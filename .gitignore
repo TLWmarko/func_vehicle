@@ -1,0 +1,15 @@
+[Cc]oppersrc/
+[Cc]oppercmp/
+[Pp]rogs106/
+[Pp]rogs106cmp/
+[Mm]apsrc/[Aa]utosave/
+[Tt]railer_material/
+
+// only used for copper testing
+pak0.pak
+
+progs.lno
+config.cfg
+qconsole.log
+darkplaces_history.txt
+ironwail.cfg
