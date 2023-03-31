@@ -315,15 +315,57 @@ void(float speed, float maxspeed) Car_Accelerate =
 		return;
 	tleft = self.driving.backleft;
 	tright = self.driving.backright;
-	tright.physobj_flags = tright.physobj_flags - (tright.physobj_flags & PHFLAGS_RESTING);
-	tleft.physobj_flags = tleft.physobj_flags - (tleft.physobj_flags & PHFLAGS_RESTING);
 	float allowAccelerateRight = tright.velocity * tright.lmat_forward < maxspeed;
 	float allowAccelerateLeft = tleft.velocity * tleft.lmat_forward < maxspeed;
-	if (allowAccelerateRight && tright.flags & FL_ONGROUND)
+	if (allowAccelerateRight && tright.flags & FL_ONGROUND){
+		tright.physobj_flags = tright.physobj_flags - (tright.physobj_flags & PHFLAGS_RESTING);
 		tright.velocity = tright.velocity + tright.lmat_forward *speed*frametime;
-	if (allowAccelerateLeft && tleft.flags & FL_ONGROUND)
+	}
+	if (allowAccelerateLeft && tleft.flags & FL_ONGROUND){
+		tleft.physobj_flags = tleft.physobj_flags - (tleft.physobj_flags & PHFLAGS_RESTING);
 		tleft.velocity = tleft.velocity + tleft.lmat_forward *speed*frametime;
+	}
 };
+
+void(float speed, float maxspeed) Car_Roll =
+{
+	local entity f_right, f_left;
+	local entity b_right, b_left;
+
+	if (!self.driving)
+		return;
+
+	f_left = self.driving.frontleft;
+	f_right = self.driving.frontright;
+	b_left = self.driving.backleft;
+	b_right = self.driving.backright;
+
+	if (f_right.flags & FL_ONGROUND && f_left.flags & FL_ONGROUND && b_right.flags & FL_ONGROUND && b_left.flags & FL_ONGROUND) // all tires touching ground, no rolling allowed
+		return;
+
+	float fright_lzvel = f_right.velocity * f_right.lmat_up;
+	float fleft_lzvel = f_left.velocity * f_left.lmat_up;
+	float bright_lzvel = b_right.velocity * b_right.lmat_up;
+	float bleft_lzvel = b_left.velocity * b_left.lmat_up;
+
+	float rel_bzvel = fabs(bright_lzvel - bleft_lzvel);
+	float rel_fzvel = fabs(fright_lzvel - fleft_lzvel);
+
+	float allowRollFront = (rel_fzvel) < maxspeed;
+	float allowRollBack = (rel_bzvel) < maxspeed;
+	if (allowRollFront && allowRollBack){
+
+		f_right.physobj_flags = f_right.physobj_flags - (f_right.physobj_flags & PHFLAGS_RESTING);
+		f_left.physobj_flags = f_left.physobj_flags - (f_left.physobj_flags & PHFLAGS_RESTING);
+		b_right.physobj_flags = b_right.physobj_flags - (b_right.physobj_flags & PHFLAGS_RESTING);
+		b_left.physobj_flags = b_left.physobj_flags - (b_left.physobj_flags & PHFLAGS_RESTING);
+
+		f_right.velocity = f_right.velocity + f_right.lmat_up *speed*frametime;
+		b_right.velocity = b_right.velocity + b_right.lmat_up *speed*frametime;
+		f_left.velocity = f_left.velocity - f_left.lmat_up *speed*frametime;	
+		b_left.velocity = b_left.velocity - b_left.lmat_up *speed*frametime;	
+	}
+}
 
 void TryUpdateVehicle(){
 	if (!check_camera_state){
@@ -347,6 +389,13 @@ void TryUpdateVehicle(){
 	}
 	else if (forw < -100){
 		Car_Accelerate(-2500, 800);
+	}
+	float roll = v_right * self.velocity;
+	if (roll > 100){
+		Car_Roll(-2000, 350);
+	}
+	else if (roll < -100){
+		Car_Roll(2000, 350);
 	}
 	float car_angs = self.driving.angles_y;
 	if (car_angs > 180)
