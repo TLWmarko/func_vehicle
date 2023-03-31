@@ -2,8 +2,8 @@
 # func_vehicle
 A drop-in vehicle-physics mod for Quake
 
-    Version     : 0.1
-    Date        : March 27th, 2023
+    Version     : 0.11
+    Date        : March 31st, 2023
     Author      : Marko "Polo" Permanto
     Email       : marko.permanto@gmail.com
     Website     : https://github.com/TLWmarko/func_vehicle
@@ -21,7 +21,9 @@ This Quake mod is primarily meant for other modders, to function as a drop-in "p
 It is currently quite obviously unfinished, but I decided to package things up and release it as is anyway, because it's been just sitting on my harddrive collecting dust for a year, and the risk of it simply getting lost to time was only increasing.
 
 ## Requirements
-Requires an engine with increased entity limits, since each physics object eats entities for breakfast. You probably also require a heftier computer than the original requirements were for Quake. Some engines might need tweaking some console settings if the chasecam is choppy. Primary target has been QuakeSpasm, but in theory all modern Quake engines should work.
+Works in any Quake engine since 1997. A word of warning though, each physics object eats entities for breakfast so engines without increased limits will quickly run out. For example the currently included hotrod vehicle uses 371 entities (assuming I counted them correctly). You probably also require a heftier computer than the original requirements were for Quake. Some engines might need tweaking some console settings if the chasecam is choppy.
+
+The mod uses chase_active for the 3rd person view when driving, which has a bug in some Quake engines where if the sightline is too far in front of you, the angle will get completely messed up, so keep that in mind if making large open maps. Ironwail has this fixed for example.
 
 ## Mapping & Modding
 ### Modding:
@@ -35,13 +37,18 @@ Missing features:
 
     - Ability to build your own vehicles using brushes
     - Ability to add own models for vehicles without coding
-    - Ability to flip vehicles back upright when you fall over
     - Visual effects like tyre-smoke and such
     - Sounds
     - Finished skin for the hotrod
     - More examples for using the physics engine in other ways
     - Technical description for the curious
-    
+
+## CHANGELOG
+- v0.11 March 31st, 2023
+    - Added ability to use strafe-keys to roll the vehicle at will, useful for tricks midair or to turn the car back over when you accidentally land upside down. Only requirement is atleast one wheel needs to be off the ground.
+- v0.1 March 27th, 2023
+    - Initial release.
+
 ## HQA (Hypothetical Questions and Answers)
 Q: Is this like Quake Rally?  
 A: Not really, but you could use it to make something like that! See the about section.  
