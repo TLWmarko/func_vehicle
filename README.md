@@ -1,3 +1,4 @@
+![func_vehicle](https://user-images.githubusercontent.com/3429506/227857251-4de81fcd-b441-45ba-9282-a176b20a5a2e.png)
 # func_vehicle
 A drop-in vehicle-physics mod for Quake
 
@@ -20,13 +21,7 @@ This Quake mod is primarily meant for other modders, to function as a drop-in "p
 It is currently quite obviously unfinished, but I decided to package things up and release it as is anyway, because it's been just sitting on my harddrive collecting dust for a year, and the risk of it simply getting lost to time was only increasing.
 
 ## Requirements
-Requires an engine with increased entity limits, since each physics object eats entities for breakfast. You probably also require a heftier computer than the original requirements were for Quake.
-### Engines tested:
-- QuakeSpasm (target engine for this mod, works great)
-- QuakeSpasm-Spiked (works great)
-- DarkPlaces (works great)
-- FTEQW (choppy chasecam, not a great experience, might be possible to tweak using some settings)
-- Ironwail (slightly choppy chasecam but acceptable, might be possible to tweak using some settings)
+Requires an engine with increased entity limits, since each physics object eats entities for breakfast. You probably also require a heftier computer than the original requirements were for Quake. Some engines might need tweaking some console settings if the chasecam is choppy. Primary target has been QuakeSpasm, but in theory all modern Quake engines should work.
 
 ## Mapping & Modding
 ### Modding:
