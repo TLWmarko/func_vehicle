@@ -34,6 +34,10 @@ entity p_damage_thinker;
 entity object_list;
 .entity object_next;
 
+.string phys_particle_start;
+.string phys_hitmodel_start;
+.string phys_static_start;
+
 .float physobj_particles;
 .entity physobj_particlelist; // first entity in particle list of this object
 .entity physobj_sticklist; // first entity in stick list of this object

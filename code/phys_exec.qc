@@ -878,6 +878,22 @@ void() Phys_ObjectThink =
 entity(vector org, entity e, entity obj) Phys_InitStatic =
 {
 	local vector v;
+
+	if (e.mdl)
+	{
+		//precache_model(e.mdl);
+		setmodel(e, e.mdl);
+		/*
+		f = strlen(e.model);
+		f = f - 3;
+		s = substring(e.model, f, 3);
+		if (s == "bsp")
+			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+		s = substring(e.model, 0, 1);
+		if (s == "*") // map bmodel
+			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+		*/
+	}
 	//e.effects = EF_NOMODELFLAGS;
 #if defined(SMOOTH)
 	e.movetype = MOVETYPE_STEP;
@@ -920,21 +936,6 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnStatic =
 		e.save_org = e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
 		e.mdl = basepart.mdl;
-		if (basepart.mdl)
-		{
-			//precache_model(basepart.mdl);
-			setmodel(e, basepart.mdl);
-			/*
-			f = strlen(e.model);
-			f = f - 3;
-			s = substring(e.model, f, 3);
-			if (s == "bsp")
-				e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-			s = substring(e.model, 0, 1);
-			if (s == "*") // map bmodel
-				e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-			*/
-		}
 	}
 	else
 	{
@@ -952,6 +953,22 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnStatic =
 entity(vector org, entity e, entity obj) Phys_InitParticle =
 {
 	local vector v;
+
+	if (e.mdl)
+	{
+		//precache_model(e.mdl);
+		setmodel(e, e.mdl);
+		/*
+		f = strlen(e.model);
+		f = f - 3;
+		s = substring(e.model, f, 3);
+		if (s == "bsp")
+			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+		s = substring(e.model, 0, 1);
+		if (s == "*") // map bmodel
+			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+		*/
+	}
 
 	if (e.owner)
 	{
@@ -1025,21 +1042,6 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.save_org = e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
 		e.mdl = basepart.mdl;
-		if (basepart.mdl)
-		{
-			//precache_model(basepart.mdl);
-			setmodel(e, basepart.mdl);
-			/*
-			f = strlen(e.model);
-			f = f - 3;
-			s = substring(e.model, f, 3);
-			if (s == "bsp")
-				e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-			s = substring(e.model, 0, 1);
-			if (s == "*") // map bmodel
-				e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-			*/
-		}
 	}
 	else
 	{
@@ -1064,6 +1066,23 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 
 entity(vector org, entity e, entity obj) Phys_InitHitmodel =
 {
+	if (e.mdl)
+	{
+		//precache_model(e.mdl);
+		setmodel(e, e.mdl);
+		/*
+		f = strlen(e.model);
+		f = f - 3;
+		s = substring(e.model, f, 3);
+		if (s == "bsp")
+			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+		s = substring(e.model, 0, 1);
+		if (s == "*") // map bmodel
+			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+		*/
+		e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
+	}
+
 	if (e.owner)
 		e.physobj_mass = obj.physobj_mass;
 	e.takedamage = DAMAGE_AIM;
@@ -1107,22 +1126,6 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 		e.touch = basepart.touch;
 		e.th_pain = basepart.th_pain;
 		e.mdl = basepart.mdl;
-		if (basepart.mdl)
-		{
-			//precache_model(basepart.mdl);
-			setmodel(e, basepart.mdl);
-			/*
-			f = strlen(e.model);
-			f = f - 3;
-			s = substring(e.model, f, 3);
-			if (s == "bsp")
-				e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-			s = substring(e.model, 0, 1);
-			if (s == "*") // map bmodel
-				e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-			*/
-			e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-		}
 	}
 	else
 	{
