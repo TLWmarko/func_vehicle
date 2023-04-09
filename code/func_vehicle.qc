@@ -103,7 +103,7 @@ void() Car_ChassiThink =
 #if defined(SMOOTH)
 	car.frags = time + 0.1;
 	self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
-	setorigin(self, self.save_org);
+	setorigin(self, self.view_ofs);
 	self.nextthink = time + 0.1;
 #else
 	self.nextthink = time;
@@ -114,7 +114,7 @@ void() Car_ChassiThink =
 void() DriverThink =
 {
 	self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
-	setorigin(self, self.save_org);
+	setorigin(self, self.view_ofs);
 
 	self.nextthink = time + 0.1;
 };
@@ -224,7 +224,7 @@ void(entity ply, entity car) Car_AttachToVehicle =
 				if (!TryPlacePlayer(FindStaticOfName("topexit", car)))
 					if (!TryPlacePlayer(FindStaticOfName("botexit", car)))
 						if (!TryPlacePlayer(FindStaticOfName("backexit", car)))
-							if (!TryPlacePlayer(FindStaticOfName("frontexit", car)))
+							TryPlacePlayer(FindStaticOfName("frontexit", car));
 		self = oself;
 		car.driving = world;
 	}
@@ -290,17 +290,19 @@ void(float turn) Car_Turn =
 			car.ideal_yaw = min(0, car.ideal_yaw + f*2*frametime);
 	}
 	// left tire
-	matrix_forward = tleft.save_forward;
-	matrix_left = tleft.save_left;
-	matrix_up = tleft.save_up;
+	makevectors(tleft.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = v_right; // quake bug
+	matrix_up = v_up;
 	Matrix_RotateByAxisAngle('0 0 1', car.ideal_yaw);
 	tleft.relative_forward = matrix_forward;
 	tleft.relative_left = matrix_left;
 	tleft.relative_up = matrix_up;
 	// right tire
-	matrix_forward = tright.save_forward;
-	matrix_left = tright.save_left;
-	matrix_up = tright.save_up;
+	makevectors(tright.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = v_right; // quake bug
+	matrix_up = v_up;
 	Matrix_RotateByAxisAngle('0 0 1', car.ideal_yaw);
 	tright.relative_forward = matrix_forward;
 	tright.relative_left = matrix_left;

@@ -203,7 +203,7 @@ void(entity targ) Phys_CheckStatus =
 };
 
 // Particle acceleration, such as gravity, buoyancy
-void(float fscale, float ftime) Phys_Acceleration =
+void(float fscale, float ftime, float sv_gravity) Phys_Acceleration =
 {
 	local float p;
 	local vector spring, v;
@@ -228,7 +228,7 @@ void(float fscale, float ftime) Phys_Acceleration =
 		if (trace_inwater)
 			part.velocity_z = part.velocity_z + sv_gravity*part.physobj_buoyancy*ftime*fscale; // Buoyancy
 		else
-			part.velocity_z = part.velocity_z - sv_gravity*part.gravity*ftime*fscale; // Gravity
+			part.velocity_z = part.velocity_z - sv_gravity*ftime*fscale; // Gravity
 		if (part.flags & FL_ONGROUND && part.physobj_flags & PHFLAGS_SPRING_TOUCH) {
 			spring = -part.lmat_up;
 			p = (1-part.physobj_floor_frac);
@@ -727,7 +727,7 @@ void() Phys_ObjectThink =
 	// Run every frame
 	self.nextthink = time;
 
-	sv_gravity = cvar("sv_gravity");
+	local float sv_gravity = cvar("sv_gravity");
 
 	Phys_CheckStatus(world); // Check in case we got pushed, blocked by a hitmodel or otherwise stuck
 	Phys_CheckOnGround(); // Check onground status in case we need to wake up the object
@@ -767,11 +767,11 @@ void() Phys_ObjectThink =
 		{
 			steps = steps - 1;
 			Phys_CheckOnGround();
-			Phys_Acceleration(0.5, ftime);
+			Phys_Acceleration(0.5, ftime, sv_gravity);
 			Phys_Constraints(iterations, ftime);
 			Phys_Deceleration(ftime);
 			Phys_Move(ftime);
-			Phys_Acceleration(0.5, ftime);
+			Phys_Acceleration(0.5, ftime, sv_gravity);
 		}
 		self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_FORCE);
 
@@ -820,7 +820,7 @@ void() Phys_ObjectThink =
 			// Update euler angles for viewing ingame
 			// Static objects aren't affected by physics
 #if defined(SMOOTH)
-			stat.save_org = self.physobj_p1.origin + self.lmat_forward*stat.relative_org_x + self.lmat_left*stat.relative_org_y + self.lmat_up*stat.relative_org_z;
+			stat.view_ofs = self.physobj_p1.origin + self.lmat_forward*stat.relative_org_x + self.lmat_left*stat.relative_org_y + self.lmat_up*stat.relative_org_z;
 #else
 			stat.angles = vectoangles2(matrix_forward, matrix_up);
 			if (stat.physobj_flags & PHFLAGS_BSPMODEL)
@@ -930,20 +930,22 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnStatic =
 	if (basepart)
 	{
 		e.netname = basepart.netname;
-		e.save_forward = e.relative_forward = basepart.relative_forward;
-		e.save_left = e.relative_left = basepart.relative_left;
-		e.save_up = e.relative_up = basepart.relative_up;
-		e.save_org = e.relative_org = basepart.relative_org;
+		e.base_pose = basepart.base_pose;
+		e.relative_forward = basepart.relative_forward;
+		e.relative_left = basepart.relative_left;
+		e.relative_up = basepart.relative_up;
+		e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
 		e.mdl = basepart.mdl;
 	}
 	else
 	{
 		e.netname = "static";
-		e.save_forward = e.relative_forward = '1 0 0';
-		e.save_left = e.relative_left = '0 1 0';
-		e.save_up = e.relative_up = '0 0 1';
-		e.save_org = e.relative_org = org;
+		e.base_pose = '0 0 0';
+		e.relative_forward = '1 0 0';
+		e.relative_left = '0 1 0';
+		e.relative_up = '0 0 1';
+		e.relative_org = org;
 		e.relative_size = 0;
 	}
 	return Phys_InitStatic(org, e, obj);
@@ -1033,13 +1035,13 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.physobj_buoyancy = basepart.physobj_buoyancy;
 		e.physobj_stiction = basepart.physobj_stiction;
 		e.physobj_stepup = basepart.physobj_stepup;
-		e.gravity = basepart.gravity;
 		e.physobj_p1 = basepart.physobj_p1;
 		e.physobj_p2 = basepart.physobj_p2;
-		e.save_forward = e.relative_forward = basepart.relative_forward;
-		e.save_left = e.relative_left = basepart.relative_left;
-		e.save_up = e.relative_up = basepart.relative_up;
-		e.save_org = e.relative_org = basepart.relative_org;
+		e.base_pose = basepart.base_pose;
+		e.relative_forward = basepart.relative_forward;
+		e.relative_left = basepart.relative_left;
+		e.relative_up = basepart.relative_up;
+		e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
 		e.mdl = basepart.mdl;
 	}
@@ -1054,11 +1056,11 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.physobj_bounce = 1.2;
 		e.physobj_stepup = 0;
 		e.physobj_buoyancy = 0.2;
-		e.gravity = 1;
-		e.save_forward = e.relative_forward = '1 0 0';
-		e.save_left = e.relative_left = '0 1 0';
-		e.save_up = e.relative_up = '0 0 1';
-		e.save_org = e.relative_org = org;
+		e.base_pose = '0 0 0';
+		e.relative_forward = '1 0 0';
+		e.relative_left = '0 1 0';
+		e.relative_up = '0 0 1';
+		e.relative_org = org;
 		e.relative_size = 0;
 	}
 	return Phys_InitParticle(org, e, obj);
@@ -1118,10 +1120,11 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 	if (basepart)
 	{
 		e.netname = basepart.netname;
-		e.save_org = e.relative_org = basepart.relative_org;
-		e.save_forward = e.relative_forward = basepart.relative_forward;
-		e.save_left = e.relative_left = basepart.relative_left;
-		e.save_up = e.relative_up = basepart.relative_up;
+		e.relative_org = basepart.relative_org;
+		e.base_pose = basepart.base_pose;
+		e.relative_forward = basepart.relative_forward;
+		e.relative_left = basepart.relative_left;
+		e.relative_up = basepart.relative_up;
 		e.blocked = basepart.blocked;
 		e.touch = basepart.touch;
 		e.th_pain = basepart.th_pain;
@@ -1130,10 +1133,11 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 	else
 	{
 		e.netname = "hitmodel";
-		e.save_forward = e.relative_forward = '1 0 0';
-		e.save_left = e.relative_left = '0 1 0';
-		e.save_up = e.relative_up = '0 0 1';
-		e.save_org = e.relative_org = org;
+		e.base_pose = '0 0 0';
+		e.relative_forward = '1 0 0';
+		e.relative_left = '0 1 0';
+		e.relative_up = '0 0 1';
+		e.relative_org = org;
 		e.th_pain = SUB_NullPain;
 	}
 	return Phys_InitHitmodel(org, e, obj);
@@ -1175,7 +1179,6 @@ entity(entity basepart) Phys_ObjectSpawn =
 	e = spawn();
 	e.classname = "physics_object";
 	e.netname = basepart.netname;
-	e.filename = basepart.filename;
 	e.physobj_mass = basepart.physobj_mass;
 	e.physobj_impactevent = basepart.physobj_impactevent;
 	e.think = Phys_ObjectThink;
@@ -1217,21 +1220,6 @@ void(entity obj) Phys_ObjectRemove =
 		next = e.physobj_next;
 		remove(e);
 		e = next;
-	}
-	e = object_list;
-	if (e == obj)
-		object_list = obj.object_next;
-	else
-	{
-		while (e)
-		{
-			if (e.object_next == obj)
-			{
-				e.object_next = obj.object_next;
-				break;
-			}
-			e = e.object_next;
-		}
 	}
 	remove(obj);
 };
@@ -1385,76 +1373,6 @@ void() Phys_SpawnSticks =
 	}
 }
 
-// Dynamicly adds an object into the object list
-// Automaticly spawns particles and sticks based on a bmodel
-// NOTE: works only on brushes, beware of model based submodels in Q3BSP
-/*
-entity(entity base, entity hitbase, entity statbase) Dynamic_BModelObject =
-{
-	local float numpoint, surf;
-	local entity obj, part, e, e2;
-	local vector org;
-
-	obj = physobj_spawning = spawn();
-	obj.object_next = object_list;
-	object_list = obj;
-	obj.netname = base.netname;
-	obj.physobj_mass = base.physobj_mass;
-
-	surf = 0;
-	numpoint = getsurfacenumpoints(base, surf);
-	while (numpoint)
-	{
-		surf = surf + 1;
-		while (numpoint)
-		{
-			org = getsurfacepoint(base, surf, numpoint);
-			if (org != base.origin) // hax, submodels for some reason have a vertex at '0 0 0'
-			{
-				org = org-base.relative_org;
-				e = Phys_SpawnParticle(org, world, obj);
-				e.physobj_stiction = base.physobj_stiction;
-				e.physobj_friction_ground = base.physobj_friction_ground;
-				e.physobj_friction_water = base.physobj_friction_water;
-				e.physobj_friction_air = base.physobj_friction_air;
-				e.physobj_bounce = base.physobj_bounce;
-				e.physobj_buoyancy = base.physobj_buoyancy;
-				e.gravity = base.gravity;
-			}
-			numpoint = numpoint - 1;
-		}
-		numpoint = getsurfacenumpoints(base, surf);
-	}
-	// remove duplicates
-	part = obj.physobj_particlelist;
-	while (part)
-	{
-		e = obj.physobj_particlelist;
-		while (e)
-		{
-			e2 = e;
-			e = e.physobj_next;
-			if (e2 != part)
-			if (e2.origin == part.origin)
-				Phys_ObjectRemoveParticle(e2, obj);
-		}
-		part = part.physobj_next;
-	}
-	if (hitbase)
-	{
-		e = Phys_SpawnHitmodel(hitbase.origin - hitbase.relative_org, world, obj);
-		e.mdl = hitbase.mdl;
-	}
-	if (statbase)
-	{
-		e = Phys_SpawnStatic(statbase.origin - statbase.relative_org, world, obj);
-		e.mdl = statbase.mdl;
-	}
-	Phys_SpawnSticks();
-	return obj;
-};
-*/
-
 entity(entity obj, vector org, vector forward, vector left, vector up) Phys_InitPhysicsObject =
 {
 	local float f;
@@ -1515,10 +1433,11 @@ entity(entity obj, vector org, vector forward, vector left, vector up) Phys_Init
 	org1 = obj.physobj_p1.relative_org;
 	org2 = obj.physobj_p2.relative_org;
 	org3 = obj.physobj_p3.relative_org;
-	obj.objbase_forward = normalize(org2-org1);
-	obj.objbase_left = org3-org1;
-	obj.objbase_up = normalize(crossproduct(obj.objbase_forward, obj.objbase_left));
-	obj.objbase_left = normalize(crossproduct(obj.objbase_forward, obj.objbase_up));
+
+	obj.relative_forward = normalize(org2-org1);
+	obj.relative_left = normalize(org3-org1);
+	obj.relative_up = normalize(crossproduct(obj.relative_forward, obj.relative_left));
+	obj.relative_left = normalize(crossproduct(obj.relative_forward, obj.relative_up));
 
 	return obj;
 }

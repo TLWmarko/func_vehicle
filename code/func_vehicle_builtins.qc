@@ -26,7 +26,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -61,7 +60,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	stab = part;
 
 	part = spawn();
@@ -97,7 +95,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	//stabilizer bar targets
 	part.physobj_p1 = stab;
 	part.physobj_p2 = stab;
@@ -136,7 +133,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	stab = part;
 
 	part = spawn();
@@ -172,7 +168,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	//stabilizer bar targets
 	part.physobj_p1 = stab;
 	part.physobj_p2 = stab;
@@ -316,7 +311,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	stab = part;
 
 	part = spawn();
@@ -353,7 +347,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	//stabilizer bar targets
 	part.physobj_p1 = stab;
 	part.physobj_p2 = stab;
@@ -393,7 +386,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	stab = part;
 
 	part = spawn();
@@ -430,7 +422,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 	//stabilizer bar targets
 	part.physobj_p1 = stab;
 	part.physobj_p2 = stab;
@@ -467,7 +458,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -487,7 +477,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -507,7 +496,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -527,7 +515,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -547,7 +534,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -567,7 +553,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -587,7 +572,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -607,7 +591,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -627,7 +610,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -647,7 +629,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -667,7 +648,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -687,7 +667,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -707,7 +686,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -727,7 +705,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
 
 	// hitmodels
 	part = spawn();
@@ -934,38 +911,41 @@ void() StartFuncVehicle =
 	entity e;
 
 	makevectors(self.angles);
-	if (self.phys_particle_start) {
-		e = find(world, targetname, self.phys_particle_start);
+	if (self.phys_particle_name) {
+		e = find(world, targetname, self.phys_particle_name);
 		while(e) {
 			e.physobj_next = self.physobj_particlelist;
 			self.physobj_particlelist = e;
 			e.owner = self;
 			e.relative_org = e.origin - self.origin;
-			e = find(e, targetname, self.phys_particle_start);
+			e.base_pose = e.angles;
+			e = find(e, targetname, self.phys_particle_name);
 		}
 	}
-	if (self.phys_hitmodel_start) {
-		e = find(world, targetname, self.phys_hitmodel_start);
+	if (self.phys_hitmodel_name) {
+		e = find(world, targetname, self.phys_hitmodel_name);
 		while(e) {
 			e.physobj_next = self.physobj_hitmodel;
 			self.physobj_hitmodel = e;
 			e.owner = self;
 			e.relative_org = e.origin - self.origin;
-			e = find(e, targetname, self.phys_hitmodel_start);
+			e.base_pose = e.angles;
+			e = find(e, targetname, self.phys_hitmodel_name);
 		}
 	}
-	if (self.phys_static_start){
-		e = find(world, targetname, self.phys_static_start);
+	if (self.phys_static_name){
+		e = find(world, targetname, self.phys_static_name);
 		while(e) {
 			e.physobj_next = self.physobj_staticlist;
 			self.physobj_staticlist = e;
 			e.owner = self;
 			e.relative_org = e.origin - self.origin;
-			e = find(e, targetname, self.phys_static_start);
+			e.base_pose = e.angles;
+			e = find(e, targetname, self.phys_static_name);
 		}
 	}
 
-	Phys_MakeIntoPhysicsObject(self, self.origin, v_forward, v_right * -1, v_up, '0 0 1', 0);
+	Phys_MakeIntoPhysicsObject(self, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	self.physobj_impactevent = PushAndDamageTarget;
 	Car_InitVehicle(self);
 }
@@ -989,6 +969,7 @@ void() func_vehicle_hitmodel =
 	else if (self.model)
 		setmodel (self, self.model);
 
+	self.base_pose = '0 0 0';
 	self.relative_forward = '1 0 0';
 	self.relative_left = '0 1 0';
 	self.relative_up = '0 0 1';
@@ -1004,6 +985,7 @@ void() func_vehicle_particle =
 	self.physobj_spring_length = 12;
 	self.physobj_spring_force = '2 4 0';
 	self.relative_size = 13;
+	self.base_pose = '0 0 0';
 	self.relative_forward = '1 0 0';
 	self.relative_left = '0 1 0';
 	self.relative_up = '0 0 1';
@@ -1014,7 +996,6 @@ void() func_vehicle_particle =
 	self.physobj_friction_water = '2 2 2';
 	self.physobj_bounce = 1.025;
 	self.physobj_buoyancy = -0.75;
-	self.gravity = 1;
 }
 void() func_vehicle_static =
 {
@@ -1024,6 +1005,7 @@ void() func_vehicle_static =
 	else if (self.model)
 		setmodel (self, self.model);
 
+	self.base_pose = '0 0 0';
 	self.relative_forward = '1 0 0';
 	self.relative_left = '0 1 0';
 	self.relative_up = '0 0 1';
@@ -1055,7 +1037,7 @@ void() func_vehicle_builtins =
 	//car.netname = self.netname;
 	
 	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin, v_forward, v_right * -1, v_up, '0 0 1', 0);
+	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
 
@@ -1074,7 +1056,7 @@ void() func_vehicle_triton =
 	entity car = triton();
 
 	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin, v_forward, v_right * -1, v_up, '0 0 1', 0);
+	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
 
@@ -1095,214 +1077,6 @@ void() func_vehicle_hotrod =
 	entity car = hotrod();
 	
 	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin, v_forward, v_right * -1, v_up, '0 0 1', 0);
+	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
-
-entity() gammacar =
-{
-	local entity obj, part;
-
-	obj = spawn();
-	obj.netname = "gammacar";
-	obj.physobj_mass = 1000;
-	obj.physobj_impactevent = PushAndDamageTarget;
-	
-	// chassis
-	part = spawn();
-	part.physobj_next = obj.physobj_particlelist;
-	obj.physobj_particlelist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_particle";
-	part.netname = "chassipart";
-	part.relative_org = '-3 0 16.5';
-	part.relative_size = 10;
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-	part.physobj_stepup = 1;
-	part.part_mass = 0.5;
-	part.physobj_stiction = 50;
-	part.physobj_friction_ground = '8 8 8';
-	part.physobj_friction_water = '2 2 2';
-	part.physobj_bounce = 1.025;
-	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
-
-	part = spawn();
-	part.physobj_next = obj.physobj_staticlist;
-	obj.physobj_staticlist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_static";
-	part.netname = "chassis";
-	part.mdl = "progs/test/gammacar/gammachassi.mdl";
-	part.relative_org = '0 0 0';
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-
-	// frontleft
-	part = spawn();
-	part.physobj_next = obj.physobj_particlelist;
-	obj.physobj_particlelist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_particle";
-	part.netname = "frontleft";
-	part.relative_org = '15.25 16 -1.5';
-	part.physobj_spring_length = 3.5;
-	part.physobj_spring_force = '1 2 0';
-	part.relative_size = 9;
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-	part.physobj_stepup = 7;
-	part.part_mass = 1;
-	part.physobj_stiction = 10;
-	part.physobj_friction_ground = '0.2 4 5';
-	part.physobj_friction_water = '2 2 2';
-	part.physobj_bounce = 1.025;
-	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
-
-	part = spawn();
-	part.physobj_next = obj.physobj_staticlist;
-	obj.physobj_staticlist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_static";
-	part.netname = "frontleft";
-	part.mdl = "progs/test/gammacar/nutire.mdl";
-	part.relative_org = '15.25 16 -1.5';
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-
-	// backleft
-	part = spawn();
-	part.physobj_next = obj.physobj_particlelist;
-	obj.physobj_particlelist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_particle";
-	part.netname = "backleft";
-	part.relative_org = '-17.25 16 -1.5';
-	part.physobj_spring_length = 3.5;
-	part.physobj_spring_force = '1 2 0';
-	part.relative_size = 9;
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-	part.physobj_stepup = 7;
-	part.part_mass = 1;
-	part.physobj_stiction = 10;
-	part.physobj_friction_ground = '0.2 4 5';
-	part.physobj_friction_water = '2 2 2';
-	part.physobj_bounce = 1.025;
-	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
-
-	part = spawn();
-	part.physobj_next = obj.physobj_staticlist;
-	obj.physobj_staticlist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_static";
-	part.netname = "backleft";
-	part.mdl = "progs/test/gammacar/nutire.mdl";
-	part.relative_org = '-17.25 16 -1.5';
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-
-	// frontright
-	part = spawn();
-	part.physobj_next = obj.physobj_particlelist;
-	obj.physobj_particlelist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_particle";
-	part.netname = "frontright";
-	part.relative_org = '15.25 -16 -1.5';
-	part.physobj_spring_length = 3.5;
-	part.physobj_spring_force = '1 2 0';
-	part.relative_size = 9;
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-	part.physobj_stepup = 7;
-	part.part_mass = 1;
-	part.physobj_stiction = 10;
-	part.physobj_friction_ground = '0.2 4 5';
-	part.physobj_friction_water = '2 2 2';
-	part.physobj_bounce = 1.025;
-	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
-
-	part = spawn();
-	part.physobj_next = obj.physobj_staticlist;
-	obj.physobj_staticlist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_static";
-	part.netname = "frontright";
-	part.mdl = "progs/test/gammacar/nutire.mdl";
-	part.relative_org = '15.25 -16 -1.5';
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-
-	// backright
-	part = spawn();
-	part.physobj_next = obj.physobj_particlelist;
-	obj.physobj_particlelist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_particle";
-	part.netname = "backright";
-	part.relative_org = '-17.25 -16 -1.5';
-	part.physobj_spring_length = 3.5;
-	part.physobj_spring_force = '1 2 0';
-	part.relative_size = 9;
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-	part.physobj_stepup = 7;
-	part.part_mass = 1;
-	part.physobj_stiction = 10;
-	part.physobj_friction_ground = '0.2 4 5';
-	part.physobj_friction_water = '2 2 2';
-	part.physobj_bounce = 1.025;
-	part.physobj_buoyancy = -0.75;
-	part.gravity = 1;
-
-	part = spawn();
-	part.physobj_next = obj.physobj_staticlist;
-	obj.physobj_staticlist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_static";
-	part.netname = "backright";
-	part.mdl = "progs/test/gammacar/nutire.mdl";
-	part.relative_org = '-17.25 -16 -1.5';
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-
-	// frontbomb
-	part = spawn();
-	part.physobj_next = obj.physobj_particlelist;
-	obj.physobj_particlelist = part;
-	part.owner = obj;
-	part.classname = "func_vehicle_particle";
-	part.netname = "frontbomb";
-	part.relative_org = '28 0 6.5';
-	part.relative_size = 3;
-	part.relative_forward = '1 0 0';
-	part.relative_left = '0 1 0';
-	part.relative_up = '0 0 1';
-	part.physobj_stepup = 7;
-	part.part_mass = 0.1;
-	part.physobj_stiction = 0;
-	part.physobj_friction_ground = '1 1 1';
-	part.physobj_friction_water = '2 2 2';
-	part.physobj_bounce = 1.025;
-	part.physobj_buoyancy = -0.75;
-	part.gravity = 0.1;
-
-	physobj_spawning = obj;
-	Phys_SpawnSticks();
-	return physobj_spawning;
-}

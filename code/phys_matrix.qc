@@ -7,7 +7,7 @@ vector(vector a, vector b) crossproduct =
 	return v;
 };
 
-// Rodriguez vector aka Axis angle rotation, thanks LordHavoc
+// Rodriguez vector aka Axis angle rotation, thanks LadyHavoc
 void(vector axis, float angle) Matrix_RotateByAxisAngle =
 {
 	local vector forward;
@@ -100,18 +100,19 @@ void(entity obj) Matrix_CalculateObjectMatrix =
 	org2 = obj.physobj_p2.origin;
 	org3 = obj.physobj_p3.origin;
 	tpart_forward = normalize(org2-org1);
-	tpart_left = org3-org1;
+	tpart_left = normalize(org3-org1);
 	tpart_up = normalize(crossproduct(tpart_forward, tpart_left));
 	tpart_left = normalize(crossproduct(tpart_forward, tpart_up));
 
-	// LordHavoc:
+	// LadyHavoc:
 	// transform the current particle matrix by transposed basepose particle
 	// matrix, which undoes any strangeness in the particle matrix, which
 	// makes it face straight forward (as it did when it was loaded)
 	// this makes the object face the same as in the editor
-	matrix_forward = obj.objbase_forward_x * tpart_forward + obj.objbase_left_x * tpart_left + obj.objbase_up_x * tpart_up;
-	matrix_left    = obj.objbase_forward_y * tpart_forward + obj.objbase_left_y * tpart_left + obj.objbase_up_y * tpart_up;
-	matrix_up      = obj.objbase_forward_z * tpart_forward + obj.objbase_left_z * tpart_left + obj.objbase_up_z * tpart_up;
+
+	matrix_forward = obj.relative_forward_x * tpart_forward + obj.relative_left_x * tpart_left + obj.relative_up_x * tpart_up;
+	matrix_left    = obj.relative_forward_y * tpart_forward + obj.relative_left_y * tpart_left + obj.relative_up_y * tpart_up;
+	matrix_up      = obj.relative_forward_z * tpart_forward + obj.relative_left_z * tpart_left + obj.relative_up_z * tpart_up;
 };
 #ifndef QSSDEP
 vector randomvec(){
