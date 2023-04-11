@@ -63,7 +63,7 @@ void(vector axis, float angle) Matrix_RotateByAxisAngle =
 	*/
 };
 
-void(entity head) Matrix_TransposeMatrix =
+void() Matrix_TransposeMatrix =
 {
 	local vector oldforward, oldleft, oldup;
 	local vector newforward, newleft, newup;
@@ -90,7 +90,50 @@ void(vector m1forward, vector m1left, vector m1up, vector m2forward, vector m2le
 	matrix_left    = m1left_x    * m2forward + m1left_y    * m2left + m1left_z    * m2up;
 	matrix_up      = m1up_x      * m2forward + m1up_y      * m2left + m1up_z      * m2up;
 };
+// untested matrix inverse
+/*
+void() Matrix_Adjugate =
+{
+	local vector adjugate_forward, adjugate_left, adjugate_up;
 
+	adjugate_forward.x =	matrix_left.y*matrix_up.z		- matrix_up.y*matrix_left.z;
+	adjugate_forward.y =	matrix_up.y*matrix_forward.z	- matrix_forward.y*matrix_up.z;
+	adjugate_forward.z =	matrix_forward.y*matrix_left.z	- matrix_left.y*matrix_forward.z;
+
+	adjugate_left.x =		matrix_left.z*matrix_up.x		- matrix_up.z*matrix_left.x;
+	adjugate_left.y =		matrix_up.z*matrix_forward.x	- matrix_forward.z*matrix_up.x;
+	adjugate_left.z =		matrix_forward.z*matrix_left.x	- matrix_left.z*matrix_forward.x;
+
+	adjugate_up.x =			matrix_left.x*matrix_up.y		- matrix_up.x*matrix_left.y;
+	adjugate_up.y =			matrix_up.x*matrix_forward.y	- matrix_forward.x*matrix_up.y;
+	adjugate_up.z =			matrix_forward.x*matrix_left.y	- matrix_left.x*matrix_forward.y;
+
+	matrix_forward = adjugate_forward;
+	matrix_left = adjugate_left;
+	matrix_up = adjugate_up;
+}
+
+float() Matrix_Determinant =
+{
+	local float det;
+	
+	det = det + (matrix_forward.x * (matrix_left.y * matrix_up.z - matrix_left.z * matrix_up.y));
+	det = det + (matrix_forward.y * (matrix_left.z * matrix_up.x - matrix_left.x * matrix_up.z));
+	det = det + (matrix_forward.z * (matrix_left.x * matrix_up.y - matrix_left.y * matrix_up.x));
+	return det;
+}
+
+void() Matrix_Inverse =
+{
+	local float determinant;
+
+	determinant = Matrix_Determinant();
+	Matrix_Adjugate();
+	matrix_forward /= determinant;
+	matrix_left /= determinant;
+	matrix_up /= determinant;
+}
+*/
 void(entity obj) Matrix_CalculateObjectMatrix =
 {
 	local vector org1, org2, org3;
