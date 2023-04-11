@@ -974,7 +974,6 @@ entity(vector org, entity e, entity obj) Phys_InitParticle =
 
 	if (e.owner)
 	{
-		e.owner.physobj_particles = e.owner.physobj_particles + 1;
 		e.physobj_mass = e.owner.physobj_mass; // used as a shortcut in force calculations
 	}
 	e.physobj_inversemass = 1 / e.part_mass;
@@ -1047,7 +1046,6 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 	}
 	else
 	{
-		//e.netname = strzone(strcat("part", ftos(e.owner.physobj_particles)));
 		e.part_mass = 1;
 		e.physobj_stiction = 50;
 		e.physobj_friction_ground = '7.5 7.5 7.5';
@@ -1273,7 +1271,6 @@ void(entity part, entity object) Phys_ObjectRemoveParticle =
 		}
 	}
 	remove(part);
-	object.physobj_particles = object.physobj_particles - 1;
 };
 
 entity(entity p1, entity p2, entity obj) Phys_ObjectAddStick =
@@ -1321,7 +1318,6 @@ entity(vector org, entity object) Phys_AddParticleToObject =
 
 	e = Phys_SpawnParticle(org, world, world);
 	//e.owner = object.physobj_hitmodel;
-	object.physobj_particles = object.physobj_particles + 1;
 	end.physobj_next = e;
 
 	stick = object.physobj_sticklist;
@@ -1446,6 +1442,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 {
 	local entity e;
 	local vector com;
+	local float particleCount;
 
 	physobj_spawning = obj;
 	obj.classname = "physics_object";
@@ -1461,6 +1458,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		setvelocity(e, toss + randomvec()*randvel);
 		com += e.origin * e.part_mass;
 		e = e.physobj_next;
+		particleCount++;
 	}
 	Phys_SpawnSticks();
 	e = obj.physobj_hitmodel;
@@ -1475,11 +1473,10 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		Phys_InitStatic(e.origin, e, physobj_spawning);
 		e = e.physobj_next;
 	}
-	if (cvar("developer") == 1) {
-		com /= obj.physobj_particles;
+	if (cvar("developer") != 0) {
+		com /= particleCount;
 		e = Phys_SpawnStatic(org + up*com_z + left*com_y + forward*com_x, world, physobj_spawning);
-		setmodel(e, "progs/debug/org.mdl");
-		//e.save_forward = e.relative_forward = 
+		setmodel(e, "progs/debug/orgbig.mdl");
 	}
 	return Phys_InitPhysicsObject(physobj_spawning, org, forward, left, up);
 };
@@ -1489,6 +1486,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 {
 	local entity e, part;
 	local vector com;
+	local float particleCount;
 
 	physobj_spawning = Phys_ObjectSpawn(obj);
 
@@ -1501,6 +1499,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		e.enemy = part; // used for easier stick spawning
 		com += e.relative_org * e.part_mass;
 		e = e.physobj_next;
+		particleCount++;
 	}
 	e = obj.physobj_sticklist;
 	while (e)
@@ -1520,11 +1519,10 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		Phys_SpawnStatic(org + up*e.relative_org_z + left*e.relative_org_y + forward*e.relative_org_x, e, physobj_spawning);
 		e = e.physobj_next;
 	}
-	if (cvar("developer") == 1) {
-		com /= obj.physobj_particles;
+	if (cvar("developer") != 0) {
+		com /= particleCount;
 		e = Phys_SpawnStatic(org + up*com_z + left*com_y + forward*com_x, world, physobj_spawning);
-		setmodel(e, "progs/debug/org.mdl");
-		//e.save_forward = e.relative_forward = 
+		setmodel(e, "progs/debug/orgbig.mdl");
 	}
 	return Phys_InitPhysicsObject(physobj_spawning, org, forward, left, up);
 };

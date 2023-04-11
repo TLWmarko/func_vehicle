@@ -31,7 +31,6 @@ entity p_damage_thinker;
 .string phys_hitmodel_name;
 .string phys_static_name;
 
-.float physobj_particles;
 .entity physobj_particlelist; // first entity in particle list of this object
 .entity physobj_sticklist; // first entity in stick list of this object
 .entity physobj_hitmodel; // the object's hitmodel

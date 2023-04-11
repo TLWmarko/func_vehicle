@@ -955,6 +955,7 @@ void() StartFuncVehicle =
 void() func_vehicle =
 {
 	precache_model("progs/debug/org.mdl");
+	precache_model("progs/debug/orgbig.mdl");
 	precache_model("progs/null.spr");
 
 	self.think = StartFuncVehicle;
@@ -1019,6 +1020,7 @@ void() func_vehicle_builtins =
 	precache_model("maps/round32.bsp");
 
 	precache_model("progs/debug/org.mdl");
+	precache_model("progs/debug/orgbig.mdl");
 	precache_model("progs/null.spr");
 
 	entity car;
@@ -1049,6 +1051,7 @@ void() func_vehicle_triton =
 	precache_model("maps/round32.bsp");
 
 	precache_model("progs/debug/org.mdl");
+	precache_model("progs/debug/orgbig.mdl");
 	precache_model("progs/null.spr");
 
 	precache_model("progs/test/whl.mdl");
@@ -1068,6 +1071,7 @@ void() func_vehicle_hotrod =
 	precache_model("maps/round32.bsp");
 
 	precache_model("progs/debug/org.mdl");
+	precache_model("progs/debug/orgbig.mdl");
 	precache_model("progs/null.spr");
 
 	precache_model("progs/HotRod_body.mdl");
