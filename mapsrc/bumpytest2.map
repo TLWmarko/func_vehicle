@@ -5104,46 +5104,50 @@
 "classname" "func_vehicle"
 "origin" "312 -200 200"
 "angle" "90"
-"phys_particle_start" "part1"
-"phys_static_start" "stat1"
+"phys_particle_name" "part1"
+"phys_static_name" "stat1"
 }
 // entity 25
 {
-"classname" "func_vehicle_particle"
+"classname" "func_vehicle_wheel"
 "origin" "344 -120 200"
 "angle" "90"
 "netname" "frontright"
 "targetname" "part1"
+"mdl" "progs/HotRod_wheel_front.mdl"
 }
 // entity 26
 {
-"classname" "func_vehicle_particle"
+"classname" "func_vehicle_wheel"
 "origin" "280 -120 200"
 "angle" "90"
 "netname" "frontleft"
 "targetname" "part1"
+"mdl" "progs/HotRod_wheel_front.mdl"
 }
 // entity 27
 {
-"classname" "func_vehicle_particle"
+"classname" "func_vehicle_wheel"
 "origin" "280 -264 200"
-"angle" "90"
+"angle" "45"
 "netname" "backleft"
 "targetname" "part1"
-"mdl" "progs/debug/org.mdl"
+"mdl" "progs/HotRod_wheel_front.mdl"
 }
 // entity 28
 {
-"classname" "func_vehicle_particle"
+"classname" "func_vehicle_wheel"
 "origin" "344 -264 200"
 "angle" "90"
 "netname" "backright"
 "targetname" "part1"
+"mdl" "progs/HotRod_wheel_front.mdl"
 }
 // entity 29
 {
 "classname" "func_vehicle_static"
 "targetname" "stat1"
+"netname" "chassis"
 // brush 0
 {
 ( 296 -216 232 ) ( 296 -215 232 ) ( 296 -216 233 ) 128_blood_1 [ 0 -1 0 -8 ] [ 0 0 -1 -24 ] 0 1 1
