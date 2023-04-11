@@ -906,19 +906,50 @@ entity() hotrod =
 	return physobj_spawning;
 }
 
+void(entity wheel, entity car) AddWheelStatic =
+{
+	local entity stat;
+
+	stat = spawn();
+	stat.classname = "func_vehicle_static";
+	stat.netname = wheel.netname;
+	setorigin(stat, wheel.origin);
+	if (wheel.mdl){
+		stat.mdl = wheel.mdl;
+	}
+	else if (wheel.model){
+		setmodel (stat, wheel.model);
+	}
+	wheel.model = 0;
+	wheel.mdl = 0;
+	stat.base_pose = wheel.base_pose;
+	stat.relative_org = wheel.relative_org;
+	stat.relative_forward = wheel.relative_forward;
+	stat.relative_left = wheel.relative_forward;
+	stat.relative_up = wheel.relative_forward;
+
+	stat.physobj_next = car.physobj_staticlist;
+	car.physobj_staticlist = stat;
+}
+
 void() StartFuncVehicle =
 {
 	entity e;
 
 	makevectors(self.angles);
+	matrix_forward = v_forward;
+	matrix_left = -v_right;
+	matrix_up = v_up;
 	if (self.phys_particle_name) {
 		e = find(world, targetname, self.phys_particle_name);
 		while(e) {
 			e.physobj_next = self.physobj_particlelist;
 			self.physobj_particlelist = e;
 			e.owner = self;
-			e.relative_org = e.origin - self.origin;
-			e.base_pose = e.angles;
+			e.relative_org = Matrix_MultiplyPoint(e.origin - self.origin);
+			e.base_pose = e.angles - self.angles;
+			if (e.classname == "func_vehicle_wheel")
+				AddWheelStatic(e, self);
 			e = find(e, targetname, self.phys_particle_name);
 		}
 	}
@@ -928,8 +959,8 @@ void() StartFuncVehicle =
 			e.physobj_next = self.physobj_hitmodel;
 			self.physobj_hitmodel = e;
 			e.owner = self;
-			e.relative_org = e.origin - self.origin;
-			e.base_pose = e.angles;
+			e.relative_org = Matrix_MultiplyPoint(e.origin - self.origin);
+			e.base_pose = e.angles - self.angles;
 			e = find(e, targetname, self.phys_hitmodel_name);
 		}
 	}
@@ -939,8 +970,8 @@ void() StartFuncVehicle =
 			e.physobj_next = self.physobj_staticlist;
 			self.physobj_staticlist = e;
 			e.owner = self;
-			e.relative_org = e.origin - self.origin;
-			e.base_pose = e.angles;
+			e.relative_org = Matrix_MultiplyPoint(e.origin - self.origin);
+			e.base_pose = e.angles - self.angles;
 			e = find(e, targetname, self.phys_static_name);
 		}
 	}
@@ -1010,6 +1041,28 @@ void() func_vehicle_static =
 	self.relative_forward = '1 0 0';
 	self.relative_left = '0 1 0';
 	self.relative_up = '0 0 1';
+}
+
+void() func_vehicle_wheel =
+{
+	setorigin (self, self.origin);
+	if (self.mdl){
+		precache_model(self.mdl);
+	}
+	self.physobj_spring_length = 12;
+	self.physobj_spring_force = '2 4 0';
+	self.relative_size = 13;
+	self.base_pose = '0 0 0';
+	self.relative_forward = '1 0 0';
+	self.relative_left = '0 1 0';
+	self.relative_up = '0 0 1';
+	self.physobj_stepup = 18;
+	self.part_mass = 1;
+	self.physobj_stiction = 10;
+	self.physobj_friction_ground = '0.225 3.3 5';
+	self.physobj_friction_water = '2 2 2';
+	self.physobj_bounce = 1.025;
+	self.physobj_buoyancy = -0.75;
 }
 
 void() func_vehicle_builtins =

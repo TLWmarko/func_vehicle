@@ -91,6 +91,15 @@ void(vector m1forward, vector m1left, vector m1up, vector m2forward, vector m2le
 	matrix_up      = m1up_x      * m2forward + m1up_y      * m2left + m1up_z      * m2up;
 };
 
+vector(vector v) Matrix_MultiplyPoint =
+{
+	local vector result;
+	result_x = matrix_forward_x * v_x + matrix_forward_y * v_y + matrix_forward_z * v_z;
+	result_y = matrix_left_x    * v_x + matrix_left_y    * v_y + matrix_left_z    * v_z;
+	result_z = matrix_up_x      * v_x + matrix_up_y      * v_y + matrix_up_z      * v_z;
+	return result;
+};
+
 void() Matrix_Adjugate =
 {
 	local vector adjugate_forward, adjugate_left, adjugate_up;

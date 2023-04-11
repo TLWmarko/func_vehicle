@@ -146,25 +146,21 @@ void(entity car) Car_InitVehicle =
 		{
 			car.frontright.enemy = e;
 			e.enemy = car.frontright;
-			car.frontright.enemy = e;
 		}
 		else if (e.netname == "frontleft")
 		{
 			car.frontleft.enemy = e;
 			e.enemy = car.frontleft;
-			car.frontleft.enemy = e;
 		}
 		else if (e.netname == "backright")
 		{
 			car.backright.enemy = e;
 			e.enemy = car.backright;
-			car.backright.enemy = e;
 		}
 		else if (e.netname == "backleft")
 		{
 			car.backleft.enemy = e;
 			e.enemy = car.backleft;
-			car.backleft.enemy = e;
 		}
 		else if (e.netname == "chassis")
 		{
@@ -292,7 +288,7 @@ void(float turn) Car_Turn =
 	// left tire
 	makevectors(tleft.base_pose);
 	matrix_forward = v_forward;
-	matrix_left = v_right; // quake bug
+	matrix_left = -v_right;
 	matrix_up = v_up;
 	Matrix_RotateByAxisAngle('0 0 1', car.ideal_yaw);
 	tleft.relative_forward = matrix_forward;
@@ -301,7 +297,7 @@ void(float turn) Car_Turn =
 	// right tire
 	makevectors(tright.base_pose);
 	matrix_forward = v_forward;
-	matrix_left = v_right; // quake bug
+	matrix_left = -v_right;
 	matrix_up = v_up;
 	Matrix_RotateByAxisAngle('0 0 1', car.ideal_yaw);
 	tright.relative_forward = matrix_forward;
