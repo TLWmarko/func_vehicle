@@ -90,8 +90,7 @@ void(vector m1forward, vector m1left, vector m1up, vector m2forward, vector m2le
 	matrix_left    = m1left_x    * m2forward + m1left_y    * m2left + m1left_z    * m2up;
 	matrix_up      = m1up_x      * m2forward + m1up_y      * m2left + m1up_z      * m2up;
 };
-// untested matrix inverse
-/*
+
 void() Matrix_Adjugate =
 {
 	local vector adjugate_forward, adjugate_left, adjugate_up;
@@ -133,7 +132,7 @@ void() Matrix_Inverse =
 	matrix_left /= determinant;
 	matrix_up /= determinant;
 }
-*/
+
 void(entity obj) Matrix_CalculateObjectMatrix =
 {
 	local vector org1, org2, org3;
