@@ -1,4 +1,5 @@
 .entity frontright, frontleft, backright, backleft;
+.entity gun;
 
 void PushAndDamageThink(){
 	entity e = self.p_damage_next;
@@ -120,7 +121,75 @@ void() DriverThink =
 };
 #endif
 
+void(float turn, float pitch) Gun_Turn =
+{
+	local float f;
+	if (!self.driving)
+		return;
+	f = 125;
+	entity car = self.driving;
+	entity swivel = car.gun;
+	if (!swivel)
+		return;
+	entity body = swivel.gun;
+	entity barrel = body.gun;
+	float want_yaw = turn;
+	//float want_yaw = clamp(turn, -35, 35);
+	if (want_yaw < 0)
+		swivel.ideal_yaw = max(want_yaw, swivel.ideal_yaw - f*frametime);
+	else if (want_yaw > 0)
+		swivel.ideal_yaw = min(want_yaw, swivel.ideal_yaw + f*frametime);
+	else{
+		if (swivel.ideal_yaw > 0)
+			swivel.ideal_yaw = max(0, swivel.ideal_yaw - f*2*frametime);
+		else
+			swivel.ideal_yaw = min(0, swivel.ideal_yaw + f*2*frametime);
+	}
+	makevectors(swivel.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = -v_right;
+	matrix_up = v_up;
+	Matrix_RotateByAxisAngle('0 0 1', swivel.ideal_yaw);
+	swivel.relative_forward = matrix_forward;
+	swivel.relative_left = matrix_left;
+	swivel.relative_up = matrix_up;
+
+	want_yaw = clamp(pitch, -25, 90);
+	if (want_yaw < 0)
+		body.ideal_yaw = max(want_yaw, body.ideal_yaw - f*frametime);
+	else if (want_yaw > 0)
+		body.ideal_yaw = min(want_yaw, body.ideal_yaw + f*frametime);
+	else{
+		if (body.ideal_yaw > 0)
+			body.ideal_yaw = max(0, body.ideal_yaw - f*2*frametime);
+		else
+			body.ideal_yaw = min(0, body.ideal_yaw + f*2*frametime);
+	}
+	makevectors(swivel.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = -v_right;
+	matrix_up = v_up;
+	Matrix_RotateByAxisAngle('0 1 0', body.ideal_yaw);
+	Matrix_RotateByAxisAngle('0 0 1', swivel.ideal_yaw);
+	body.relative_forward = matrix_forward;
+	body.relative_left = matrix_left;
+	body.relative_up = matrix_up;
+	barrel.relative_forward = matrix_forward;
+	barrel.relative_left = matrix_left;
+	barrel.relative_up = matrix_up;
+};
+
 vector() Car_SpringyOrigin;
+
+entity FindStaticOfName(string name, entity obj){
+	entity e = obj.physobj_staticlist;
+	while(e){
+		if (e.netname == name)
+			return e;
+		e = e.physobj_next;
+	}
+	return world;
+}
 
 void(entity car) Car_InitVehicle =
 {
@@ -174,19 +243,15 @@ void(entity car) Car_InitVehicle =
 			e.nextthink = time;
 		}
 #endif
+		else if (e.netname == "turretswivel")
+		{
+			car.gun = e;
+			car.gun.gun = FindStaticOfName("turretbody", car);
+			car.gun.gun.gun = FindStaticOfName("turretbarrel", car);
+		}
 		e = e.physobj_next;
 	}
 };
-
-entity FindStaticOfName(string name, entity obj){
-	entity e = obj.physobj_staticlist;
-	while(e){
-		if (e.netname == name)
-			return e;
-		e = e.physobj_next;
-	}
-	return world;
-}
 
 float TryPlacePlayer(entity exit){
 	setorigin(self, exit.origin);
@@ -410,6 +475,21 @@ void TryUpdateVehicle(){
 			move = move + 360;
 	}
 	Car_Turn(move);
+	car_angs = self.driving.angles_x;
+	if (car_angs > 180)
+		car_angs -= 360;
+	float pitch = car_angs - self.v_angle_x;
+	if (car_angs > self.v_angle_x)
+	{
+		if (pitch > 180)
+			pitch = pitch - 360;
+	}
+	else
+	{
+		if (pitch < -180)
+			pitch = pitch + 360;
+	}
+	Gun_Turn(move, pitch);
 	self.velocity = '0 0 0';
 	self.modelindex = modelindex_null;
 	self.frame = 0;

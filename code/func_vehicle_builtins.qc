@@ -234,6 +234,7 @@ entity() hotrod =
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
+
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
@@ -258,7 +259,7 @@ entity() hotrod =
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
 
-		part = spawn();
+	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
@@ -270,7 +271,7 @@ entity() hotrod =
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
 
-		part = spawn();
+	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
