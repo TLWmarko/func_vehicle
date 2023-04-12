@@ -1007,6 +1007,10 @@ void() StartFuncVehicle =
 			e.owner = self;
 			e.relative_org = Matrix_MultiplyPoint(e.origin - self.origin);
 			e.base_pose = e.angles - self.angles;
+			makevectors(e.base_pose);
+			e.relative_forward = v_forward;
+			e.relative_left = -v_right;
+			e.relative_up = v_up;
 			if (e.classname == "func_vehicle_wheel")
 				AddWheelStatic(e, self);
 			e = find(e, targetname, self.phys_particle_name);
@@ -1020,6 +1024,10 @@ void() StartFuncVehicle =
 			e.owner = self;
 			e.relative_org = Matrix_MultiplyPoint(e.origin - self.origin);
 			e.base_pose = e.angles - self.angles;
+			makevectors(e.base_pose);
+			e.relative_forward = v_forward;
+			e.relative_left = -v_right;
+			e.relative_up = v_up;
 			e = find(e, targetname, self.phys_hitmodel_name);
 		}
 	}
@@ -1031,6 +1039,10 @@ void() StartFuncVehicle =
 			e.owner = self;
 			e.relative_org = Matrix_MultiplyPoint(e.origin - self.origin);
 			e.base_pose = e.angles - self.angles;
+			makevectors(e.base_pose);
+			e.relative_forward = v_forward;
+			e.relative_left = -v_right;
+			e.relative_up = v_up;
 			e = find(e, targetname, self.phys_static_name);
 		}
 	}
@@ -1059,11 +1071,6 @@ void() func_vehicle_hitmodel =
 		precache_model(self.mdl);
 	else if (self.model)
 		setmodel (self, self.model);
-
-	self.base_pose = '0 0 0';
-	self.relative_forward = '1 0 0';
-	self.relative_left = '0 1 0';
-	self.relative_up = '0 0 1';
 }
 void() func_vehicle_particle =
 {
@@ -1076,10 +1083,6 @@ void() func_vehicle_particle =
 	self.physobj_spring_length = 12;
 	self.physobj_spring_force = '2 4 0';
 	self.relative_size = 13;
-	self.base_pose = '0 0 0';
-	self.relative_forward = '1 0 0';
-	self.relative_left = '0 1 0';
-	self.relative_up = '0 0 1';
 	self.physobj_stepup = 18;
 	self.part_mass = 1;
 	self.physobj_stiction = 10;
@@ -1095,11 +1098,6 @@ void() func_vehicle_static =
 		precache_model(self.mdl);
 	else if (self.model)
 		setmodel (self, self.model);
-
-	self.base_pose = '0 0 0';
-	self.relative_forward = '1 0 0';
-	self.relative_left = '0 1 0';
-	self.relative_up = '0 0 1';
 }
 
 void() func_vehicle_wheel =
@@ -1111,10 +1109,6 @@ void() func_vehicle_wheel =
 	self.physobj_spring_length = 12;
 	self.physobj_spring_force = '2 4 0';
 	self.relative_size = 13;
-	self.base_pose = '0 0 0';
-	self.relative_forward = '1 0 0';
-	self.relative_left = '0 1 0';
-	self.relative_up = '0 0 1';
 	self.physobj_stepup = 18;
 	self.part_mass = 1;
 	self.physobj_stiction = 10;
