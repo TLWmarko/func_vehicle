@@ -234,6 +234,53 @@ entity() hotrod =
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "func_vehicle_static";
+	part.netname = "turretbase";
+	part.mdl = "progs/HotRod_turret_base.mdl";
+	part.relative_org = '-14.596 0 24.76';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "func_vehicle_static";
+	part.netname = "turretswivel";
+	part.mdl = "progs/HotRod_turret_swivel.mdl";
+	part.relative_org = '-14.596 0 24.76';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+		part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "func_vehicle_static";
+	part.netname = "turretbody";
+	part.mdl = "progs/HotRod_turret_body.mdl";
+	part.relative_org = '-14.596 0 36.18';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+		part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "func_vehicle_static";
+	part.netname = "turretbarrel";
+	part.mdl = "progs/HotRod_turret_barrel.mdl";
+	part.relative_org = '-14.596 0 36.18';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -1100,6 +1147,10 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_player_driver.mdl");
 		precache_model("progs/HotRod_wheel_front.mdl");
 		precache_model("progs/HotRod_wheel_rear.mdl");
+		precache_model("progs/HotRod_turret_base.mdl");
+		precache_model("progs/HotRod_turret_swivel.mdl");
+		precache_model("progs/HotRod_turret_body.mdl");
+		precache_model("progs/HotRod_turret_barrel.mdl");
 		car = hotrod();
 	}
 	//car.netname = self.netname;
@@ -1145,6 +1196,10 @@ void() func_vehicle_hotrod =
 	precache_model("progs/HotRod_player_driver.mdl");
 	precache_model("progs/HotRod_wheel_front.mdl");
 	precache_model("progs/HotRod_wheel_rear.mdl");
+	precache_model("progs/HotRod_turret_base.mdl");
+	precache_model("progs/HotRod_turret_swivel.mdl");
+	precache_model("progs/HotRod_turret_body.mdl");
+	precache_model("progs/HotRod_turret_barrel.mdl");
 	entity car = hotrod();
 	
 	makevectors(self.angles);
