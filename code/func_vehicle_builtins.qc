@@ -216,6 +216,18 @@ entity() hotrod =
 	obj.physobj_staticlist = part;
 	part.owner = obj;
 	part.classname = "func_vehicle_static";
+	part.netname = "roof";
+	part.mdl = "progs/HotRod_roof.mdl";
+	part.relative_org = '0 0 0';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "func_vehicle_static";
 	part.netname = "driver";
 	part.mdl = "progs/HotRod_player_driver.mdl";
 	part.relative_org = '0 0 0';
@@ -1084,6 +1096,7 @@ void() func_vehicle_builtins =
 	}
 	else if (self.netname == "hotrod"){
 		precache_model("progs/HotRod_body.mdl");
+		precache_model("progs/HotRod_roof.mdl");
 		precache_model("progs/HotRod_player_driver.mdl");
 		precache_model("progs/HotRod_wheel_front.mdl");
 		precache_model("progs/HotRod_wheel_rear.mdl");
@@ -1128,6 +1141,7 @@ void() func_vehicle_hotrod =
 	precache_model("progs/null.spr");
 
 	precache_model("progs/HotRod_body.mdl");
+	precache_model("progs/HotRod_roof.mdl");
 	precache_model("progs/HotRod_player_driver.mdl");
 	precache_model("progs/HotRod_wheel_front.mdl");
 	precache_model("progs/HotRod_wheel_rear.mdl");
