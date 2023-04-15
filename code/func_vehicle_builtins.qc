@@ -379,7 +379,7 @@ entity() hotrod =
 	part.owner = obj;
 	part.classname = "func_vehicle_static";
 	part.netname = "frontleft";
-	part.mdl = "progs/HotRod_wheel_front.mdl";
+	part.mdl = "progs/HotRod_wheel_front_L.mdl";
 	part.relative_org = '43.5 30 -24';
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
@@ -418,7 +418,7 @@ entity() hotrod =
 	part.owner = obj;
 	part.classname = "func_vehicle_static";
 	part.netname = "frontright";
-	part.mdl = "progs/HotRod_wheel_front.mdl";
+	part.mdl = "progs/HotRod_wheel_front_R.mdl";
 	part.relative_org = '43.5 -30 -24';
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
@@ -454,7 +454,7 @@ entity() hotrod =
 	part.owner = obj;
 	part.classname = "func_vehicle_static";
 	part.netname = "backleft";
-	part.mdl = "progs/HotRod_wheel_rear.mdl";
+	part.mdl = "progs/HotRod_wheel_rear_L.mdl";
 	part.relative_org = '-43.5 30 -24';
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
@@ -493,7 +493,7 @@ entity() hotrod =
 	part.owner = obj;
 	part.classname = "func_vehicle_static";
 	part.netname = "backright";
-	part.mdl = "progs/HotRod_wheel_rear.mdl";
+	part.mdl = "progs/HotRod_wheel_rear_R.mdl";
 	part.relative_org = '-43.5 -30 -24';
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
@@ -1140,8 +1140,10 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_body.mdl");
 		precache_model("progs/HotRod_roof.mdl");
 		precache_model("progs/HotRod_player_driver.mdl");
-		precache_model("progs/HotRod_wheel_front.mdl");
-		precache_model("progs/HotRod_wheel_rear.mdl");
+		precache_model("progs/HotRod_wheel_front_L.mdl");
+		precache_model("progs/HotRod_wheel_rear_L.mdl");
+		precache_model("progs/HotRod_wheel_front_R.mdl");
+		precache_model("progs/HotRod_wheel_rear_R.mdl");
 		precache_model("progs/HotRod_turret_base.mdl");
 		precache_model("progs/HotRod_turret_swivel.mdl");
 		precache_model("progs/HotRod_turret_body.mdl");
@@ -1189,8 +1191,10 @@ void() func_vehicle_hotrod =
 	precache_model("progs/HotRod_body.mdl");
 	precache_model("progs/HotRod_roof.mdl");
 	precache_model("progs/HotRod_player_driver.mdl");
-	precache_model("progs/HotRod_wheel_front.mdl");
-	precache_model("progs/HotRod_wheel_rear.mdl");
+	precache_model("progs/HotRod_wheel_front_L.mdl");
+	precache_model("progs/HotRod_wheel_rear_L.mdl");
+	precache_model("progs/HotRod_wheel_front_R.mdl");
+	precache_model("progs/HotRod_wheel_rear_R.mdl");
 	precache_model("progs/HotRod_turret_base.mdl");
 	precache_model("progs/HotRod_turret_swivel.mdl");
 	precache_model("progs/HotRod_turret_body.mdl");

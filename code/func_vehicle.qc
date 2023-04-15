@@ -55,9 +55,9 @@ void() PhysCrush =
 	PushAndDamageTarget(other, self);
 };
 
-void Car_TirePlace(entity tire, float sign){
+void Car_TirePlace(entity tire){
 	entity tireparticle = tire.enemy;
-	tire.angles = vectoangles2(tireparticle.lmat_forward * sign, tireparticle.lmat_up);
+	tire.angles = vectoangles2(tireparticle.lmat_forward, tireparticle.lmat_up);
 
 	traceline(tireparticle.origin, tireparticle.origin + tireparticle.lmat_up * -tire.frags, TRUE, tire);
 	float tracelen = fabs(tireparticle.physobj_spring_length);
@@ -88,10 +88,10 @@ void() Car_ChassiThink =
 		hitmodel = hitmodel.physobj_next;
 	}
 
-	Car_TirePlace(tbleft, -1);
-	Car_TirePlace(tbright, 1);
-	Car_TirePlace(tfleft, -1);
-	Car_TirePlace(tfright, 1);
+	Car_TirePlace(tbleft);
+	Car_TirePlace(tbright);
+	Car_TirePlace(tfleft);
+	Car_TirePlace(tfright);
 
 	hitmodel = self.realowner.physobj_hitmodel;
 	while (hitmodel)
