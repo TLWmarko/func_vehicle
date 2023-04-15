@@ -61,7 +61,6 @@ float PHFLAGS_SPRING_TOUCH = 32;
 float PHFLAGS_FORCE = 64;
 float PHFLAGS_KILLME = 128;
 float PHFLAGS_STABILIZERBAR = 256;
-float PHFLAGS_INVERT = 512;
 
 .float force_calcdist, force_calcscale;
 

@@ -208,6 +208,32 @@ void(entity car) Car_InitVehicle =
 			car.backleft = e;
 		e = e.physobj_next;
 	}
+	if (car.frontright && car.frontleft){
+		e = car.physobj_sticklist;
+		while (e)
+		{
+			if (e.physobj_p1 == car.frontright || e.physobj_p2 == car.frontright){
+				if (e.physobj_p1 == car.frontleft || e.physobj_p2 == car.frontleft){
+					e.physobj_flags |= PHFLAGS_STABILIZERBAR;
+					break;
+				}
+			}
+			e = e.physobj_next;
+		}
+	}
+	if (car.backright && car.backleft){
+		e = car.physobj_sticklist;
+		while (e)
+		{
+			if (e.physobj_p1 == car.backright || e.physobj_p2 == car.backright){
+				if (e.physobj_p1 == car.backleft || e.physobj_p2 == car.backleft){
+					e.physobj_flags |= PHFLAGS_STABILIZERBAR;
+					break;
+				}
+			}
+			e = e.physobj_next;
+		}
+	}
 	e = car.physobj_staticlist;
 	while (e)
 	{

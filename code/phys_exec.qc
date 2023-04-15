@@ -1253,12 +1253,6 @@ entity(entity p1, entity p2, entity obj) Phys_ObjectAddStick =
 	}
 	e.physobj_p1 = p1;
 	e.physobj_p2 = p2;
-	float p1_first = p1.physobj_p1 == p2;
-	if (p1_first || p2.physobj_p1 == p1){
-		e.physobj_flags |= PHFLAGS_STABILIZERBAR;
-		if ((p1_first && p2.physobj_p2 == p2) || (!p1_first && p1.physobj_p2 == p1))
-			e.physobj_flags |= PHFLAGS_INVERT;
-	}
 	e.stick_preferredlength = vlen(p2.relative_org - p1.relative_org);
 	// the following is used by the physics to prevent sign errors
 	if (p1.stick_preferredlength <= 0)

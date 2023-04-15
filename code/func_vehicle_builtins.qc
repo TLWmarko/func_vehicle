@@ -1,6 +1,6 @@
 entity() triton =
 {
-	local entity obj, part, stab;
+	local entity obj, part;
 
 	obj = spawn();
 	obj.netname = "triton";
@@ -60,7 +60,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	stab = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -95,10 +94,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	//stabilizer bar targets
-	part.physobj_p1 = stab;
-	part.physobj_p2 = stab;
-	stab.physobj_p1 = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -133,7 +128,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	stab = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -168,10 +162,6 @@ entity() triton =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	//stabilizer bar targets
-	part.physobj_p1 = stab;
-	part.physobj_p2 = stab;
-	stab.physobj_p1 = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -192,7 +182,7 @@ entity() triton =
 
 entity() hotrod =
 {
-	local entity obj, part, stab;
+	local entity obj, part;
 
 	obj = spawn();
 	obj.netname = "hotrod";
@@ -371,7 +361,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	stab = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -407,10 +396,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	//stabilizer bar targets
-	part.physobj_p1 = stab;
-	part.physobj_p2 = stab;
-	stab.physobj_p1 = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -446,7 +431,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	stab = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -482,10 +466,6 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
-	//stabilizer bar targets
-	part.physobj_p1 = stab;
-	part.physobj_p2 = stab;
-	stab.physobj_p1 = part;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
