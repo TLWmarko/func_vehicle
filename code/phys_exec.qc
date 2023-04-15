@@ -1416,7 +1416,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 	{
 		Phys_InitParticle(e.origin, e, physobj_spawning);
 		setvelocity(e, toss + randomvec()*randvel);
-		com += e.origin * e.part_mass;
+		com += e.relative_org * e.part_mass;
 		e = e.physobj_next;
 		particleCount++;
 	}
