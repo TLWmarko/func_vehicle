@@ -5104,12 +5104,12 @@
 "classname" "func_vehicle"
 "origin" "312 -200 200"
 "angle" "90"
-"phys_particle_name" "part1"
-"phys_static_name" "stat1"
+"phys_particle_target" "part1"
+"phys_static_target" "stat1"
 }
 // entity 25
 {
-"classname" "func_vehicle_wheel"
+"classname" "phys_wheel"
 "origin" "344 -120 200"
 "angle" "90"
 "netname" "frontright"
@@ -5118,7 +5118,7 @@
 }
 // entity 26
 {
-"classname" "func_vehicle_wheel"
+"classname" "phys_wheel"
 "origin" "280 -120 200"
 "angle" "90"
 "netname" "frontleft"
@@ -5127,7 +5127,7 @@
 }
 // entity 27
 {
-"classname" "func_vehicle_wheel"
+"classname" "phys_wheel"
 "origin" "280 -264 200"
 "angle" "90"
 "netname" "backleft"
@@ -5136,7 +5136,7 @@
 }
 // entity 28
 {
-"classname" "func_vehicle_wheel"
+"classname" "phys_wheel"
 "origin" "344 -264 200"
 "angle" "90"
 "netname" "backright"
@@ -5169,7 +5169,7 @@
 }
 // entity 30
 {
-"classname" "func_vehicle_particle"
+"classname" "phys_particle"
 "origin" "312 -200 280"
 "angle" "90"
 "targetname" "part1"

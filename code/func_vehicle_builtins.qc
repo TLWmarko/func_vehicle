@@ -12,7 +12,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "chassipart";
 	part.relative_org = '0 0 25';
 	part.relative_size = 10;
@@ -31,7 +31,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "chassis";
 	part.mdl = "progs/test/triton.mdl";
 	part.relative_org = '0 0 0';
@@ -44,7 +44,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "frontleft";
 	part.relative_org = '43.5 30 -24';
 	part.physobj_spring_length = 15;
@@ -66,7 +66,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "frontleft";
 	part.mdl = "progs/test/whl.mdl";
 	part.relative_org = '43.5 30 -24';
@@ -79,7 +79,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "frontright";
 	part.relative_org = '43.5 -30 -24';
 	part.physobj_spring_length = 15;
@@ -104,7 +104,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "frontright";
 	part.mdl = "progs/test/whl.mdl";
 	part.relative_org = '43.5 -30 -24';
@@ -117,7 +117,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "backleft";
 	part.relative_org = '-43.5 30 -24';
 	part.physobj_spring_length = 15;
@@ -139,7 +139,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "backleft";
 	part.mdl = "progs/test/whl.mdl";
 	part.relative_org = '-43.5 30 -24';
@@ -152,7 +152,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "backright";
 	part.relative_org = '-43.5 -30 -24';
 	part.physobj_spring_length = 15;
@@ -177,7 +177,7 @@ entity() triton =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "backright";
 	part.mdl = "progs/test/whl.mdl";
 	part.relative_org = '-43.5 -30 -24';
@@ -203,7 +203,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "chassis";
 	part.mdl = "progs/HotRod_body.mdl";
 	part.relative_org = '0 0 0';
@@ -215,7 +215,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "roof";
 	part.mdl = "progs/HotRod_roof.mdl";
 	part.relative_org = '0 0 0';
@@ -227,7 +227,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "driver";
 	part.mdl = "progs/HotRod_player_driver.mdl";
 	part.relative_org = '0 0 0';
@@ -239,7 +239,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "turretbase";
 	part.mdl = "progs/HotRod_turret_base.mdl";
 	part.relative_org = '-14.596 0 24.76';
@@ -251,7 +251,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "turretswivel";
 	part.mdl = "progs/HotRod_turret_swivel.mdl";
 	part.relative_org = '-14.596 0 24.76';
@@ -263,7 +263,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "turretbody";
 	part.mdl = "progs/HotRod_turret_body.mdl";
 	part.relative_org = '-14.596 0 36.18';
@@ -275,7 +275,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "turretbarrel";
 	part.mdl = "progs/HotRod_turret_barrel.mdl";
 	part.relative_org = '-14.596 0 36.18';
@@ -287,7 +287,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "leftdoor";
 	part.relative_org = '-16 50 0';
 	part.relative_forward = '1 0 0';
@@ -298,7 +298,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "topexit";
 	part.relative_org = '-16 0 50';
 	part.relative_forward = '1 0 0';
@@ -309,7 +309,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "rightdoor";
 	part.relative_org = '-16 -50 0';
 	part.relative_forward = '1 0 0';
@@ -320,7 +320,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "botexit";
 	part.relative_org = '-16 0 -50';
 	part.relative_forward = '1 0 0';
@@ -331,7 +331,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "frontexit";
 	part.relative_org = '80 0 0';
 	part.relative_forward = '1 0 0';
@@ -342,7 +342,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "backexit";
 	part.relative_org = '-80 0 0';
 	part.relative_forward = '1 0 0';
@@ -354,7 +354,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "frontleft";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '47.5 23.3 -23.5';
@@ -377,7 +377,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "frontleft";
 	part.mdl = "progs/HotRod_wheel_front_L.mdl";
 	part.relative_org = '43.5 30 -24';
@@ -390,7 +390,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "frontright";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '47.5 -23.3 -23.5';
@@ -416,7 +416,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "frontright";
 	part.mdl = "progs/HotRod_wheel_front_R.mdl";
 	part.relative_org = '43.5 -30 -24';
@@ -429,7 +429,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "backleft";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-49.84 27.08 -24';
@@ -452,7 +452,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "backleft";
 	part.mdl = "progs/HotRod_wheel_rear_L.mdl";
 	part.relative_org = '-43.5 30 -24';
@@ -465,7 +465,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "backright";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-49.84 -27.08 -24';
@@ -491,7 +491,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_staticlist;
 	obj.physobj_staticlist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_static";
+	part.classname = "phys_static";
 	part.netname = "backright";
 	part.mdl = "progs/HotRod_wheel_rear_R.mdl";
 	part.relative_org = '-43.5 -30 -24';
@@ -504,7 +504,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '56.9 0 -16.9';
@@ -523,7 +523,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '54.4 7.4 11.6';
@@ -542,7 +542,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '54.4 -7.4 11.6';
@@ -561,7 +561,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '15.9 0 10.35';
@@ -580,7 +580,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '5 18 -10';
@@ -599,7 +599,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '5 -18 -10';
@@ -618,7 +618,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '1.9 14.9 23.4';
@@ -637,7 +637,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '1.9 -14.9 23.4';
@@ -656,7 +656,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-25 0 -15.5';
@@ -675,7 +675,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-30.3 16.7 23.9';
@@ -694,7 +694,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-30.3 -16.7 23.9';
@@ -713,7 +713,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-56.8 17.1 3.5';
@@ -732,7 +732,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-56.8 -17.1 3.5';
@@ -751,7 +751,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_particlelist;
 	obj.physobj_particlelist = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_particle";
+	part.classname = "phys_particle";
 	part.netname = "point";
 	//part.mdl = "progs/debug/org.mdl";
 	part.relative_org = '-65.1 0 -10.9';
@@ -771,7 +771,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round32.bsp";
 	part.relative_org = '48 0 -3';
 	part.relative_forward = '1 0 0';
@@ -783,7 +783,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round32.bsp";
 	part.relative_org = '28.4 0 -5';
 	part.relative_forward = '1 0 0';
@@ -795,7 +795,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round32.bsp";
 	part.relative_org = '8.8 0 -5';
 	part.relative_forward = '1 0 0';
@@ -807,7 +807,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round32.bsp";
 	part.relative_org = '-10.8 0 -5';
 	part.relative_forward = '1 0 0';
@@ -819,7 +819,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round32.bsp";
 	part.relative_org = '-30.4 0 -5';
 	part.relative_forward = '1 0 0';
@@ -831,7 +831,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round32.bsp";
 	part.relative_org = '-50 0 -5';
 	part.relative_forward = '1 0 0';
@@ -843,7 +843,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-2 6 16';
 	part.relative_forward = '1 0 0';
@@ -855,7 +855,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-2 -6 16';
 	part.relative_forward = '1 0 0';
@@ -867,7 +867,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-14 6 16';
 	part.relative_forward = '1 0 0';
@@ -879,7 +879,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-14 -6 16';
 	part.relative_forward = '1 0 0';
@@ -891,7 +891,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-30 6 16';
 	part.relative_forward = '1 0 0';
@@ -903,7 +903,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-30 -6 16';
 	part.relative_forward = '1 0 0';
@@ -916,7 +916,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-49.84 -25 -14';
 	part.relative_forward = '1 0 0';
@@ -928,7 +928,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '-49.84 25 -14';
 	part.relative_forward = '1 0 0';
@@ -940,7 +940,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '47.5 -21 -13.5';
 	part.relative_forward = '1 0 0';
@@ -952,7 +952,7 @@ entity() hotrod =
 	part.physobj_next = obj.physobj_hitmodel;
 	obj.physobj_hitmodel = part;
 	part.owner = obj;
-	part.classname = "func_vehicle_hitmodel";
+	part.classname = "phys_hitmodel";
 	part.mdl = "maps/round16.bsp";
 	part.relative_org = '47.5 21 -13.5';
 	part.relative_forward = '1 0 0';
@@ -971,7 +971,7 @@ void(entity wheel, entity car) AddWheelStatic =
 	local entity stat;
 
 	stat = spawn();
-	stat.classname = "func_vehicle_static";
+	stat.classname = "phys_static";
 	stat.netname = wheel.netname;
 	setorigin(stat, wheel.origin);
 	if (wheel.mdl){
@@ -982,6 +982,7 @@ void(entity wheel, entity car) AddWheelStatic =
 	}
 	wheel.model = 0;
 	wheel.mdl = 0;
+	wheel.classname = "phys_particle";
 	stat.base_pose = wheel.base_pose;
 	stat.relative_org = wheel.relative_org;
 	stat.relative_forward = wheel.relative_forward;
@@ -1000,8 +1001,8 @@ void() StartFuncVehicle =
 	matrix_forward = v_forward;
 	matrix_left = -v_right;
 	matrix_up = v_up;
-	if (self.phys_particle_name) {
-		e = find(world, targetname, self.phys_particle_name);
+	if (self.phys_particle_target) {
+		e = find(world, targetname, self.phys_particle_target);
 		while(e) {
 			e.physobj_next = self.physobj_particlelist;
 			self.physobj_particlelist = e;
@@ -1012,13 +1013,13 @@ void() StartFuncVehicle =
 			e.relative_forward = v_forward;
 			e.relative_left = -v_right;
 			e.relative_up = v_up;
-			if (e.classname == "func_vehicle_wheel")
+			if (e.classname == "func_vehicle_wheel" || e.classname == "phys_wheel")
 				AddWheelStatic(e, self);
-			e = find(e, targetname, self.phys_particle_name);
+			e = find(e, targetname, self.phys_particle_target);
 		}
 	}
-	if (self.phys_hitmodel_name) {
-		e = find(world, targetname, self.phys_hitmodel_name);
+	if (self.phys_hitmodel_target) {
+		e = find(world, targetname, self.phys_hitmodel_target);
 		while(e) {
 			e.physobj_next = self.physobj_hitmodel;
 			self.physobj_hitmodel = e;
@@ -1029,11 +1030,11 @@ void() StartFuncVehicle =
 			e.relative_forward = v_forward;
 			e.relative_left = -v_right;
 			e.relative_up = v_up;
-			e = find(e, targetname, self.phys_hitmodel_name);
+			e = find(e, targetname, self.phys_hitmodel_target);
 		}
 	}
-	if (self.phys_static_name){
-		e = find(world, targetname, self.phys_static_name);
+	if (self.phys_static_target){
+		e = find(world, targetname, self.phys_static_target);
 		while(e) {
 			e.physobj_next = self.physobj_staticlist;
 			self.physobj_staticlist = e;
@@ -1044,7 +1045,7 @@ void() StartFuncVehicle =
 			e.relative_forward = v_forward;
 			e.relative_left = -v_right;
 			e.relative_up = v_up;
-			e = find(e, targetname, self.phys_static_name);
+			e = find(e, targetname, self.phys_static_target);
 		}
 	}
 
@@ -1053,27 +1054,34 @@ void() StartFuncVehicle =
 	Car_InitVehicle(self);
 }
 
-/*QUAKED func_vehicle (1 0 0) (-16 -16 -24) (16 16 40)
-*/
+// keeping the titular name for the memes, but this is a point entity
 void() func_vehicle =
 {
-	precache_model("progs/debug/org.mdl");
-	precache_model("progs/debug/orgbig.mdl");
+	if (cvar("developer") != 0){
+		precache_model("progs/debug/org.mdl");
+		precache_model("progs/debug/orgbig.mdl");
+	}
 	precache_model("progs/null.spr");
 
 	self.think = StartFuncVehicle;
 	self.nextthink = 0.2;
 };
 
-void() func_vehicle_hitmodel =
+void() phys_hitmodel =
 {
 	setorigin (self, self.origin);
-	if (self.mdl)
-		precache_model(self.mdl);
-	else if (self.model)
-		setmodel (self, self.model);
+	if (!self.model)
+		error("hitmodel with no model");
+	precache_model(self.model);
+	setmodel (self, self.model);
 }
-void() func_vehicle_particle =
+// bmodel version of above entity
+void() func_vehicle_hitmodel =
+{
+	phys_hitmodel();
+}
+
+void() phys_particle =
 {
 	setorigin (self, self.origin);
 	if (self.mdl)
@@ -1092,7 +1100,13 @@ void() func_vehicle_particle =
 	self.physobj_bounce = 1.025;
 	self.physobj_buoyancy = -0.75;
 }
-void() func_vehicle_static =
+// bmodel version of above entity
+void() func_vehicle_particle =
+{
+	phys_particle();
+}
+
+void() phys_static =
 {
 	setorigin (self, self.origin);
 	if (self.mdl)
@@ -1100,8 +1114,13 @@ void() func_vehicle_static =
 	else if (self.model)
 		setmodel (self, self.model);
 }
+// bmodel version of above entity
+void() func_vehicle_static =
+{
+	phys_static();
+}
 
-void() func_vehicle_wheel =
+void() phys_wheel =
 {
 	setorigin (self, self.origin);
 	if (self.mdl){
@@ -1118,7 +1137,13 @@ void() func_vehicle_wheel =
 	self.physobj_bounce = 1.025;
 	self.physobj_buoyancy = -0.75;
 }
+// bmodel version of above entity
+void() func_vehicle_wheel =
+{
+	phys_wheel();
+}
 
+// legacy, hopefully can remove in next release
 void() func_vehicle_builtins =
 {
 	precache_model("maps/cube16.bsp");
@@ -1126,8 +1151,10 @@ void() func_vehicle_builtins =
 	precache_model("maps/round16.bsp");
 	precache_model("maps/round32.bsp");
 
-	precache_model("progs/debug/org.mdl");
-	precache_model("progs/debug/orgbig.mdl");
+	if (cvar("developer") != 0){
+		precache_model("progs/debug/org.mdl");
+		precache_model("progs/debug/orgbig.mdl");
+	}
 	precache_model("progs/null.spr");
 
 	entity car;
@@ -1156,7 +1183,7 @@ void() func_vehicle_builtins =
 	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
-
+// legacy, hopefully can remove in next release
 void() func_vehicle_triton =
 {
 	precache_model("maps/cube16.bsp");
@@ -1164,8 +1191,10 @@ void() func_vehicle_triton =
 	precache_model("maps/round16.bsp");
 	precache_model("maps/round32.bsp");
 
-	precache_model("progs/debug/org.mdl");
-	precache_model("progs/debug/orgbig.mdl");
+	if (cvar("developer") != 0){
+		precache_model("progs/debug/org.mdl");
+		precache_model("progs/debug/orgbig.mdl");
+	}
 	precache_model("progs/null.spr");
 
 	precache_model("progs/test/whl.mdl");
@@ -1177,15 +1206,17 @@ void() func_vehicle_triton =
 	Car_InitVehicle(car);
 };
 
-void() func_vehicle_hotrod =
+void() vehicle_hotrod =
 {
 	precache_model("maps/cube16.bsp");
 	precache_model("maps/cube32.bsp");
 	precache_model("maps/round16.bsp");
 	precache_model("maps/round32.bsp");
 
-	precache_model("progs/debug/org.mdl");
-	precache_model("progs/debug/orgbig.mdl");
+	if (cvar("developer") != 0){
+		precache_model("progs/debug/org.mdl");
+		precache_model("progs/debug/orgbig.mdl");
+	}
 	precache_model("progs/null.spr");
 
 	precache_model("progs/HotRod_body.mdl");
@@ -1204,4 +1235,9 @@ void() func_vehicle_hotrod =
 	makevectors(self.angles);
 	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
+};
+// legacy, hopefully can remove in next release
+void() func_vehicle_hotrod =
+{
+	vehicle_hotrod();
 };

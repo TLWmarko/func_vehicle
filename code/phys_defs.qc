@@ -27,9 +27,9 @@ entity p_damage_thinker;
 .vector relative_org;
 .float relative_size;
 
-.string phys_particle_name;
-.string phys_hitmodel_name;
-.string phys_static_name;
+.string phys_particle_target;
+.string phys_hitmodel_target;
+.string phys_static_target;
 
 .entity physobj_particlelist; // first entity in particle list of this object
 .entity physobj_sticklist; // first entity in stick list of this object
