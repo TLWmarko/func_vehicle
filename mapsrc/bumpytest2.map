@@ -5114,7 +5114,7 @@
 "angle" "90"
 "netname" "frontright"
 "targetname" "part1"
-"mdl" "progs/HotRod_wheel_front.mdl"
+"mdl" "progs/HotRod_wheel_front_R.mdl"
 }
 // entity 26
 {
@@ -5123,7 +5123,7 @@
 "angle" "90"
 "netname" "frontleft"
 "targetname" "part1"
-"mdl" "progs/HotRod_wheel_front.mdl"
+"mdl" "progs/HotRod_wheel_front_L.mdl"
 }
 // entity 27
 {
@@ -5132,7 +5132,7 @@
 "angle" "90"
 "netname" "backleft"
 "targetname" "part1"
-"mdl" "progs/HotRod_wheel_front.mdl"
+"mdl" "progs/HotRod_wheel_rear_L.mdl"
 }
 // entity 28
 {
@@ -5141,7 +5141,7 @@
 "angle" "90"
 "netname" "backright"
 "targetname" "part1"
-"mdl" "progs/HotRod_wheel_front.mdl"
+"mdl" "progs/HotRod_wheel_rear_R.mdl"
 }
 // entity 29
 {
