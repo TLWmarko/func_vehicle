@@ -1,6 +1,9 @@
 .entity frontright, frontleft, backright, backleft;
 .entity gun;
 
+float VEHICLE_NO_ROOF = 1;
+float VEHICLE_PERMANENT_GUN = 2;
+
 void PushAndDamageThink(){
 	entity e = self.p_damage_next;
 	while(e){
@@ -128,7 +131,10 @@ void(float turn, float pitch) Gun_Turn =
 		return;
 	f = 125;
 	entity car = self.driving;
-	entity swivel = car.gun;
+	entity base = car.gun;
+	if (!base.modelindex)
+		return;
+	entity swivel = base.gun;
 	if (!swivel)
 		return;
 	entity body = swivel.gun;
@@ -262,6 +268,12 @@ void(entity car) Car_InitVehicle =
 			e.think = Car_ChassiThink;
 			e.nextthink = time;
 		}
+		else if (e.netname == "roof")
+		{
+			if (car.spawnflags & VEHICLE_NO_ROOF){ // hide
+				e.modelindex = 0;
+			}
+		}
 #if defined(SMOOTH)
 		else if (e.netname == "driver")
 		{
@@ -269,11 +281,18 @@ void(entity car) Car_InitVehicle =
 			e.nextthink = time;
 		}
 #endif
-		else if (e.netname == "turretswivel")
+		else if (e.netname == "turretbase")
 		{
 			car.gun = e;
-			car.gun.gun = FindStaticOfName("turretbody", car);
-			car.gun.gun.gun = FindStaticOfName("turretbarrel", car);
+			car.gun.gun = FindStaticOfName("turretswivel", car);
+			car.gun.gun.gun = FindStaticOfName("turretbody", car);
+			car.gun.gun.gun.gun = FindStaticOfName("turretbarrel", car);
+			if (!(car.spawnflags & VEHICLE_PERMANENT_GUN)){ // hide
+				car.gun.modelindex = 0;
+				car.gun.gun.modelindex = 0;
+				car.gun.gun.gun.modelindex = 0;
+				car.gun.gun.gun.gun.modelindex = 0;
+			}
 		}
 		e = e.physobj_next;
 	}

@@ -350,7 +350,7 @@ entity() hotrod =
 	part.relative_org = '47.5 23.3 -23.5';
 	part.physobj_spring_length = 12;
 	part.physobj_spring_force = '2 4 0';
-	part.relative_size = 13;
+	part.relative_size = 14;
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
@@ -385,7 +385,7 @@ entity() hotrod =
 	part.relative_org = '47.5 -23.3 -23.5';
 	part.physobj_spring_length = 12;
 	part.physobj_spring_force = '2 4 0';
-	part.relative_size = 13;
+	part.relative_size = 14;
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
@@ -420,7 +420,7 @@ entity() hotrod =
 	part.relative_org = '-49.84 27.08 -24';
 	part.physobj_spring_length = 12;
 	part.physobj_spring_force = '2 4 0';
-	part.relative_size = 13;
+	part.relative_size = 14;
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
@@ -455,7 +455,7 @@ entity() hotrod =
 	part.relative_org = '-49.84 -27.08 -24';
 	part.physobj_spring_length = 12;
 	part.physobj_spring_force = '2 4 0';
-	part.relative_size = 13;
+	part.relative_size = 14;
 	part.relative_forward = '1 0 0';
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
@@ -1035,6 +1035,15 @@ void() StartFuncVehicle =
 }
 
 // keeping the titular name for the memes, but this is a point entity
+/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8)
+This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle
+
+"targetname" must be defined, used by the physics object to find the particle
+"model" must be defined, loads a .bsp model to use for pushing objects around
+"phys_particle_target" must be defined, the targetname of all the particles and/or wheels in this object
+"phys_static_target" the targetname of all the statics in this object
+"phys_hitmodel_target" the targetname of all the hitmodels in this object
+*/
 void() func_vehicle =
 {
 	if (cvar("developer") != 0){
@@ -1046,21 +1055,50 @@ void() func_vehicle =
 	self.think = StartFuncVehicle;
 	self.nextthink = 0.2;
 };
+/*QUAKED phys_hitmodel (1 0 0) (-8 -8 -8) (8 8 8)
+Hitmodels are brushes that move together with the physics-object and push entities around (for example monsters).
 
+"targetname" must be defined, used by the physics object to find the particle
+"model" must be defined, loads a .bsp model to use for pushing objects around
+"angle" base-pose for the physics object
+*/
 void() phys_hitmodel =
 {
+	self.physobj_flags = self.physobj_flags | PHFLAGS_BSPMODEL; // this is always a bmodel
 	setorigin (self, self.origin);
 	if (!self.model)
 		error("hitmodel with no model");
 	precache_model(self.model);
 	setmodel (self, self.model);
 }
-// bmodel version of above entity
+/*QUAKED func_vehicle_hitmodel (1 0 0) ?
+Brush version of phys_hitmodel.
+
+Hitmodels are brushes that move together with the physics-object and push entities around (for example monsters).
+
+"targetname" must be defined, used by the physics object to find the particle
+*/
 void() func_vehicle_hitmodel =
 {
 	phys_hitmodel();
 }
+/*QUAKED phys_particle (1 0 0) (-8 -8 -8) (8 8 8)
+Particles are what define the simulation-shape of a physics-object. These collide with the world and other entities.
 
+"targetname" must be defined, used by the physics object to find the particle
+"angle" base-pose angle for this particle in the physics object
+"physobj_spring_length" length of spring for this particle, primarily meant for wheels (see phys_wheel instead)
+"physobj_spring_force" x and y are spring forces based on distance to surface, z is unused, primarily meant for wheels (see phys_wheel instead)
+"relative_size" extra-height for particles as an offset from the floor, good default 1
+"physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
+"part_mass" mass multiplier of this particle, affects center of mass of entire object, mass of 0 makes particle stick in mid-air, good default 1
+"physobj_stiction" half-assed attempt at making physics objects not slide infinitely on slopes, good default 10
+"physobj_friction_ground" directional ground friction, good default '8 8 8'
+"physobj_friction_water" directional water friction, good default '2 2 2'
+"physobj_friction_air" directional air friction
+"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
+"physobj_buoyancy" gravity multiplier when under-water, good default -0.75
+*/
 void() phys_particle =
 {
 	setorigin (self, self.origin);
@@ -1068,24 +1106,15 @@ void() phys_particle =
 		precache_model(self.mdl);
 	else if (self.model)
 		setmodel (self, self.model);
-
-	self.physobj_spring_length = 12;
-	self.physobj_spring_force = '2 4 0';
-	self.relative_size = 13;
-	self.physobj_stepup = 18;
-	self.part_mass = 1;
-	self.physobj_stiction = 10;
-	self.physobj_friction_ground = '0.225 3.3 5';
-	self.physobj_friction_water = '2 2 2';
-	self.physobj_bounce = 1.025;
-	self.physobj_buoyancy = -0.75;
 }
-// bmodel version of above entity
-void() func_vehicle_particle =
-{
-	phys_particle();
-}
+/*QUAKED phys_static (1 0 0) (-8 -8 -8) (8 8 8)
+Statics are objects which follow the physics-object around but don't affect the physics themselves. Useful for models visually representing the physics-object, and for entrances/exits in a vehicle.
 
+"targetname" must be defined, used by the physics-object to find the static
+"model" the model to be loaded for visualization
+"netname" in vehicle-contexts useful names are chassis, roof, driver, but also rightdoor, leftdoor, topexit, botexit, backexit, frontexit
+"angle" base-pose angle for this static in the physics-object
+*/
 void() phys_static =
 {
 	setorigin (self, self.origin);
@@ -1094,32 +1123,68 @@ void() phys_static =
 	else if (self.model)
 		setmodel (self, self.model);
 }
-// bmodel version of above entity
+/*QUAKED func_vehicle_static (1 0 0) ?
+Brush version of phys_static.
+
+Statics are objects which follow the physics-object around but don't affect the physics themselves. Useful for models visually representing the physics-object, and for entrances/exits in a vehicle.
+
+"targetname" must be defined, used by the physics-object to find the static
+"netname" in vehicle-contexts useful names are chassis, roof, driver, but also rightdoor, leftdoor, topexit, botexit, backexit, frontexit
+*/
 void() func_vehicle_static =
 {
+	self.physobj_flags = self.physobj_flags | PHFLAGS_BSPMODEL;
 	phys_static();
 }
 
+/*QUAKED phys_wheel (1 0 0) (-8 -8 -8) (8 8 8)
+Wheels are useful for vehicles! They're a combo of a particle and a static. Make four of these, with correct netnames and targetnames.
+
+"targetname" must be defined, used by the physics object to find the wheel
+"netname" useful names are frontleft, frontright, backleft, backright
+"model" the model to be loaded for visualization
+"angle" base-pose angle for this wheel in the physics object
+"physobj_spring_length" length of spring for this wheel, good default 12
+"physobj_spring_force" x and y are spring forces based on distance to surface, z is unused, good default '2 4 0'
+"relative_size" radius of wheel, good default 14
+"physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
+"part_mass" mass multiplier of this wheel, affects center of mass of entire object, mass of 0 makes wheel stick in mid-air, good default 1
+"physobj_stiction" half-assed attempt at making physics objects not slide infinitely on slopes, good default 10
+"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. z is used for damping the spring! good default '0.225 3.3 5'
+"physobj_friction_water" directional water friction, good default '2 2 2'
+"physobj_friction_air" directional air friction
+"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
+"physobj_buoyancy" gravity multiplier when under-water, good default -0.75
+*/
 void() phys_wheel =
 {
 	setorigin (self, self.origin);
 	if (self.mdl){
 		precache_model(self.mdl);
 	}
-	self.physobj_spring_length = 12;
-	self.physobj_spring_force = '2 4 0';
-	self.relative_size = 13;
-	self.physobj_stepup = 18;
-	self.part_mass = 1;
-	self.physobj_stiction = 10;
-	self.physobj_friction_ground = '0.225 3.3 5';
-	self.physobj_friction_water = '2 2 2';
-	self.physobj_bounce = 1.025;
-	self.physobj_buoyancy = -0.75;
 }
-// bmodel version of above entity
+/*QUAKED func_vehicle_wheel (1 0 0) ?
+Brush version of phys_wheel.
+
+Wheels are useful for vehicles! They're a combo of a particle and a static. Make four of these, with correct netnames and targetnames.
+
+"targetname" must be defined, used by the physics object to find the wheel
+"netname" useful names are frontleft, frontright, backleft, backright
+"physobj_spring_length" length of spring for this wheel, good default 12
+"physobj_spring_force" x and y are spring forces based on distance to surface, z is unused, good default '2 4 0'
+"relative_size" radius of wheel, good default 14
+"physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
+"part_mass" mass multiplier of this wheel, affects center of mass of entire object, mass of 0 makes wheel stick in mid-air, good default 1
+"physobj_stiction" half-assed attempt at making physics objects not slide infinitely on slopes, good default 10
+"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. z is used for damping the spring! good default '0.225 3.3 5'
+"physobj_friction_water" directional water friction, good default '2 2 2'
+"physobj_friction_air" directional air friction
+"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
+"physobj_buoyancy" gravity multiplier when under-water, good default -0.75
+*/
 void() func_vehicle_wheel =
 {
+	self.physobj_flags = self.physobj_flags | PHFLAGS_BSPMODEL;
 	phys_wheel();
 }
 
@@ -1185,7 +1250,13 @@ void() func_vehicle_triton =
 	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
+/*QUAKED vehicle_hotrod (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN
+The built-in Mad Max styled hotrod. 
 
+SPAWNFLAGS
+"vehicle_no_roof" convertible style
+"vehicle_permanent_gun" turret always active
+*/
 void() vehicle_hotrod =
 {
 	precache_model("maps/cube16.bsp");
@@ -1211,6 +1282,7 @@ void() vehicle_hotrod =
 	precache_model("progs/HotRod_turret_body.mdl");
 	precache_model("progs/HotRod_turret_barrel.mdl");
 	entity car = hotrod();
+	car.spawnflags = self.spawnflags;
 	
 	makevectors(self.angles);
 	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
