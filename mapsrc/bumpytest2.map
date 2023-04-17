@@ -5115,6 +5115,14 @@
 "netname" "frontright"
 "targetname" "part1"
 "mdl" "progs/HotRod_wheel_front_R.mdl"
+"physobj_bounce" "1.025"
+"part_mass" "1"
+"physobj_friction_ground" "0.225 3.3 5"
+"physobj_spring_force" "2 4 0"
+"physobj_spring_length" "12"
+"physobj_stepup" "1"
+"physobj_stiction" "10"
+"relative_size" "13"
 }
 // entity 26
 {
@@ -5124,6 +5132,14 @@
 "netname" "frontleft"
 "targetname" "part1"
 "mdl" "progs/HotRod_wheel_front_L.mdl"
+"part_mass" "1"
+"physobj_bounce" "1.025"
+"physobj_friction_ground" "0.225 3.3 5"
+"physobj_spring_force" "2 4 0"
+"physobj_spring_length" "12"
+"physobj_stepup" "1"
+"physobj_stiction" "10"
+"relative_size" "13"
 }
 // entity 27
 {
@@ -5133,6 +5149,14 @@
 "netname" "backleft"
 "targetname" "part1"
 "mdl" "progs/HotRod_wheel_rear_L.mdl"
+"physobj_spring_length" "12"
+"physobj_spring_force" "2 4 0"
+"relative_size" "13"
+"physobj_stepup" "1"
+"part_mass" "1"
+"physobj_stiction" "10"
+"physobj_friction_ground" "0.225 3.3 5"
+"physobj_bounce" "1.025"
 }
 // entity 28
 {
@@ -5142,6 +5166,14 @@
 "netname" "backright"
 "targetname" "part1"
 "mdl" "progs/HotRod_wheel_rear_R.mdl"
+"physobj_bounce" "1.025"
+"part_mass" "1"
+"physobj_friction_ground" "0.225 3.3 5"
+"physobj_spring_force" "2 4 0"
+"physobj_spring_length" "12"
+"physobj_stepup" "1"
+"physobj_stiction" "10"
+"relative_size" "13"
 }
 // entity 29
 {
@@ -5173,4 +5205,9 @@
 "origin" "312 -200 280"
 "angle" "90"
 "targetname" "part1"
+"part_mass" "1"
+"physobj_bounce" "1.025"
+"physobj_friction_ground" "8 8 8"
+"physobj_stepup" "1"
+"physobj_stiction" "10"
 }
