@@ -879,8 +879,8 @@ entity(vector org, entity e, entity obj) Phys_InitStatic =
 {
 	local vector v;
 
-	if (e.mdl)
-		setmodel(e, e.mdl);
+	if (e.model)
+		setmodel(e, e.model);
 	else if (e.model) // assume bmodel
 		e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
 
@@ -926,7 +926,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnStatic =
 		e.relative_up = basepart.relative_up;
 		e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
-		e.mdl = basepart.mdl;
+		e.model = basepart.model;
 	}
 	else
 	{
@@ -946,8 +946,8 @@ entity(vector org, entity e, entity obj) Phys_InitParticle =
 {
 	local vector v;
 
-	if (e.mdl)
-		setmodel(e, e.mdl);
+	if (e.model)
+		setmodel(e, e.model);
 	else if (e.model) // assume bmodel
 		e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
 
@@ -1021,7 +1021,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.relative_up = basepart.relative_up;
 		e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
-		e.mdl = basepart.mdl;
+		e.model = basepart.model;
 	}
 	else
 	{
@@ -1045,8 +1045,8 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 
 entity(vector org, entity e, entity obj) Phys_InitHitmodel =
 {
-	if (e.mdl)
-		setmodel(e, e.mdl);
+	if (e.model)
+		setmodel(e, e.model);
 	e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL; // always assume bmodel for hitmodels
 
 	if (e.owner)
@@ -1092,7 +1092,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 		e.blocked = basepart.blocked;
 		e.touch = basepart.touch;
 		e.th_pain = basepart.th_pain;
-		e.mdl = basepart.mdl;
+		e.model = basepart.model;
 	}
 	else
 	{

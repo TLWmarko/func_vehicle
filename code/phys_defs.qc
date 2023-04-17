@@ -4,7 +4,6 @@ float MOVE_NORMAL = 0; // same as FALSE
 float MOVE_NOMONSTERS = 1; // same as TRUE
 float MOVE_MISSILE = 2; // save as movement with .movetype == MOVETYPE_FLYMISSILE
 
-.string mdl;
 .entity realowner;
 .entity driving;
 
