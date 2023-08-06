@@ -720,8 +720,8 @@ float() Phys_CheckCollisionDot =
 // The think function for our physics objects in the game
 void() Phys_ObjectThink =
 {
-	local float f, ftime, steps, iterations, coldot;
-	local float best_vel, best_len, vel_limit, vel;
+	local float f, ftime, steps, iterations;//, coldot;
+	//local float best_vel, best_len, vel_limit, vel;
 	local entity part, hitmodel, stat;
 
 	// Run every frame
@@ -735,6 +735,7 @@ void() Phys_ObjectThink =
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
+		/*
 		// Figure out the amount of steps needed to abide with the length of the shortest stick
 		// This is used to prevent sign errors
 		// Limit the amount of steps based on the angle of collision, unless there was a force change
@@ -759,6 +760,9 @@ void() Phys_ObjectThink =
 			part = part.physobj_next;
 		}
 		steps = max(1, ceil((best_vel/best_len)*coldot));
+		*/
+		steps = 10; // should be a cvar, higher means more stable but costs more perf
+		iterations = 1; // should always be 1
 		ftime = 1/steps;
 		ftime = ftime*frametime;
 
