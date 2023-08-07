@@ -208,8 +208,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 {
 	local float p;
 	local vector spring, v;
-	local entity part, hitmodel, stick;
-	local entity p1, p2;
+	local entity part, hitmodel;
 
 	const float ANTIROLL_MULT = 1.25;
 
@@ -246,28 +245,9 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		else {
 			part.frags = sv_gravity*part.physobj_spring_force_x;
 		}
+		// Build future positions for particles
+		part.destorigin = part.origin + part.velocity * ftime * 2;
 		part = part.physobj_next;
-	}
-
-	stick = self.physobj_sticklist;
-	while(stick){
-		if (stick.physobj_flags & PHFLAGS_STABILIZERBAR){
-			p1 = stick.physobj_p1;
-			p2 = stick.physobj_p2;
-
-			float p1_mult = p2.physobj_floor_frac - p1.physobj_floor_frac;
-			float p2_mult = p1.physobj_floor_frac - p2.physobj_floor_frac;
-			
-			if (p1_mult < 0)
-				p1.physobj_spring_mult = remap(p1_mult + 1, 0, 1, -0.5, 1);
-			else
-				p1.physobj_spring_mult = 1;
-			if (p2_mult < 0)
-				p2.physobj_spring_mult = remap(p2_mult + 1, 0, 1, -0.5, 1);
-			else
-				p2.physobj_spring_mult = 1;
-		}
-		stick = stick.physobj_next;
 	}
 
 	hitmodel = self.physobj_hitmodel;
@@ -291,21 +271,29 @@ void(float ftime) Phys_Constraints =
 	local entity p1, p2;
 
 	inverse_frametime = 1 / ftime;
-	// Build future positions for particles
-	part = self.physobj_particlelist;
-	while (part)
-	{
-		part.destorigin = part.origin + part.velocity * ftime;
-		part = part.physobj_next;
-	}
+	
 	// Marko 2023: we are running a single iteration because the entire update loop runs multiple times instead, XPBD style
 	stick = self.physobj_sticklist;
 	while(stick)
 	{
+		if (stick.physobj_flags & PHFLAGS_STABILIZERBAR){
+			p1 = stick.physobj_p1;
+			p2 = stick.physobj_p2;
+
+			float p1_mult = p2.physobj_floor_frac - p1.physobj_floor_frac;
+			float p2_mult = p1.physobj_floor_frac - p2.physobj_floor_frac;
+			
+			if (p1_mult < 0)
+				p1.physobj_spring_mult = remap(p1_mult + 1, 0, 1, -0.5, 1);
+			else
+				p1.physobj_spring_mult = 1;
+			if (p2_mult < 0)
+				p2.physobj_spring_mult = remap(p2_mult + 1, 0, 1, -0.5, 1);
+			else
+				p2.physobj_spring_mult = 1;
+		}
 		p1 = stick.physobj_p1;
-		//p1.destorigin = p1.origin + p1.velocity * ftime;
 		p2 = stick.physobj_p2;
-		//p2.destorigin = p2.origin + p2.velocity * ftime;
 		offset = p1.destorigin - p2.destorigin;
 		offsetlength = vlen(offset);
 		diff = (offsetlength-stick.stick_preferredlength)/(offsetlength*(p1.physobj_inversemass+p2.physobj_inversemass));
@@ -740,32 +728,6 @@ void() Phys_ObjectThink =
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
-		/*
-		// Figure out the amount of steps needed to abide with the length of the shortest stick
-		// This is used to prevent sign errors
-		// Limit the amount of steps based on the angle of collision, unless there was a force change
-		coldot = 0;
-		if (!(self.physobj_flags & PHFLAGS_FORCE))
-			coldot = Phys_CheckCollisionDot();
-		// Limit velocities to not cause too many steps to occur
-		//vel_limit = cvar("phys_maxvelocity");
-		iterations = max(1, cvar("phys_constraints_linear_iterations"));
-		best_len = 999999999;
-		best_vel = 0;
-		part = self.physobj_particlelist;
-		while(part)
-		{
-			vel = vlen(part.velocity);
-			f = 1;
-			if (vel_limit > 0)
-				f = min(1, vel_limit/vel);
-			part.velocity = part.velocity*f;
-			best_vel = max(vlen(part.velocity*frametime), best_vel);
-			best_len = min(part.stick_preferredlength, best_len);
-			part = part.physobj_next;
-		}
-		steps = max(1, ceil((best_vel/best_len)*coldot));
-		*/
 		steps = 5; // should be a cvar, higher means more stable but costs more perf
 		ftime = 1/steps;
 		ftime = ftime*frametime;
@@ -773,7 +735,7 @@ void() Phys_ObjectThink =
 		// Let's run some physics
 		while(steps)
 		{
-			steps = steps - 1;
+			steps--;
 			Phys_Acceleration(ftime*0.5, sv_gravity);
 			Phys_Constraints(ftime);
 			Phys_Deceleration(ftime);
