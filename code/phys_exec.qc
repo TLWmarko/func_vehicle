@@ -658,41 +658,6 @@ void() Phys_CheckRestState =
 	}
 }
 
-float() Phys_CheckCollisionDot =
-{
-	local float dot, highest_dot;
-	local entity part, hitmodel;
-
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
-
-	part = self.physobj_particlelist;
-	while(part)
-	{
-		traceline(part.origin, part.origin + part.velocity*frametime, part.physobj_movetype, part);
-		//tracebox(part.origin, part.mins, part.maxs, part.origin + part.velocity*frametime, part.physobj_movetype, part);
-		dot = trace_plane_normal*normalize(part.velocity)*-1;
-		if (dot > highest_dot)
-		{
-			highest_dot = dot;
-		}
-		part = part.physobj_next;
-	}
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
-	return highest_dot;
-};
-
 // The think function for our physics objects in the game
 void() Phys_ObjectThink =
 {
@@ -711,7 +676,7 @@ void() Phys_ObjectThink =
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
-		steps = 2; // should be a cvar, higher means more stable but costs more perf
+		steps = 3; // should be a cvar, higher means more stable but costs more perf
 		ftime = 1/steps;
 		ftime = ftime*frametime;
 
