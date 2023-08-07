@@ -728,7 +728,7 @@ void() Phys_ObjectThink =
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
-		steps = 5; // should be a cvar, higher means more stable but costs more perf
+		steps = 2; // should be a cvar, higher means more stable but costs more perf
 		ftime = 1/steps;
 		ftime = ftime*frametime;
 
