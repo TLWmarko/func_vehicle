@@ -1,6 +1,9 @@
 void(entity attacker, float damage) SUB_NullPain = {};
 void(entity part, entity targ) SUB_NullImpact = {};
 void(entity part) Particle_CheckOnGround;
+void(entity part, float ftime) Particle_Friction;
+void(entity part, entity object) Phys_ObjectRemoveParticle;
+
 
 vector(vector c_maxs, vector c_mins, vector c_org) Clamp =
 {
@@ -72,7 +75,6 @@ void(entity targ, float in_mass, vector inforce, vector hitspot, vector normal) 
 		dot = normalize(inforce)*normal;
 		force = normal*vlen(inforce)*dot*t_mass*targ.force_calcscale;
 		setvelocity(targ, targ.velocity + force*0.8); // hack to soften things up a bit, before I figure out wtf is wrong
-		//targ.velocity = targ.velocity + force*0.8; // hack to soften things up a bit, before I figure out wtf is wrong
 		targ.physobj_flags = targ.physobj_flags - (targ.physobj_flags & PHFLAGS_RESTING);
 		targ.flags = targ.flags - (targ.flags & FL_ONGROUND);
 		targ = targ.physobj_next;
@@ -247,6 +249,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		}
 		// Build future positions for particles
 		part.destorigin = part.origin + part.velocity * ftime * 2;
+		Particle_Friction(part, ftime * 2);
 		part = part.physobj_next;
 	}
 
@@ -370,81 +373,61 @@ void() Phys_CheckOnGround =
 	}
 };
 
-// Apply water friction, stiction
-void(float ftime) Phys_Deceleration =
+void(entity part, float ftime) Particle_Friction =
 {
 	local float vel, st, dot;
-	local entity part, hitmodel;
 
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
+	if (part.flags & FL_ONGROUND)
 	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
-
-	part = self.physobj_particlelist;
-	while (part)
-	{
-		if (part.flags & FL_ONGROUND)
+		// Stiction
+		if (part.physobj_stiction > 0)
 		{
-			// Stiction
-			if (part.physobj_stiction > 0)
+			vel = vlen(part.velocity);
+			if (vel <= part.physobj_stiction) // stiction occurs when moving slow enough
 			{
-				vel = vlen(part.velocity);
-				if (vel <= part.physobj_stiction) // stiction occurs when moving slow enough
-				{
-					st = vel/part.physobj_stiction;
-					//part.velocity = part.velocity*st*ftime;
-					part.velocity = part.velocity*st;
-				}
+				st = vel/part.physobj_stiction;
+				//part.velocity = part.velocity*st*ftime;
+				part.velocity = part.velocity*st;
 			}
-			// Directional ground friction
-			dot = part.physobj_floor_plane_normal*normalize(part.velocity)*-1;
-			if (part.physobj_friction_ground_x)
-				part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_forward)*part.physobj_friction_ground_x*2*ftime;//(1+dot)*ftime;
-			if (part.physobj_friction_ground_y)
-				part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_left)*part.physobj_friction_ground_y*2*ftime;//(1+dot)*ftime;
-			if (part.physobj_friction_ground_z)
-				part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*part.physobj_friction_ground_z*2*ftime;//(1+dot)*ftime;
-			//print(ftos(vlen(part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*part.physobj_friction_ground_z*(1+dot)*ftime)), "\n");
 		}
-		traceline(part.origin, part.origin, TRUE, part);
-		//tracebox(part.origin, part.mins, part.maxs, part.origin, TRUE, part);
-		// Water friction
-		//if (trace_inwater)
-		if (pointcontents(part.origin) < CONTENT_SOLID)
-		{
-			if (part.physobj_friction_water_x)
-				part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*normalize(part.velocity)*part.lmat_forward*part.physobj_friction_water_x*ftime;
-			if (part.physobj_friction_water_y)
-				part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*normalize(part.velocity)*part.lmat_left*part.physobj_friction_water_y*ftime;
-			if (part.physobj_friction_water_z)
-				part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*normalize(part.velocity)*part.lmat_up*part.physobj_friction_water_z*ftime;
-		}
-		// Air friction
-		else if (!trace_startsolid)
-		{
-			if (part.physobj_friction_air_x)
-				part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*normalize(part.velocity)*part.lmat_forward*part.physobj_friction_air_x*ftime;
-			if (part.physobj_friction_air_y)
-				part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*normalize(part.velocity)*part.lmat_left*part.physobj_friction_air_y*ftime;
-			if (part.physobj_friction_air_z)
-				part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*normalize(part.velocity)*part.lmat_up*part.physobj_friction_air_z*ftime;
-		}
-		part = part.physobj_next;
+		// Directional ground friction
+		dot = part.physobj_floor_plane_normal*normalize(part.velocity)*-1;
+		if (part.physobj_friction_ground_x)
+			part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_forward)*part.physobj_friction_ground_x*2*ftime;//(1+dot)*ftime;
+		if (part.physobj_friction_ground_y)
+			part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_left)*part.physobj_friction_ground_y*2*ftime;//(1+dot)*ftime;
+		if (part.physobj_friction_ground_z)
+			part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*part.physobj_friction_ground_z*2*ftime;//(1+dot)*ftime;
+		//print(ftos(vlen(part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*part.physobj_friction_ground_z*(1+dot)*ftime)), "\n");
 	}
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
+	traceline(part.origin, part.origin, TRUE, part);
+	//tracebox(part.origin, part.mins, part.maxs, part.origin, TRUE, part);
+	// Water friction
+	//if (trace_inwater)
+	if (pointcontents(part.origin) < CONTENT_SOLID)
 	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
+		if (part.physobj_friction_water_x)
+			part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*normalize(part.velocity)*part.lmat_forward*part.physobj_friction_water_x*ftime;
+		if (part.physobj_friction_water_y)
+			part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*normalize(part.velocity)*part.lmat_left*part.physobj_friction_water_y*ftime;
+		if (part.physobj_friction_water_z)
+			part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*normalize(part.velocity)*part.lmat_up*part.physobj_friction_water_z*ftime;
 	}
-};
+	/*
+	// Marko 2023: disabled air friction because it's a bunch of calcs for probably unused feature, remove the comments if you need it
+	// Air friction
+	else if (!trace_startsolid)
+	{
+		if (part.physobj_friction_air_x)
+			part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*normalize(part.velocity)*part.lmat_forward*part.physobj_friction_air_x*ftime;
+		if (part.physobj_friction_air_y)
+			part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*normalize(part.velocity)*part.lmat_left*part.physobj_friction_air_y*ftime;
+		if (part.physobj_friction_air_z)
+			part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*normalize(part.velocity)*part.lmat_up*part.physobj_friction_air_z*ftime;
+	}
+	*/
+}
 
-void(entity part, entity object) Phys_ObjectRemoveParticle;
 
 // Velocity Verlet physics, meant to be used for all moving entities in the game
 void(float ftime) Phys_Move =
@@ -738,7 +721,6 @@ void() Phys_ObjectThink =
 			steps--;
 			Phys_Acceleration(ftime*0.5, sv_gravity);
 			Phys_Constraints(ftime);
-			Phys_Deceleration(ftime);
 			Phys_Move(ftime);
 			Phys_Acceleration(ftime*0.5, sv_gravity);
 		}
