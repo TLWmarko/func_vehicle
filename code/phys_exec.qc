@@ -274,22 +274,18 @@ const float STABILITY_MULTIPLIER = 0.8;
 void(float ftime) Phys_Constraints =
 {
 	local float offsetlength, diff, lendiff;
-	local float inverse_frametime;
 	local vector offset;
-	local entity part, stick;
+	local entity stick;
 	local entity p1, p2;
 
-	inverse_frametime = 1 / ftime;
-	
 	// Marko 2023: we are running a single iteration because the entire update loop runs multiple times instead, XPBD style
 	stick = self.physobj_sticklist;
 	while(stick)
 	{
+		p1 = stick.physobj_p1;
+		p2 = stick.physobj_p2;
 
 		if (stick.physobj_flags & PHFLAGS_STABILIZERBAR){
-			p1 = stick.physobj_p1;
-			p2 = stick.physobj_p2;
-
 			float p1_mult = p2.physobj_floor_frac - p1.physobj_floor_frac;
 			float p2_mult = p1.physobj_floor_frac - p2.physobj_floor_frac;
 			
@@ -302,25 +298,17 @@ void(float ftime) Phys_Constraints =
 			else
 				p2.physobj_spring_mult = 1;
 		}
-		p1 = stick.physobj_p1;
-		p2 = stick.physobj_p2;
+
 		offset = p1.destorigin - p2.destorigin;
 		offsetlength = vlen(offset);
 		lendiff = offsetlength-stick.stick_preferredlength;
 		if (resting_allowed)
-		if (fabs(lendiff) > 3)
+		if (fabs(lendiff) > stick.stick_preferredlength * 0.05)
 			resting_allowed = FALSE;
 		diff = lendiff/(offsetlength*(p1.physobj_inversemass+p2.physobj_inversemass));
 		p1.destorigin = p1.destorigin - p1.physobj_inversemass*offset*diff*STABILITY_MULTIPLIER;
 		p2.destorigin = p2.destorigin + p2.physobj_inversemass*offset*diff*STABILITY_MULTIPLIER;
 		stick = stick.physobj_next;
-	}
-	// Convert back from future positions to velocities again
-	part = self.physobj_particlelist;
-	while (part)
-	{
-		part.velocity = (part.destorigin - part.origin) * inverse_frametime;
-		part = part.physobj_next;
 	}
 };
 
@@ -416,7 +404,7 @@ void(entity part, float ftime) Particle_Friction =
 void(float ftime) Phys_Move =
 {
 	local float bump, it;
-	local float t, f;
+	local float t, f, inverse_frametime;
 	local float dot;
 	local float stuck;
 	local vector test_org;
@@ -436,11 +424,16 @@ void(float ftime) Phys_Move =
 		hitmodel = hitmodel.physobj_next;
 	}
 
+	inverse_frametime = 1 / ftime;
+
 	part = self.physobj_particlelist;
 	if (!part)
 		part = self;
 	while(part)
 	{
+		// Convert back from future positions set by constraints to velocities again
+		part.velocity = (part.destorigin - part.origin) * inverse_frametime;
+
 		part.oldorigin = part.origin;
 		bump = 0;
 		it = 0;
@@ -607,7 +600,7 @@ void() Phys_ObjectThink =
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
-		steps = 3; // should be a cvar, higher means more stable but costs more perf
+		steps = 2; // should be a cvar, higher means more stable but costs more perf
 		ftime = 1/steps;
 		ftime = ftime*frametime;
 
