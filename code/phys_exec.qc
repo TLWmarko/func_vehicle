@@ -236,20 +236,25 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 			part.velocity_z = part.velocity_z + sv_gravity*part.physobj_buoyancy*ftime; // Buoyancy
 		else
 			part.velocity_z = part.velocity_z - sv_gravity*ftime; // Gravity
-		if (part.flags & FL_ONGROUND && part.physobj_flags & PHFLAGS_SPRING_TOUCH) {
-			spring = -part.lmat_up;
-			p = (1-part.physobj_floor_frac);
-			part.frags = lerp(sv_gravity*part.physobj_spring_force_x, sv_gravity*part.physobj_spring_force_y, p*p) * part.physobj_spring_mult;
-			v = spring*part.frags*ftime;
-			part.velocity = part.velocity - v;
-			// Marko 2021: I have no idea what the point of this is, or why it says FIXME, but it stays since it works.
-			// It appears to simply undo some spring force, making springs a bit slower, but that should be handled by dampeners already.
-			// Removing it makes springs bouncier, nothing really breaks
-			//FIXME
-			part.velocity = part.velocity + spring*part.physobj_floor_frac*100*ftime;
-		}
-		else {
-			part.frags = sv_gravity*part.physobj_spring_force_x;
+		if (part.physobj_spring_length)
+		{
+			if (part.flags & FL_ONGROUND && part.physobj_flags & PHFLAGS_SPRING_TOUCH)
+			{
+				spring = -part.lmat_up;
+				p = (1-part.physobj_floor_frac);
+				part.frags = lerp(sv_gravity*part.physobj_spring_force_x, sv_gravity*part.physobj_spring_force_y, p*p) * part.physobj_spring_mult;
+				v = spring*part.frags*ftime;
+				part.velocity = part.velocity - v;
+				// Marko 2021: I have no idea what the point of this is, or why it says FIXME, but it stays since it works.
+				// It appears to simply undo some spring force, making springs a bit slower, but that should be handled by dampeners already.
+				// Removing it makes springs bouncier, nothing really breaks
+				//FIXME
+				part.velocity = part.velocity + spring*part.physobj_floor_frac*100*ftime;
+			}
+			else
+			{
+				part.frags = sv_gravity*part.physobj_spring_force_x;
+			}
 		}
 		// Build future positions for particles
 		part.destorigin = part.origin + part.velocity * ftime * 2;
