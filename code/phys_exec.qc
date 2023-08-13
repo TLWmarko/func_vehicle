@@ -49,7 +49,7 @@ void(entity targ, float in_mass, vector inforce, vector hitspot, vector normal) 
 
 	t_mass = min(1, in_mass/targ.physobj_mass);
 	targ.physobj_flags = targ.physobj_flags | PHFLAGS_FORCE;
-	targ.physobj_flags = targ.physobj_flags - (targ.physobj_flags & PHFLAGS_RESTING);
+	targ.physobj_flags -= (targ.physobj_flags & PHFLAGS_RESTING);
 	targ.flags = targ.flags - (targ.flags & FL_ONGROUND);
 
 	if (targ.physobj_particlelist)
@@ -75,7 +75,7 @@ void(entity targ, float in_mass, vector inforce, vector hitspot, vector normal) 
 		dot = normalize(inforce)*normal;
 		force = normal*vlen(inforce)*dot*t_mass*targ.force_calcscale;
 		setvelocity(targ, targ.velocity + force*0.8); // hack to soften things up a bit, before I figure out wtf is wrong
-		targ.physobj_flags = targ.physobj_flags - (targ.physobj_flags & PHFLAGS_RESTING);
+		//targ.physobj_flags = targ.physobj_flags - (targ.physobj_flags & PHFLAGS_RESTING);
 		targ.flags = targ.flags - (targ.flags & FL_ONGROUND);
 		targ = targ.physobj_next;
 	}
@@ -87,6 +87,7 @@ void(entity targ) Phys_CheckStatus =
 	local float inverse_frametime, dot, success, best_dot, best_dist;
 	local vector best_normal;
 	local entity stick, part, oself, t_ent, hitmodel;
+	local float f;
 
 	oself = self;
 	inverse_frametime = 1 / frametime;
@@ -107,6 +108,9 @@ void(entity targ) Phys_CheckStatus =
 	}
 	while(part)
 	{
+		Particle_CheckOnGround(part);
+		if (part.flags & FL_ONGROUND)
+			f++;
 		if (part.physobj_flags & PHFLAGS_FORCE)
 		{
 			self.physobj_flags = self.physobj_flags | PHFLAGS_FORCE;
@@ -116,7 +120,7 @@ void(entity targ) Phys_CheckStatus =
 		if (part.origin != part.pushorigin)
 		{
 			self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_RESTING);
-			part.physobj_flags = part.physobj_flags - (part.physobj_flags & PHFLAGS_RESTING);
+			//part.physobj_flags = part.physobj_flags - (part.physobj_flags & PHFLAGS_RESTING);
 		}
 
 		//tracebox(part.origin, part.mins, part.maxs, part.origin, TRUE, part);
@@ -130,7 +134,7 @@ void(entity targ) Phys_CheckStatus =
 			part.physobj_movetype = MOVE_NOMONSTERS;
 			part.physobj_flags = part.physobj_flags | PHFLAGS_BLOCKED;
 			self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_RESTING);
-			part.physobj_flags = part.physobj_flags - (part.physobj_flags & PHFLAGS_RESTING);
+			//part.physobj_flags = part.physobj_flags - (part.physobj_flags & PHFLAGS_RESTING);
 			success = FALSE;
 			best_dot = 0;
 			best_normal = '0 0 0';
@@ -195,6 +199,8 @@ void(entity targ) Phys_CheckStatus =
 		else
 			part = world;
 	}
+	if (f < 3)
+		self.physobj_flags -= (self.physobj_flags & PHFLAGS_RESTING);
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
@@ -267,7 +273,7 @@ const float STABILITY_MULTIPLIER = 0.8;
 // Run constraints on all particles
 void(float ftime) Phys_Constraints =
 {
-	local float offsetlength, diff;
+	local float offsetlength, diff, lendiff;
 	local float inverse_frametime;
 	local vector offset;
 	local entity part, stick;
@@ -279,6 +285,7 @@ void(float ftime) Phys_Constraints =
 	stick = self.physobj_sticklist;
 	while(stick)
 	{
+
 		if (stick.physobj_flags & PHFLAGS_STABILIZERBAR){
 			p1 = stick.physobj_p1;
 			p2 = stick.physobj_p2;
@@ -299,7 +306,11 @@ void(float ftime) Phys_Constraints =
 		p2 = stick.physobj_p2;
 		offset = p1.destorigin - p2.destorigin;
 		offsetlength = vlen(offset);
-		diff = (offsetlength-stick.stick_preferredlength)/(offsetlength*(p1.physobj_inversemass+p2.physobj_inversemass));
+		lendiff = offsetlength-stick.stick_preferredlength;
+		if (resting_allowed)
+		if (fabs(lendiff) > 3)
+			resting_allowed = FALSE;
+		diff = lendiff/(offsetlength*(p1.physobj_inversemass+p2.physobj_inversemass));
 		p1.destorigin = p1.destorigin - p1.physobj_inversemass*offset*diff*STABILITY_MULTIPLIER;
 		p2.destorigin = p2.destorigin + p2.physobj_inversemass*offset*diff*STABILITY_MULTIPLIER;
 		stick = stick.physobj_next;
@@ -344,34 +355,6 @@ void(entity part) Particle_CheckOnGround =
 		part.physobj_floor_frac = 1;
 	}
 }
-
-// Check if we're touching the ground
-void() Phys_CheckOnGround =
-{
-	local entity part, hitmodel;
-
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
-
-	part = self.physobj_particlelist;
-	while (part)
-	{
-		Particle_CheckOnGround(part);
-		part = part.physobj_next;
-	}
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
-};
 
 void(entity part, float ftime) Particle_Friction =
 {
@@ -433,11 +416,10 @@ void(entity part, float ftime) Particle_Friction =
 void(float ftime) Phys_Move =
 {
 	local float bump, it;
-	local float t;
+	local float t, f;
 	local float dot;
 	local float stuck;
 	local vector test_org;
-	//local vector spring;
 	local entity part, killme, hitmodel;
 
 	local vector save_endpos;
@@ -577,13 +559,18 @@ void(float ftime) Phys_Move =
 				break;
 		}
 		part.pushorigin = part.origin;
-		if (!(part.physobj_flags & PHFLAGS_BLOCKED))
+
+		if(resting_allowed)
 		{
-			if (vlen(part.origin - part.oldorigin) < ftime*5)
-				part.physobj_flags = part.physobj_flags | PHFLAGS_RESTING;
-			else
-				part.physobj_flags = part.physobj_flags - (part.physobj_flags & PHFLAGS_RESTING);
+			if(!(part.physobj_flags & PHFLAGS_BLOCKED))
+			{
+				if (vlen(part.origin - part.oldorigin) > ftime*5)
+					resting_allowed = FALSE;
+				else if (part.flags & FL_ONGROUND)
+					f++;
+			}
 		}
+
 		if (part.physobj_flags & PHFLAGS_KILLME)
 		{
 			killme = part;
@@ -600,63 +587,9 @@ void(float ftime) Phys_Move =
 		setorigin(hitmodel, hitmodel.origin);
 		hitmodel = hitmodel.physobj_next;
 	}
+	if (f < 3)
+		resting_allowed = FALSE;
 };
-
-void() Phys_CheckRestState =
-{
-	local float f, len;
-	local entity part, stick;
-
-	if (self.physobj_flags & PHFLAGS_ATTACHED)
-	{
-		self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_RESTING);
-		return;
-	}
-
-	f = 0;
-	part = self.physobj_particlelist;
-	while(part)
-	{
-		if (!(part.physobj_flags & PHFLAGS_RESTING))
-		{
-			f = 0;
-			break;
-		}
-		if (part.flags & FL_ONGROUND)
-			f = f + 1;
-		part = part.physobj_next;
-	}
-
-	if (f > 2 && !(self.physobj_flags & PHFLAGS_RESTING))
-	{
-		stick = self.physobj_sticklist;
-		while (stick)
-		{
-			len = vlen(stick.physobj_p1.origin-stick.physobj_p2.origin);
-			if (len < stick.stick_preferredlength*0.95 && len > stick.stick_preferredlength*1.05)
-			{
-				//self.physobj_staticlist.colormod = '1 1 1';
-				self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_RESTING);
-				return;
-			}
-			stick = stick.physobj_next;
-		}
-		self.physobj_flags = self.physobj_flags | PHFLAGS_RESTING;
-		//self.physobj_staticlist.colormod = '2 2 2';
-		part = self.physobj_particlelist;
-		while(part)
-		{
-			setorigin(part, part.oldorigin);
-			part.pushorigin = part.origin;
-			part = part.physobj_next;
-		}
-	}
-	else if (f <= 2)
-	{
-		//self.physobj_staticlist.colormod = '1 1 1';
-		self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_RESTING);
-	}
-}
 
 // The think function for our physics objects in the game
 void() Phys_ObjectThink =
@@ -670,9 +603,7 @@ void() Phys_ObjectThink =
 
 	local float sv_gravity = cvar("sv_gravity");
 
-	Phys_CheckStatus(world); // Check in case we got pushed, blocked by a hitmodel or otherwise stuck
-	Phys_CheckOnGround(); // Check onground status in case we need to wake up the object
-	Phys_CheckRestState(); // See above
+	Phys_CheckStatus(world); // Check in case we got pushed, got stuck, or the ground beneath us disappeared
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
@@ -680,6 +611,7 @@ void() Phys_ObjectThink =
 		ftime = 1/steps;
 		ftime = ftime*frametime;
 
+		resting_allowed = TRUE;
 		// Let's run some physics
 		while(steps)
 		{
@@ -691,8 +623,8 @@ void() Phys_ObjectThink =
 		}
 		self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_FORCE);
 
-		//If movement was very minor, and atleast three particles are on the ground, let's stick to the floor
-		Phys_CheckRestState();
+		if (resting_allowed) // resting still allowed after various checks
+			self.physobj_flags |= PHFLAGS_RESTING;
 
 		// calculate an object matrix from the first three particles, used for orientation (magic)
 		Matrix_CalculateObjectMatrix(self);
