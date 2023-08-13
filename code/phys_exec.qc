@@ -102,8 +102,7 @@ void(entity targ) Phys_CheckStatus =
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
+		hitmodel.solid = SOLID_NOT;
 		hitmodel = hitmodel.physobj_next;
 	}
 	while(part)
@@ -223,8 +222,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
+		hitmodel.solid = SOLID_NOT;
 		hitmodel = hitmodel.physobj_next;
 	}
 
@@ -419,8 +417,7 @@ void(float ftime) Phys_Move =
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
+		hitmodel.solid = SOLID_NOT;
 		hitmodel = hitmodel.physobj_next;
 	}
 

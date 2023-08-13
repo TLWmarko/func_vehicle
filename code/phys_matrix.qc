@@ -26,8 +26,9 @@ void(vector axis, float angle) Matrix_RotateByAxisAngle =
 #endif
 
 	axis = normalize(axis);
-	c = cos(angle);mc = 1 - c;
-	s = sin(angle);
+	vector sincos_angle = SinCos(angle);
+	c = sincos_angle.y;mc = 1 - c;
+	s = sincos_angle.x;
 
 	rforward_x = axis_x * axis_x + c * (1 - axis_x * axis_x);
 	rforward_y = axis_x * axis_y * mc - axis_z * s;
@@ -198,8 +199,10 @@ vector vectoangles2 (vector forward, vector up) {
 		result.x = -atan2(forward.z, sqrt(DotProduct2(forward, forward)));
 		result.y = atan2(forward.y, forward.x);
 
-		float cp = cos(result.x), sp = sin(result.x);
-		float cy = cos(result.y), sy = sin(result.y);
+		vector sincos_resultx = SinCos(result.x);
+		vector sincos_resulty = SinCos(result.y);
+		float cp = sincos_resultx.y, sp = sincos_resultx.x;
+		float cy = sincos_resulty.y, sy = sincos_resulty.x;
 		vector tleft, tup;
 		tleft.x = -sy;
 		tleft.y = cy;
