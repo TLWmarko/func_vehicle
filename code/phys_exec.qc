@@ -271,7 +271,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 	}
 };
 
-const float STABILITY_MULTIPLIER = 0.8;
+const float STABILITY_MULTIPLIER = 1; // lower values make the object more soft, but less prone to randomly exploding
 
 // Run constraints on all particles
 void(float ftime) Phys_Constraints =
@@ -1082,9 +1082,31 @@ void(entity part, entity object) Phys_ObjectRemoveParticle =
 	remove(part);
 };
 
-entity(entity p1, entity p2, entity obj) Phys_ObjectAddStick =
+const float STICK_SIMILARITY_THRESHOLD = 0.95; // raise to make less wobbly
+
+entity(entity p1, entity p2, entity obj, float force_add) Phys_ObjectAddStick =
 {
 	local entity e;
+	local vector v, v_other;
+
+	if (!force_add && obj && !(p1.physobj_spring_length && p2.physobj_spring_length))
+	{
+		v = normalize(p1.relative_org - p2.relative_org);
+		e = obj.physobj_sticklist;
+		while(e)
+		{
+			v_other = normalize(e.physobj_p1.relative_org - e.physobj_p2.relative_org);
+			if (fabs(v * v_other) > STICK_SIMILARITY_THRESHOLD) // similar direction, let's see if we share any particle
+			{
+				if (e.physobj_p1 == p1 ||
+					e.physobj_p1 == p2 ||
+					e.physobj_p2 == p1 ||
+					e.physobj_p2 == p2)
+				return world; // this stick doesn't contribute to stability enough
+			}
+			e = e.physobj_next;
+		}
+	}
 
 	e = spawn();
 	e.classname = "stick";
@@ -1134,7 +1156,7 @@ entity(vector org, entity object) Phys_AddParticleToObject =
 	{
 		save_rel = part.relative_org;
 		part.relative_org = part.origin;
-		stick = Phys_ObjectAddStick(e, part, world);
+		stick = Phys_ObjectAddStick(e, part, world, FALSE);
 		part.relative_org = save_rel;
 		stick.owner = object;
 		end.physobj_next = stick;
@@ -1146,30 +1168,33 @@ entity(vector org, entity object) Phys_AddParticleToObject =
 
 void() Phys_SpawnSticks =
 {
-	local float f, total;
+	local float f, total_particles, total_sticks;
 	local entity part1, part2;
 
-	total = 0;
+	total_particles = 0;
 	part1 = physobj_spawning.physobj_particlelist;
 	while (part1)
 	{
-		total = total + 1;
+		total_particles = total_particles + 1;
 		part1 = part1.physobj_next;
 	}
 	part1 = physobj_spawning.physobj_particlelist;
 	while (part1)
 	{
 		part2 = part1;
-		total = total - 1;
+		total_particles = total_particles - 1;
 		f = 0;
-		while (f < total)
+		while (f < total_particles)
 		{
 			part2 = part2.physobj_next;
-			Phys_ObjectAddStick(part1, part2, physobj_spawning);
+			if (Phys_ObjectAddStick(part1, part2, physobj_spawning, FALSE))
+				total_sticks++;
 			f = f + 1;
 		}
 		part1 = part1.physobj_next;
 	}
+	dprint(ftos(total_sticks));
+	dprint("\n");
 }
 
 entity(entity obj, vector org, vector forward, vector left, vector up) Phys_InitPhysicsObject =
