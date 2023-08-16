@@ -1082,28 +1082,45 @@ void(entity part, entity object) Phys_ObjectRemoveParticle =
 	remove(part);
 };
 
-const float STICK_SIMILARITY_THRESHOLD = 0.95; // raise to make less wobbly
+const float STICK_SIMILARITY_THRESHOLD = 0.97; // raise to make less wobbly
+
+float(vector v, entity p1, entity p2) CheckStickSimilarity =
+{
+	vector v_other = normalize(p1.relative_org - p2.relative_org);
+	if (fabs(v * v_other) > STICK_SIMILARITY_THRESHOLD) // similar direction
+		return TRUE; // this stick doesn't contribute to stability enough
+	return FALSE;
+}
+
 
 entity(entity p1, entity p2, entity obj, float force_add) Phys_ObjectAddStick =
 {
+	local vector v;
 	local entity e;
-	local vector v, v_other;
+	local float isStabilizerBar;
 
-	if (!force_add && obj && !(p1.physobj_spring_length && p2.physobj_spring_length))
+	if (p1.netname == "frontright" || p2.netname == "frontright")
+	if (p1.netname == "frontleft"  || p2.netname == "frontleft")
+		isStabilizerBar = TRUE;
+	if (p1.netname == "backright"  || p2.netname == "backright")
+	if (p1.netname == "backleft"   || p2.netname == "backleft")
+		isStabilizerBar = TRUE;
+
+	if (!force_add && !isStabilizerBar)
 	{
 		v = normalize(p1.relative_org - p2.relative_org);
-		e = obj.physobj_sticklist;
+		e = p1.physobj_next;
 		while(e)
 		{
-			v_other = normalize(e.physobj_p1.relative_org - e.physobj_p2.relative_org);
-			if (fabs(v * v_other) > STICK_SIMILARITY_THRESHOLD) // similar direction, let's see if we share any particle
-			{
-				if (e.physobj_p1 == p1 ||
-					e.physobj_p1 == p2 ||
-					e.physobj_p2 == p1 ||
-					e.physobj_p2 == p2)
-				return world; // this stick doesn't contribute to stability enough
-			}
+			if (e != p2 && CheckStickSimilarity(v, p1, e))
+				return world;
+			e = e.physobj_next;
+		}
+		e = p2.physobj_next;
+		while(e)
+		{
+			if (e != p1 && CheckStickSimilarity(v, p2, e))
+				return world;
 			e = e.physobj_next;
 		}
 	}
