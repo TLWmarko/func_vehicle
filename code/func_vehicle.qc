@@ -203,6 +203,7 @@ entity FindStaticOfName(string name, entity obj){
 void(entity car) Car_InitVehicle =
 {
 	local entity e;
+	local float hasStabilizer;
 
 	e = car.physobj_particlelist;
 	while (e)
@@ -217,6 +218,7 @@ void(entity car) Car_InitVehicle =
 			car.backleft = e;
 		e = e.physobj_next;
 	}
+	hasStabilizer = FALSE;
 	if (car.frontright && car.frontleft){
 		e = car.physobj_sticklist;
 		while (e)
@@ -224,12 +226,17 @@ void(entity car) Car_InitVehicle =
 			if (e.physobj_p1 == car.frontright || e.physobj_p2 == car.frontright){
 				if (e.physobj_p1 == car.frontleft || e.physobj_p2 == car.frontleft){
 					e.physobj_flags |= PHFLAGS_STABILIZERBAR;
+					hasStabilizer = TRUE;
 					break;
 				}
 			}
 			e = e.physobj_next;
 		}
+		if (!hasStabilizer){ // we better make one then
+			Phys_ObjectAddStick(car.frontright, car.frontleft, car);
+		}
 	}
+	hasStabilizer = FALSE;
 	if (car.backright && car.backleft){
 		e = car.physobj_sticklist;
 		while (e)
@@ -237,10 +244,14 @@ void(entity car) Car_InitVehicle =
 			if (e.physobj_p1 == car.backright || e.physobj_p2 == car.backright){
 				if (e.physobj_p1 == car.backleft || e.physobj_p2 == car.backleft){
 					e.physobj_flags |= PHFLAGS_STABILIZERBAR;
+					hasStabilizer = TRUE;
 					break;
 				}
 			}
 			e = e.physobj_next;
+		}
+		if (!hasStabilizer){ // we better make one then
+			Phys_ObjectAddStick(car.backright, car.backleft, car);
 		}
 	}
 	e = car.physobj_staticlist;
