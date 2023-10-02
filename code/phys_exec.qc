@@ -1219,7 +1219,8 @@ entity(vector org, entity object) Phys_AddParticleToObject =
 	}
 	return e;
 };
-
+/*
+// obsolete
 void() Phys_SpawnSticks =
 {
 	local float f, total_particles, total_sticks;
@@ -1250,7 +1251,7 @@ void() Phys_SpawnSticks =
 	dprint(ftos(total_sticks));
 	dprint("\n");
 }
-
+*/
 entity(entity obj, vector org, vector forward, vector left, vector up) Phys_InitPhysicsObject =
 {
 	local float f;
