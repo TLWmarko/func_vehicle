@@ -643,7 +643,7 @@ void() StartFuncVehicle =
 		}
 	}
 
-	Phys_MakeIntoPhysicsObject(self, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
+	Phys_MakeIntoPhysicsObject(self, self.origin, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
 	self.physobj_impactevent = PushAndDamageTarget;
 	Car_InitVehicle(self);
 }
