@@ -1082,49 +1082,10 @@ void(entity part, entity object) Phys_ObjectRemoveParticle =
 	remove(part);
 };
 
-const float STICK_SIMILARITY_THRESHOLD = 0.97; // raise to make less wobbly
-
-float(vector v, entity p1, entity p2) CheckStickSimilarity =
+entity(entity p1, entity p2, entity obj) Phys_ObjectAddStick =
 {
-	vector v_other = normalize(p1.relative_org - p2.relative_org);
-	if (fabs(v * v_other) > STICK_SIMILARITY_THRESHOLD) // similar direction
-		return TRUE; // this stick doesn't contribute to stability enough
-	return FALSE;
-}
-
-
-entity(entity p1, entity p2, entity obj, float force_add) Phys_ObjectAddStick =
-{
-	local vector v;
 	local entity e;
-	local float isStabilizerBar;
-
-	if (p1.netname == "frontright" || p2.netname == "frontright")
-	if (p1.netname == "frontleft"  || p2.netname == "frontleft")
-		isStabilizerBar = TRUE;
-	if (p1.netname == "backright"  || p2.netname == "backright")
-	if (p1.netname == "backleft"   || p2.netname == "backleft")
-		isStabilizerBar = TRUE;
-
-	if (!force_add && !isStabilizerBar)
-	{
-		v = normalize(p1.relative_org - p2.relative_org);
-		e = p1.physobj_next;
-		while(e)
-		{
-			if (e != p2 && CheckStickSimilarity(v, p1, e))
-				return world;
-			e = e.physobj_next;
-		}
-		e = p2.physobj_next;
-		while(e)
-		{
-			if (e != p1 && CheckStickSimilarity(v, p2, e))
-				return world;
-			e = e.physobj_next;
-		}
-	}
-
+	
 	e = spawn();
 	e.classname = "stick";
 	e.owner = obj;
@@ -1173,7 +1134,7 @@ entity(vector org, entity object) Phys_AddParticleToObject =
 	{
 		save_rel = part.relative_org;
 		part.relative_org = part.origin;
-		stick = Phys_ObjectAddStick(e, part, world, FALSE);
+		stick = Phys_ObjectAddStick(e, part, world);
 		part.relative_org = save_rel;
 		stick.owner = object;
 		end.physobj_next = stick;
@@ -1204,7 +1165,7 @@ void() Phys_SpawnSticks =
 		while (f < total_particles)
 		{
 			part2 = part2.physobj_next;
-			if (Phys_ObjectAddStick(part1, part2, physobj_spawning, FALSE))
+			if (Phys_ObjectAddStick(part1, part2, physobj_spawning))
 				total_sticks++;
 			f = f + 1;
 		}
