@@ -952,7 +952,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 
 entity(entity basepart, entity obj) Phys_SpawnStick =
 {
-	local entity e, p1, p2;
+	local entity e;
 
 	e = spawn();
 	e.classname = "stick";
@@ -965,17 +965,10 @@ entity(entity basepart, entity obj) Phys_SpawnStick =
 	if (basepart)
 	{
 		e.netname = basepart.netname;
-		e.physobj_p1 = p1 = basepart.physobj_p1.enemy;
-		e.physobj_p2 = p2 = basepart.physobj_p2.enemy;
+		e.physobj_p1 = basepart.physobj_p1.enemy;
+		e.physobj_p2 = basepart.physobj_p2.enemy;
 		e.physobj_flags = basepart.physobj_flags;
 		e.stick_preferredlength = basepart.stick_preferredlength;
-
-		if (p1.stick_preferredlength <= 0)
-			p1.stick_preferredlength = 99999999;
-		p1.stick_preferredlength = min(p1.stick_preferredlength, e.stick_preferredlength*0.5);
-		if (p2.stick_preferredlength <= 0)
-			p2.stick_preferredlength = 99999999;
-		p2.stick_preferredlength = min(p2.stick_preferredlength, e.stick_preferredlength*0.5);
 	}
 	return e;
 };
@@ -1097,13 +1090,6 @@ entity(entity p1, entity p2, entity obj) Phys_ObjectAddStick =
 	e.physobj_p1 = p1;
 	e.physobj_p2 = p2;
 	e.stick_preferredlength = vlen(p2.relative_org - p1.relative_org);
-	// the following is used by the physics to prevent sign errors
-	if (p1.stick_preferredlength <= 0)
-		p1.stick_preferredlength = 99999999;
-	p1.stick_preferredlength = min(p1.stick_preferredlength, e.stick_preferredlength*0.5);
-	if (p2.stick_preferredlength <= 0)
-		p2.stick_preferredlength = 99999999;
-	p2.stick_preferredlength = min(p2.stick_preferredlength, e.stick_preferredlength*0.5);
 	return e;
 };
 
