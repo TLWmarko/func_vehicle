@@ -14,6 +14,7 @@ entity physobj_spawning; // the current object in spawning
 .entity physobj_p1; // particle 1 of this stick (start)
 .entity physobj_p2; // particle 2 of this stick (end)
 .entity physobj_p3; // particle 3 of this stick (rotation)
+.entity physobj_p4; // particle 4 of this tetrahedron
 
 entity p_damage_thinker;
 .entity p_damage_next;
@@ -26,6 +27,9 @@ entity p_damage_thinker;
 .vector relative_org;
 .float relative_size;
 
+.float phys_volume, phys_radius;
+.vector phys_center;
+
 .string phys_particle_target;
 .string phys_hitmodel_target;
 .string phys_static_target;
@@ -34,6 +38,7 @@ entity p_damage_thinker;
 .entity physobj_sticklist; // first entity in stick list of this object
 .entity physobj_hitmodel; // the object's hitmodel
 .entity physobj_staticlist; // first entity in static list of this object
+.entity physobj_tetralist;
 
 .float physobj_flags, physobj_movetype;
 .float physobj_mass, physobj_inversemass;
