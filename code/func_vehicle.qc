@@ -660,10 +660,9 @@ This is the entity which brings all the disjointed particles, statics and hitmod
 */
 void() func_vehicle =
 {
-	if (cvar("developer") != 0){
-		precache_model("progs/debug/org.mdl");
-		precache_model("progs/debug/orgbig.mdl");
-	}
+	if (cvar("developer") != 0)
+		Debug_Precache();
+	
 	precache_model("progs/null.spr");
 
 	self.think = StartFuncVehicle;
@@ -805,17 +804,14 @@ void() func_vehicle_wheel =
 // legacy, hopefully can remove in next release
 void() func_vehicle_builtins =
 {
-	Debug_Precache();
-
 	precache_model("maps/cube16.bsp");
 	precache_model("maps/cube32.bsp");
 	precache_model("maps/round16.bsp");
 	precache_model("maps/round32.bsp");
 
-	if (cvar("developer") != 0){
-		precache_model("progs/debug/org.mdl");
-		precache_model("progs/debug/orgbig.mdl");
-	}
+	if (cvar("developer") != 0)
+		Debug_Precache();
+
 	precache_model("progs/null.spr");
 
 	entity car;
@@ -852,10 +848,9 @@ void() func_vehicle_triton =
 	precache_model("maps/round16.bsp");
 	precache_model("maps/round32.bsp");
 
-	if (cvar("developer") != 0){
-		precache_model("progs/debug/org.mdl");
-		precache_model("progs/debug/orgbig.mdl");
-	}
+	if (cvar("developer") != 0)
+		Debug_Precache();
+
 	precache_model("progs/null.spr");
 
 	precache_model("progs/test/whl.mdl");
@@ -875,17 +870,15 @@ SPAWNFLAGS
 */
 void() vehicle_hotrod =
 {
-	Debug_Precache();
 
 	precache_model("maps/cube16.bsp");
 	precache_model("maps/cube32.bsp");
 	precache_model("maps/round16.bsp");
 	precache_model("maps/round32.bsp");
 
-	if (cvar("developer") != 0){
-		precache_model("progs/debug/org.mdl");
-		precache_model("progs/debug/orgbig.mdl");
-	}
+	if (cvar("developer") != 0)
+		Debug_Precache();
+
 	precache_model("progs/null.spr");
 
 	precache_model("progs/HotRod_body.mdl");

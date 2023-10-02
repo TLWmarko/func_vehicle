@@ -1,6 +1,9 @@
 void() Debug_Precache =
 {
 	precache_model("progs/debug/line.mdl");
+	precache_model("progs/debug/point.spr");
+	precache_model("progs/debug/org.mdl");
+	precache_model("progs/debug/orgbig.mdl");
 }
 
 void(vector start, vector end, float lifetime) Debug_DrawLine =
