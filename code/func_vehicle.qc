@@ -805,6 +805,8 @@ void() func_vehicle_wheel =
 // legacy, hopefully can remove in next release
 void() func_vehicle_builtins =
 {
+	Debug_Precache();
+
 	precache_model("maps/cube16.bsp");
 	precache_model("maps/cube32.bsp");
 	precache_model("maps/round16.bsp");
@@ -873,6 +875,8 @@ SPAWNFLAGS
 */
 void() vehicle_hotrod =
 {
+	Debug_Precache();
+
 	precache_model("maps/cube16.bsp");
 	precache_model("maps/cube32.bsp");
 	precache_model("maps/round16.bsp");
@@ -901,6 +905,7 @@ void() vehicle_hotrod =
 	makevectors(self.angles);
 	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
+
 };
 // legacy, hopefully can remove in next release
 void() func_vehicle_hotrod =
