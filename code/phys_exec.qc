@@ -1324,7 +1324,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up) Phys_Init
 entity(entity obj, vector org, vector forward, vector left, vector up, vector toss, float randvel) Phys_MakeIntoPhysicsObject =
 {
 	local entity e;
-	local vector com;
+	local vector com, v;
 	local float particleCount;
 
 	physobj_spawning = obj;
@@ -1337,24 +1337,27 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 	e = obj.physobj_particlelist;
 	while(e)
 	{
-		Phys_InitParticle(e.origin, e, physobj_spawning);
+		v = org + up*e.relative_org_z + left*e.relative_org_y + forward*e.relative_org_x;
+		Phys_InitParticle(v, e, physobj_spawning);
 		setvelocity(e, toss + randomvec()*randvel);
 		com += e.relative_org * e.part_mass;
 		e = e.physobj_next;
 		particleCount++;
 	}
-	GenerateTetrahedrons(self);
-	GenerateSticksFromTetrahedrons(self);
+	GenerateTetrahedrons(obj);
+	GenerateSticksFromTetrahedrons(obj);
 	e = obj.physobj_hitmodel;
 	while(e)
 	{
-		Phys_InitHitmodel(e.origin, e, physobj_spawning);
+		v = org + up*e.relative_org_z + left*e.relative_org_y + forward*e.relative_org_x;
+		Phys_InitHitmodel(v, e, physobj_spawning);
 		e = e.physobj_next;
 	}
 	e = obj.physobj_staticlist;
 	while(e)
 	{
-		Phys_InitStatic(e.origin, e, physobj_spawning);
+		v = org + up*e.relative_org_z + left*e.relative_org_y + forward*e.relative_org_x;
+		Phys_InitStatic(v, e, physobj_spawning);
 		e = e.physobj_next;
 	}
 	if (cvar("developer") != 0) {

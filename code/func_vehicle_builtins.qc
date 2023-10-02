@@ -176,9 +176,6 @@ entity() triton =
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
 
-	GenerateTetrahedrons(obj);
-	GenerateSticksFromTetrahedrons(obj);
-
 	return obj;
 }
 
@@ -924,9 +921,6 @@ entity() hotrod =
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
 	part.th_pain = Car_Pain;
-
-	GenerateTetrahedrons(obj);
-	GenerateSticksFromTetrahedrons(obj);
 
 	return obj;
 }

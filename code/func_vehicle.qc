@@ -850,7 +850,7 @@ void() func_vehicle_builtins =
 	//car.netname = self.netname;
 	
 	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
+	car = Phys_MakeIntoPhysicsObject(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
 // legacy, hopefully can remove in next release
@@ -871,7 +871,7 @@ void() func_vehicle_triton =
 	entity car = triton();
 
 	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
+	car = Phys_MakeIntoPhysicsObject(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 };
 /*QUAKED vehicle_hotrod (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN
@@ -909,7 +909,7 @@ void() vehicle_hotrod =
 	car.spawnflags = self.spawnflags;
 	
 	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
+	car = Phys_MakeIntoPhysicsObject(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
 	Car_InitVehicle(car);
 
 };
