@@ -1368,7 +1368,8 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 	return Phys_InitPhysicsObject(physobj_spawning, org, forward, left, up);
 };
 
-// Used for creating the physics objects ingame
+/*
+// obsolete
 entity(entity obj, vector org, vector forward, vector left, vector up, vector toss, float randvel) Phys_ObjectCreate =
 {
 	local entity e, part;
@@ -1419,3 +1420,4 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 	}
 	return Phys_InitPhysicsObject(physobj_spawning, org, forward, left, up);
 };
+*/
