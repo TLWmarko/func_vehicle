@@ -6,6 +6,7 @@ entity() triton =
 	obj.netname = "triton";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
+	setorigin(obj, self.origin);
 	
 	// chassis
 	part = spawn();
@@ -175,9 +176,10 @@ entity() triton =
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
 
-	physobj_spawning = obj;
-	Phys_SpawnSticks();
-	return physobj_spawning;
+	GenerateTetrahedrons(obj);
+	GenerateSticksFromTetrahedrons(obj);
+
+	return obj;
 }
 
 entity() hotrod =
@@ -188,6 +190,7 @@ entity() hotrod =
 	obj.netname = "hotrod";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
+	setorigin(obj, self.origin);
 	
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -922,8 +925,8 @@ entity() hotrod =
 	part.relative_up = '0 0 1';
 	part.th_pain = Car_Pain;
 
-	physobj_spawning = obj;
-	Phys_SpawnSticks();
+	GenerateTetrahedrons(obj);
+	GenerateSticksFromTetrahedrons(obj);
 
-	return physobj_spawning;
+	return obj;
 }

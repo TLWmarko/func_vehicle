@@ -273,8 +273,69 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 
 const float STABILITY_MULTIPLIER = 1; // lower values make the object more soft, but less prone to randomly exploding
 
-// Run constraints on all particles
-void(float ftime) Phys_Constraints =
+vector(entity p1, entity p2, entity p3) GetGradient =
+{
+	vector p2p1 = p2.origin - p1.origin;
+	vector p3p1 = p3.origin - p1.origin;
+
+	return CrossProduct(p2p1, p3p1);
+}
+
+// Run constraints on all tetras
+void(float ftime) Phys_Constraints_Volume =
+{
+	float C, wTotal, lambda;
+	float current_volume, rest_volume;
+	entity p1, p2, p3, p4, tetra;
+	vector grad1, grad2, grad3, grad4;
+	float w1, w2, w3, w4;
+
+	tetra = self.physobj_tetralist;
+	while(tetra)
+	{
+		wTotal = 0.0;
+
+		p1 = tetra.physobj_p1;
+		p2 = tetra.physobj_p2;
+		p3 = tetra.physobj_p3;
+		p4 = tetra.physobj_p4;
+
+		w1 = p1.physobj_inversemass;
+		w2 = p2.physobj_inversemass;
+		w3 = p3.physobj_inversemass;
+		w4 = p4.physobj_inversemass;
+
+		grad1 = GetGradient(p2, p4, p3);
+		wTotal += w1 * vlensqr(grad1);
+
+		grad2 = GetGradient(p1, p3, p4);
+		wTotal += w2 * vlensqr(grad2);
+
+		grad3 = GetGradient(p1, p4, p2);
+		wTotal += w3 * vlensqr(grad3);
+
+		grad4 = GetGradient(p1, p2, p3);
+		wTotal += w4 * vlensqr(grad4);
+
+		if (wTotal == 0)
+			continue;
+
+		current_volume = GetTetraVolumeSextupled(tetra, FALSE);
+		rest_volume = tetra.phys_volume;
+		C = current_volume - rest_volume;
+		lambda = -C / wTotal;
+
+		p1.destorigin += grad1 * lambda * w1;
+		p2.destorigin += grad2 * lambda * w2;
+		p3.destorigin += grad3 * lambda * w3;
+		p4.destorigin += grad4 * lambda * w4;
+
+		tetra = tetra.physobj_next;
+	}
+};
+
+// Run constraints on all sticks
+void(float ftime) Phys_Constraints_Linear =
 {
 	local float offsetlength, diff, lendiff;
 	local vector offset;
@@ -612,7 +673,8 @@ void() Phys_ObjectThink =
 		{
 			steps--;
 			Phys_Acceleration(ftime*0.5, sv_gravity);
-			Phys_Constraints(ftime);
+			Phys_Constraints_Volume(ftime);
+			Phys_Constraints_Linear(ftime);
 			Phys_Move(ftime);
 			Phys_Acceleration(ftime*0.5, sv_gravity);
 		}
@@ -950,6 +1012,33 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 	return Phys_InitHitmodel(org, e, obj);
 };
 
+entity(entity basepart, entity obj) Phys_SpawnTetra =
+{
+	local entity e;
+
+	e = spawn();
+	e.classname = "tetra";
+	e.owner = obj;
+	if (e.owner)
+	{
+		e.physobj_next = obj.physobj_tetralist;
+		obj.physobj_tetralist = e;
+	}
+	if (basepart)
+	{
+		e.netname = basepart.netname;
+		e.phys_volume = basepart.phys_volume;
+		e.phys_radius = basepart.phys_radius;
+		e.phys_center = basepart.phys_center;
+		e.physobj_p1 = basepart.physobj_p1.enemy;
+		e.physobj_p2 = basepart.physobj_p2.enemy;
+		e.physobj_p3 = basepart.physobj_p3.enemy;
+		e.physobj_p4 = basepart.physobj_p4.enemy;
+		e.physobj_flags = basepart.physobj_flags;
+	}
+	return e;
+};
+
 entity(entity basepart, entity obj) Phys_SpawnStick =
 {
 	local entity e;
@@ -981,6 +1070,7 @@ entity(entity basepart) Phys_ObjectSpawn =
 	e.netname = basepart.netname;
 	e.physobj_mass = basepart.physobj_mass;
 	e.physobj_impactevent = basepart.physobj_impactevent;
+	setorigin(e, basepart.origin);
 	e.think = Phys_ObjectThink;
 	e.nextthink = time + 0.2; // needs more leeway than a normal think tick otherwise there be errors for some reason when spawning from map entity
 	//e.contentstransition = SUB_Null;
@@ -1252,7 +1342,8 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		e = e.physobj_next;
 		particleCount++;
 	}
-	Phys_SpawnSticks();
+	GenerateTetrahedrons(self);
+	GenerateSticksFromTetrahedrons(self);
 	e = obj.physobj_hitmodel;
 	while(e)
 	{
@@ -1292,6 +1383,12 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		com += e.relative_org * e.part_mass;
 		e = e.physobj_next;
 		particleCount++;
+	}
+	e = obj.physobj_tetralist;
+	while (e)
+	{
+		Phys_SpawnTetra(e, physobj_spawning);
+		e = e.physobj_next;
 	}
 	e = obj.physobj_sticklist;
 	while (e)
