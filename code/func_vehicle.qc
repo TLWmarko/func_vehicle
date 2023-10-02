@@ -233,7 +233,8 @@ void(entity car) Car_InitVehicle =
 			e = e.physobj_next;
 		}
 		if (!hasStabilizer){ // we better make one then
-			Phys_ObjectAddStick(car.frontright, car.frontleft, car);
+			e= Phys_ObjectAddStick(car.frontright, car.frontleft, car);
+			e.physobj_flags |= PHFLAGS_STABILIZERBAR;
 		}
 	}
 	hasStabilizer = FALSE;
@@ -251,7 +252,8 @@ void(entity car) Car_InitVehicle =
 			e = e.physobj_next;
 		}
 		if (!hasStabilizer){ // we better make one then
-			Phys_ObjectAddStick(car.backright, car.backleft, car);
+			e = Phys_ObjectAddStick(car.backright, car.backleft, car);
+			e.physobj_flags |= PHFLAGS_STABILIZERBAR;
 		}
 	}
 	e = car.physobj_staticlist;
