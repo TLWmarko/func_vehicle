@@ -313,6 +313,10 @@ void(entity obj) CleanUpOuterTetrasAndSupports =
 		*/
 		tetra = temp;
 	}
+	remove(obj.super_tetra_save.physobj_p1);
+	remove(obj.super_tetra_save.physobj_p2);
+	remove(obj.super_tetra_save.physobj_p3);
+	remove(obj.super_tetra_save.physobj_p4);
 	remove(obj.super_tetra_save);
 	e = obj.bad_tetra_start;
 	while(e){
