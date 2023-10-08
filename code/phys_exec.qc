@@ -1329,9 +1329,6 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 
 	physobj_spawning = obj;
 	obj.classname = "physics_object";
-	obj.think = Phys_ObjectThink;
-	obj.nextthink = time + 0.2; // needs more leeway than a normal think tick otherwise there be errors for some reason when spawning from map entity
-	//obj.contentstransition = SUB_Null;
 	obj.solid = SOLID_TRIGGER;
 
 	e = obj.physobj_particlelist;
@@ -1345,7 +1342,6 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		particleCount++;
 	}
 	GenerateTetrahedrons(obj);
-	GenerateSticksFromTetrahedrons(obj);
 	e = obj.physobj_hitmodel;
 	while(e)
 	{
@@ -1365,6 +1361,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up, vector to
 		e = Phys_SpawnStatic(org + up*com_z + left*com_y + forward*com_x, world, physobj_spawning);
 		setmodel(e, "progs/debug/orgbig.mdl");
 	}
+	
 	return Phys_InitPhysicsObject(physobj_spawning, org, forward, left, up);
 };
 

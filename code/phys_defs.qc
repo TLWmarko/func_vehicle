@@ -1,4 +1,4 @@
-//#define SMOOTH
+//#define QUICKSPAWN
 
 float MOVE_NORMAL = 0; // same as FALSE
 float MOVE_NOMONSTERS = 1; // same as TRUE
@@ -15,6 +15,11 @@ entity physobj_spawning; // the current object in spawning
 .entity physobj_p2; // particle 2 of this stick (end)
 .entity physobj_p3; // particle 3 of this stick (rotation)
 .entity physobj_p4; // particle 4 of this tetrahedron
+
+.entity bad_tetra_start;
+.entity volume_start;
+.entity support_tris_start;
+.entity super_tetra_save;
 
 entity p_damage_thinker;
 .entity p_damage_next;

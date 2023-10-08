@@ -233,7 +233,7 @@ void(entity car) Car_InitVehicle =
 			e = e.physobj_next;
 		}
 		if (!hasStabilizer){ // we better make one then
-			e= Phys_ObjectAddStick(car.frontright, car.frontleft, car);
+			e = Phys_ObjectAddStick(car.frontright, car.frontleft, car);
 			e.physobj_flags |= PHFLAGS_STABILIZERBAR;
 		}
 	}
@@ -679,7 +679,7 @@ void() func_vehicle =
 	precache_model("progs/null.spr");
 
 	self.think = StartFuncVehicle;
-	self.nextthink = 0.2;
+	self.nextthink = time;
 };
 /*QUAKED phys_hitmodel (1 0 0) (-8 -8 -8) (8 8 8)
 Hitmodels are brushes that move together with the physics-object and push entities around (for example monsters).
@@ -814,6 +814,13 @@ void() func_vehicle_wheel =
 	phys_wheel();
 }
 
+void() StartBuiltinVehicle =
+{
+	makevectors(self.angles);
+	entity car = Phys_MakeIntoPhysicsObject(self, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
+	Car_InitVehicle(car);
+}
+
 // legacy, hopefully can remove in next release
 void() func_vehicle_builtins =
 {
@@ -847,11 +854,11 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_turret_barrel.mdl");
 		car = hotrod();
 	}
-	//car.netname = self.netname;
 	
-	makevectors(self.angles);
-	car = Phys_MakeIntoPhysicsObject(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
-	Car_InitVehicle(car);
+	car.angles = self.angles;
+	car.think = StartBuiltinVehicle;
+	car.nextthink = time;
+	car.spawnflags = self.spawnflags;
 };
 // legacy, hopefully can remove in next release
 void() func_vehicle_triton =
@@ -870,9 +877,10 @@ void() func_vehicle_triton =
 	precache_model("progs/test/triton.mdl");
 	entity car = triton();
 
-	makevectors(self.angles);
-	car = Phys_MakeIntoPhysicsObject(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
-	Car_InitVehicle(car);
+	car.angles = self.angles;
+	car.think = StartBuiltinVehicle;
+	car.nextthink = time;
+	car.spawnflags = self.spawnflags;
 };
 /*QUAKED vehicle_hotrod (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN
 The built-in Mad Max styled hotrod. 
@@ -906,12 +914,11 @@ void() vehicle_hotrod =
 	precache_model("progs/HotRod_turret_body.mdl");
 	precache_model("progs/HotRod_turret_barrel.mdl");
 	entity car = hotrod();
-	car.spawnflags = self.spawnflags;
 	
-	makevectors(self.angles);
-	car = Phys_MakeIntoPhysicsObject(car, self.origin, v_forward, -v_right, v_up, '0 0 1', 0);
-	Car_InitVehicle(car);
-
+	car.angles = self.angles;
+	car.think = StartBuiltinVehicle;
+	car.nextthink = time;
+	car.spawnflags = self.spawnflags;
 };
 // legacy, hopefully can remove in next release
 void() func_vehicle_hotrod =
