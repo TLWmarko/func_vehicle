@@ -58,6 +58,7 @@ entity p_damage_thinker;
 .float physobj_stiction;
 .float physobj_buoyancy;
 .void(entity part, entity targ) physobj_impactevent;
+.void() physobj_extra_think;
 .float stick_preferredlength;
 .float part_mass;
 
