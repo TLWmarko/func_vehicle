@@ -1,6 +1,17 @@
 .entity frontright, frontleft, backright, backleft;
 .entity gun;
 
+.float max_forward_speed;
+.float max_reverse_speed;
+.float max_roll_speed;
+
+.float accelerate_forward;
+.float accelerate_reverse;
+.float accelerate_roll;
+
+.float max_turn;
+.float turn_speed;
+
 float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 
@@ -368,8 +379,8 @@ void(float turn) Car_Turn =
 	entity car = self.driving;
 	tleft = car.frontleft;
 	tright = car.frontright;
-	f = 125;
-	float want_yaw = clamp(turn, -35, 35);
+	f = car.turn_speed;
+	float want_yaw = clamp(turn, -car.max_turn, car.max_turn);
 	if (want_yaw < 0)
 		car.ideal_yaw = max(want_yaw, car.ideal_yaw - f*frametime);
 	else if (want_yaw > 0)
@@ -400,7 +411,7 @@ void(float turn) Car_Turn =
 	tright.relative_up = matrix_up;
 };
 
-void(float speed, float maxspeed) Car_Accelerate =
+void(float accel, float maxspeed) Car_Accelerate =
 {
 	local entity tright, tleft;
 
@@ -411,14 +422,14 @@ void(float speed, float maxspeed) Car_Accelerate =
 	float allowAccelerateRight = tright.velocity * tright.lmat_forward < maxspeed;
 	float allowAccelerateLeft = tleft.velocity * tleft.lmat_forward < maxspeed;
 	if (allowAccelerateRight && tright.flags & FL_ONGROUND){
-		tright.velocity = tright.velocity + tright.lmat_forward *speed*frametime;
+		tright.velocity = tright.velocity + tright.lmat_forward *accel*frametime;
 	}
 	if (allowAccelerateLeft && tleft.flags & FL_ONGROUND){
-		tleft.velocity = tleft.velocity + tleft.lmat_forward *speed*frametime;
+		tleft.velocity = tleft.velocity + tleft.lmat_forward *accel*frametime;
 	}
 };
 
-void(float speed, float maxspeed) Car_Roll =
+void(float accel, float maxspeed) Car_Roll =
 {
 	local entity f_right, f_left;
 	local entity b_right, b_left;
@@ -445,10 +456,10 @@ void(float speed, float maxspeed) Car_Roll =
 	float allowRollFront = (rel_fzvel) < maxspeed;
 	float allowRollBack = (rel_bzvel) < maxspeed;
 	if (allowRollFront && allowRollBack){
-		f_right.velocity = f_right.velocity + f_right.lmat_up *speed*frametime;
-		b_right.velocity = b_right.velocity + b_right.lmat_up *speed*frametime;
-		f_left.velocity = f_left.velocity - f_left.lmat_up *speed*frametime;	
-		b_left.velocity = b_left.velocity - b_left.lmat_up *speed*frametime;	
+		f_right.velocity = f_right.velocity + f_right.lmat_up *accel*frametime;
+		b_right.velocity = b_right.velocity + b_right.lmat_up *accel*frametime;
+		f_left.velocity = f_left.velocity - f_left.lmat_up *accel*frametime;	
+		b_left.velocity = b_left.velocity - b_left.lmat_up *accel*frametime;	
 	}
 }
 
@@ -466,22 +477,23 @@ void TryUpdateVehicle(){
 	}
 	if (!self.driving)
 		return;
-	self.driving.physobj_flags -= (self.driving.physobj_flags & PHFLAGS_RESTING);
+	entity car = self.driving;
+	car.physobj_flags -= (car.physobj_flags & PHFLAGS_RESTING);
 	setorigin(self, Car_SpringyOrigin());
 	makevectors(self.v_angle);
 	float forw = v_forward * self.velocity;
 	if (forw > 100){
-		Car_Accelerate(3000, 950);
+		Car_Accelerate(car.max_forward_speed, car.accelerate_forward);
 	}
 	else if (forw < -100){
-		Car_Accelerate(-2500, 800);
+		Car_Accelerate(-car.max_reverse_speed, car.accelerate_reverse);
 	}
 	float roll = v_right * self.velocity;
 	if (roll > 100){
-		Car_Roll(-2000, 350);
+		Car_Roll(-car.max_roll_speed, car.accelerate_roll);
 	}
 	else if (roll < -100){
-		Car_Roll(2000, 350);
+		Car_Roll(car.max_roll_speed, car.accelerate_roll);
 	}
 	float car_angs = self.driving.angles_y;
 	if (car_angs > 180)
@@ -623,6 +635,8 @@ This is the entity which brings all the disjointed particles, statics and hitmod
 "phys_particle_target" must be defined, the targetname of all the particles and/or wheels in this object
 "phys_static_target" the targetname of all the statics in this object
 "phys_hitmodel_target" the targetname of all the hitmodels in this object
+"physobj_mass" the mass of the entire object
+"lip" the offset above the wheels where the player resides, good default 16
 */
 void() func_vehicle =
 {

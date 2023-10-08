@@ -5106,6 +5106,15 @@
 "angle" "90"
 "phys_particle_target" "part1"
 "phys_static_target" "stat1"
+"max_forward_speed" "3000"
+"max_reverse_speed" "2500"
+"max_roll_speed" "2000"
+"accelerate_forward" "950"
+"accelerate_reverse" "800"
+"accelerate_roll" "350"
+"lip" "16"
+"max_turn" "35"
+"turn_speed" "125"
 }
 // entity 25
 {
