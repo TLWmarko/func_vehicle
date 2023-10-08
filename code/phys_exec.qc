@@ -724,15 +724,11 @@ void() Phys_ObjectThink =
 			stat.lmat_up = matrix_up;
 			// Update euler angles for viewing ingame
 			// Static objects aren't affected by physics
-#if defined(SMOOTH)
-			stat.view_ofs = self.physobj_p1.origin + self.lmat_forward*stat.relative_org_x + self.lmat_left*stat.relative_org_y + self.lmat_up*stat.relative_org_z;
-#else
 			stat.angles = vectoangles2(matrix_forward, matrix_up);
 			if (stat.physobj_flags & PHFLAGS_BSPMODEL)
 				stat.angles_x = stat.angles_x*-1;
 			stat.oldorigin = stat.origin;
 			setorigin (stat, self.physobj_p1.origin + self.lmat_forward*stat.relative_org_x + self.lmat_left*stat.relative_org_y + self.lmat_up*stat.relative_org_z);
-#endif
 			stat = stat.physobj_next;
 		}
 		// Pushing is broken somehow :(
@@ -786,14 +782,6 @@ entity(vector org, entity e, entity obj) Phys_InitStatic =
 
 	if (e.model)
 		setmodel(e, e.model);
-	else if (e.model) // assume bmodel
-		e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
-
-	//e.effects = EF_NOMODELFLAGS;
-#if defined(SMOOTH)
-	e.movetype = MOVETYPE_STEP;
-	e.flags = FL_FLY;
-#endif
 
 	e.th_die = SUB_Null;
 	e.th_pain = SUB_NullPain;
@@ -853,13 +841,9 @@ entity(vector org, entity e, entity obj) Phys_InitParticle =
 
 	if (e.model)
 		setmodel(e, e.model);
-	else if (e.model) // assume bmodel
-		e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL;
 
 	if (e.owner)
-	{
 		e.physobj_mass = e.owner.physobj_mass; // used as a shortcut in force calculations
-	}
 	e.physobj_inversemass = 1 / e.part_mass;
 	//e.effects = EF_NOMODELFLAGS;
 	e.takedamage = DAMAGE_YES;

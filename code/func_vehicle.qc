@@ -67,12 +67,7 @@ void Car_TirePlace(entity tire){
 
 	traceline(tireparticle.origin, tireparticle.origin + tireparticle.lmat_up * -tire.frags, TRUE, tire);
 	float tracelen = fabs(tireparticle.physobj_spring_length);
-#if defined(SMOOTH)
-	float f = 0.1;
-#else
-	float f = frametime;
-#endif
-	tire.frags = min(tire.frags + f*30, tracelen*trace_fraction);
+	tire.frags = min(tire.frags + frametime*30, tracelen*trace_fraction);
 	tire.oldorigin = tire.origin;
 	setorigin(tire, trace_endpos + tireparticle.lmat_up * tireparticle.relative_size);
 }
@@ -107,25 +102,8 @@ void() Car_ChassiThink =
 		hitmodel = hitmodel.physobj_next;
 	}
 
-#if defined(SMOOTH)
-	car.frags = time + 0.1;
-	self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
-	setorigin(self, self.view_ofs);
-	self.nextthink = time + 0.1;
-#else
 	self.nextthink = time;
-#endif
 };
-
-#if defined(SMOOTH)
-void() DriverThink =
-{
-	self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
-	setorigin(self, self.view_ofs);
-
-	self.nextthink = time + 0.1;
-};
-#endif
 
 void(float turn, float pitch) Gun_Turn =
 {
@@ -290,13 +268,6 @@ void(entity car) Car_InitVehicle =
 				e.modelindex = 0;
 			}
 		}
-#if defined(SMOOTH)
-		else if (e.netname == "driver")
-		{
-			e.think = DriverThink;
-			e.nextthink = time;
-		}
-#endif
 		else if (e.netname == "turretbase")
 		{
 			car.gun = e;
@@ -556,28 +527,10 @@ vector() Car_SpringyOrigin =
 	entity tfright = car.frontright.enemy;
 
 	vector org = tbleft.origin + tbright.origin + tfleft.origin + tfright.origin;
-	org = (org / 4) + car.lmat_up * 16;
-#if defined(SMOOTH)
-	vector oldorg = tbleft.oldorigin + tbright.oldorigin + tfleft.oldorigin + tfright.oldorigin;
-	oldorg = (oldorg / 4) + car.lmat_up * 16;
-	vector pos = lerpVector(oldorg, org, 1-(car.frags - time)*10);
-#else
-	vector pos = org;
-#endif
-	return pos;
-};
+	org = (org / 4) + car.lmat_up * car.lip;
 
-/*
-void() automake_triton =
-{
-	entity car = triton();
-	
-	makevectors(self.angles);
-	car = Phys_ObjectCreate(car, self.origin + '0 0 16', v_forward, v_right * -1, v_up, '0 0 1', 0);
-	Car_InitVehicle(car);
-	Car_AttachToVehicle(self, car);
+	return org;
 };
-*/
 
 void(entity wheel, entity car) AddWheelStatic =
 {
