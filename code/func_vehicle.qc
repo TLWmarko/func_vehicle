@@ -434,7 +434,7 @@ void(float turn) Car_Turn =
 	f = car.turn_speed;
 	want_yaw = clamp(turn, -car.max_turn, car.max_turn) - tleft.base_pose_y;
 	car.ideal_yaw = MoveTowardsAngle(car.ideal_yaw, want_yaw, f*frametime);
-	
+
 	// left tire
 	makevectors(tleft.base_pose);
 	matrix_forward = v_forward;
@@ -611,13 +611,16 @@ void TryUpdateVehicle(){
 	v_forward_z = 0;
 	normalize(v_forward);
 	float f = (car.velocity * v_forward > 0) * 2 - 1;
-	/*
-	makevectors(self.v_angle);
-	v_forward_z = 0;
-	normalize(v_forward);
-	f = (car.velocity * v_forward > 0) * f;
-	*/
-	Car_Turn((mod(self.driving.angles_y - self.v_angle_y + 180, 360) - 180) * f);
+
+	float turn = (mod(self.driving.angles_y - self.v_angle_y + 180, 360) - 180) * f;
+
+	if (f < 0){ // driving backwards, check if we are also aiming backwards, in which case don't flip car around
+		if (turn > 100)
+			turn -= 180;
+		if (turn < -100)
+			turn += 180;
+	}
+	Car_Turn(turn);
 	Gun_Turn(self.driving.angles_y - self.v_angle_y, mod(self.driving.angles_x - self.v_angle_x + 180, 360) - 180);
 	self.velocity = '0 0 0';
 	self.modelindex = modelindex_null;
