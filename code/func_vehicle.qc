@@ -375,9 +375,45 @@ float(float v) anglemodfast =
 	return v - floor(v/360) * 360;
 }
 
+float(float f) sign =
+{
+	return (0 < f) - (f < 0);
+}
+
+float(float current, float target, float maxDelta) MoveTowards =
+{
+	if (fabs(target - current) <= maxDelta)
+    {
+        return target;
+    }
+    return current + sign(target - current) * maxDelta;
+}
+
+void(entity tire, float doMatrix) Spin_A_Tire =
+{
+	entity vistire = tire.enemy;
+	if (tire.flags & FL_ONGROUND){
+		vistire.yaw_speed = (tire.velocity * tire.lmat_forward) / (PI * tire.relative_size * 0.5);
+	}
+	else {
+		vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 5 * frametime);
+	}
+	vistire.ideal_yaw = anglemodfast(vistire.ideal_yaw - vistire.yaw_speed);
+	if (doMatrix){
+		makevectors(tire.base_pose);
+		matrix_forward = v_forward;
+		matrix_left = -v_right;
+		matrix_up = v_up;
+	}
+	Matrix_RotateByAxisAngle(matrix_left, vistire.ideal_yaw);
+	vistire.relative_forward = matrix_forward;
+	vistire.relative_left = matrix_left;
+	vistire.relative_up = matrix_up;
+}
+
 void(float turn) Car_Turn =
 {
-	local float f, rotspeed;
+	local float f;
 	local entity tright, tleft;
 
 	if (!self.driving)
@@ -408,12 +444,7 @@ void(float turn) Car_Turn =
 	tleft.relative_left = matrix_left;
 	tleft.relative_up = matrix_up;
 
-	rotspeed = (tleft.velocity * tleft.lmat_forward) / (PI * tleft.relative_size * 0.5);
-	tleft.enemy.ideal_yaw = anglemodfast(tleft.enemy.ideal_yaw - rotspeed);
-	Matrix_RotateByAxisAngle(matrix_left, tleft.enemy.ideal_yaw);
-	tleft.enemy.relative_forward = matrix_forward;
-	tleft.enemy.relative_left = matrix_left;
-	tleft.enemy.relative_up = matrix_up;
+	Spin_A_Tire(tleft, FALSE);
 
 	// right tire
 	makevectors(tright.base_pose);
@@ -425,17 +456,36 @@ void(float turn) Car_Turn =
 	tright.relative_left = matrix_left;
 	tright.relative_up = matrix_up;
 
-	rotspeed = (tright.velocity * tright.lmat_forward) / (PI * tright.relative_size * 0.5);
-	tright.enemy.ideal_yaw = anglemodfast(tright.enemy.ideal_yaw - rotspeed);
-	Matrix_RotateByAxisAngle(matrix_left, tright.enemy.ideal_yaw);
-	tright.enemy.relative_forward = matrix_forward;
-	tright.enemy.relative_left = matrix_left;
-	tright.enemy.relative_up = matrix_up;
+	Spin_A_Tire(tright, FALSE);
 };
+
+void(entity tire, float frame_acc) Accelerate_A_Tire =
+{
+	entity vistire = tire.enemy;
+	if (tire.flags & FL_ONGROUND){
+		vistire.yaw_speed = (tire.velocity * tire.lmat_forward) / (PI * tire.relative_size * 0.5);
+	}
+	else {
+		vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 10 * frametime);
+	}
+	if (frame_acc < 0)
+		vistire.yaw_speed = min(vistire.yaw_speed, frame_acc * 0.25);
+	else if (frame_acc > 0)
+		vistire.yaw_speed = max(vistire.yaw_speed, frame_acc * 0.25);
+	vistire.ideal_yaw = anglemodfast(vistire.ideal_yaw - vistire.yaw_speed);
+	makevectors(tire.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = -v_right;
+	matrix_up = v_up;
+	Matrix_RotateByAxisAngle(matrix_left, vistire.ideal_yaw);
+	vistire.relative_forward = matrix_forward;
+	vistire.relative_left = matrix_left;
+	vistire.relative_up = matrix_up;
+}
 
 void(float accel, float maxspeed) Car_Accelerate =
 {
-	float rotspeed, frame_acc;
+	float frame_acc;
 	local entity tright, tleft;
 
 	if (!self.driving)
@@ -456,61 +506,19 @@ void(float accel, float maxspeed) Car_Accelerate =
 		}
 	}
 
-	rotspeed = (tright.velocity * tright.lmat_forward) / (PI * tright.relative_size * 0.5);
-	if (frame_acc < 0)
-		rotspeed = min(rotspeed, frame_acc * 0.25);
-	else if (frame_acc > 0)
-		rotspeed = max(rotspeed, frame_acc * 0.25);
-	tright.enemy.ideal_yaw = anglemodfast(tright.enemy.ideal_yaw - rotspeed);
-	makevectors(tright.base_pose);
-	matrix_forward = v_forward;
-	matrix_left = -v_right;
-	matrix_up = v_up;
-	Matrix_RotateByAxisAngle(matrix_left, tright.enemy.ideal_yaw);
-	tright.enemy.relative_forward = matrix_forward;
-	tright.enemy.relative_left = matrix_left;
-	tright.enemy.relative_up = matrix_up;
-
-	rotspeed = (tleft.velocity * tleft.lmat_forward) / (PI * tleft.relative_size * 0.5);
-	if (frame_acc < 0)
-		rotspeed = min(rotspeed, frame_acc * 0.25);
-	else if (frame_acc > 0)
-		rotspeed = max(rotspeed, frame_acc * 0.25);
-	tleft.enemy.ideal_yaw = anglemodfast(tleft.enemy.ideal_yaw - rotspeed);
-	makevectors(tleft.base_pose);
-	matrix_forward = v_forward;
-	matrix_left = -v_right;
-	matrix_up = v_up;
-	Matrix_RotateByAxisAngle(matrix_left, tleft.enemy.ideal_yaw);
-	tleft.enemy.relative_forward = matrix_forward;
-	tleft.enemy.relative_left = matrix_left;
-	tleft.enemy.relative_up = matrix_up;
+	Accelerate_A_Tire(tright, frame_acc);
+	Accelerate_A_Tire(tleft, frame_acc);
 };
-
-void(entity tire) Spin_A_Tire =
-{
-	entity vistire = tire.enemy;
-	float rotspeed = (tire.velocity * tire.lmat_forward) / (PI * tire.relative_size * 0.5);
-	vistire.ideal_yaw = anglemodfast(vistire.ideal_yaw - rotspeed);
-	makevectors(tire.base_pose);
-	matrix_forward = v_forward;
-	matrix_left = -v_right;
-	matrix_up = v_up;
-	Matrix_RotateByAxisAngle(matrix_left, vistire.ideal_yaw);
-	vistire.relative_forward = matrix_forward;
-	vistire.relative_left = matrix_left;
-	vistire.relative_up = matrix_up;
-}
 
 void() Spin_Tires =
 {
 	if (self.driving)
 		return;
 
-	Spin_A_Tire(self.frontleft);
-	Spin_A_Tire(self.frontright);
-	Spin_A_Tire(self.backleft);
-	Spin_A_Tire(self.backright);
+	Spin_A_Tire(self.frontleft, TRUE);
+	Spin_A_Tire(self.frontright, TRUE);
+	Spin_A_Tire(self.backleft, TRUE);
+	Spin_A_Tire(self.backright, TRUE);
 };
 
 void(float accel, float maxspeed) Car_Roll =
