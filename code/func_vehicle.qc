@@ -23,25 +23,6 @@ float() crandom;
 void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
 void(vector org, vector vel, float damage) SpawnBlood;
 
-float(float v) anglemodfast =
-{
-	return v - floor(v/360) * 360;
-}
-
-float(float f) sign =
-{
-	return (0 < f) - (f < 0);
-}
-
-float(float current, float target, float maxDelta) MoveTowards =
-{
-	if (fabs(target - current) <= maxDelta)
-    {
-        return target;
-    }
-    return current + sign(target - current) * maxDelta;
-}
-
 void PushAndDamageThink(){
 	entity e = self.p_damage_next;
 	while(e){
@@ -154,18 +135,8 @@ void(float turn, float pitch) Gun_Turn =
 		return;
 	entity body = swivel.gun;
 	entity barrel = body.gun;
-	float want_yaw = turn;
-	//float want_yaw = clamp(turn, -35, 35);
-	if (want_yaw < 0)
-		swivel.ideal_yaw = max(want_yaw, swivel.ideal_yaw - f*frametime);
-	else if (want_yaw > 0)
-		swivel.ideal_yaw = min(want_yaw, swivel.ideal_yaw + f*frametime);
-	else{
-		if (swivel.ideal_yaw > 0)
-			swivel.ideal_yaw = max(0, swivel.ideal_yaw - f*2*frametime);
-		else
-			swivel.ideal_yaw = min(0, swivel.ideal_yaw + f*2*frametime);
-	}
+	float want_yaw = turn - swivel.base_pose_y;
+	swivel.ideal_yaw = MoveTowardsAngle(swivel.ideal_yaw, want_yaw, f*frametime);
 	makevectors(swivel.base_pose);
 	matrix_forward = v_forward;
 	matrix_left = -v_right;
@@ -175,18 +146,8 @@ void(float turn, float pitch) Gun_Turn =
 	swivel.relative_left = matrix_left;
 	swivel.relative_up = matrix_up;
 
-	want_yaw = clamp(pitch, -25, 90);
-	if (want_yaw < 0)
-		body.ideal_yaw = max(want_yaw, body.ideal_yaw - f*frametime);
-	else if (want_yaw > 0)
-		body.ideal_yaw = min(want_yaw, body.ideal_yaw + f*frametime);
-	else{
-		if (body.ideal_yaw > 0)
-			body.ideal_yaw = max(0, body.ideal_yaw - f*2*frametime);
-		else
-			body.ideal_yaw = min(0, body.ideal_yaw + f*2*frametime);
-	}
-
+	want_yaw = clamp(pitch, -25, 90) - body.base_pose_x;
+	body.ideal_yaw = MoveTowardsAngle(body.ideal_yaw, want_yaw, f*frametime);
 	Matrix_RotateByAxisAngle(matrix_left, body.ideal_yaw);
 	body.relative_forward = matrix_forward;
 	body.relative_left = matrix_left;
@@ -446,7 +407,7 @@ void(entity tire, float doMatrix) Spin_A_Tire =
 	else {
 		vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 5 * frametime);
 	}
-	vistire.ideal_yaw = anglemodfast(vistire.ideal_yaw - vistire.yaw_speed);
+	vistire.ideal_yaw = mod(vistire.ideal_yaw - vistire.yaw_speed, 360);
 	if (doMatrix){
 		makevectors(tire.base_pose);
 		matrix_forward = v_forward;
@@ -461,7 +422,7 @@ void(entity tire, float doMatrix) Spin_A_Tire =
 
 void(float turn) Car_Turn =
 {
-	local float f;
+	local float f, want_yaw;
 	local entity tright, tleft;
 
 	if (!self.driving)
@@ -471,17 +432,9 @@ void(float turn) Car_Turn =
 	tleft = car.frontleft;
 	tright = car.frontright;
 	f = car.turn_speed;
-	float want_yaw = clamp(turn, -car.max_turn, car.max_turn);
-	if (want_yaw < 0)
-		car.ideal_yaw = max(want_yaw, car.ideal_yaw - f*frametime);
-	else if (want_yaw > 0)
-		car.ideal_yaw = min(want_yaw, car.ideal_yaw + f*frametime);
-	else{
-		if (car.ideal_yaw > 0)
-			car.ideal_yaw = max(0, car.ideal_yaw - f*2*frametime);
-		else
-			car.ideal_yaw = min(0, car.ideal_yaw + f*2*frametime);
-	}
+	want_yaw = clamp(turn, -car.max_turn, car.max_turn) - tleft.base_pose_y;
+	car.ideal_yaw = MoveTowardsAngle(car.ideal_yaw, want_yaw, f*frametime);
+	
 	// left tire
 	makevectors(tleft.base_pose);
 	matrix_forward = v_forward;
@@ -520,7 +473,7 @@ void(entity tire, float frame_acc) Accelerate_A_Tire =
 		vistire.yaw_speed = min(vistire.yaw_speed, frame_acc * 0.25);
 	else if (frame_acc > 0)
 		vistire.yaw_speed = max(vistire.yaw_speed, frame_acc * 0.25);
-	vistire.ideal_yaw = anglemodfast(vistire.ideal_yaw - vistire.yaw_speed);
+	vistire.ideal_yaw = mod(vistire.ideal_yaw - vistire.yaw_speed, 360);
 	makevectors(tire.base_pose);
 	matrix_forward = v_forward;
 	matrix_left = -v_right;
@@ -654,22 +607,18 @@ void TryUpdateVehicle(){
 		if (move < -180)
 			move = move + 360;
 	}
-	Car_Turn(move);
-	car_angs = self.driving.angles_x;
-	if (car_angs > 180)
-		car_angs -= 360;
-	float pitch = car_angs - self.v_angle_x;
-	if (car_angs > self.v_angle_x)
-	{
-		if (pitch > 180)
-			pitch = pitch - 360;
-	}
-	else
-	{
-		if (pitch < -180)
-			pitch = pitch + 360;
-	}
-	Gun_Turn(move, pitch);
+	makevectors(car.angles);
+	v_forward_z = 0;
+	normalize(v_forward);
+	float f = (car.velocity * v_forward > 0) * 2 - 1;
+	/*
+	makevectors(self.v_angle);
+	v_forward_z = 0;
+	normalize(v_forward);
+	f = (car.velocity * v_forward > 0) * f;
+	*/
+	Car_Turn((mod(self.driving.angles_y - self.v_angle_y + 180, 360) - 180) * f);
+	Gun_Turn(self.driving.angles_y - self.v_angle_y, mod(self.driving.angles_x - self.v_angle_x + 180, 360) - 180);
 	self.velocity = '0 0 0';
 	self.modelindex = modelindex_null;
 	self.frame = 0;
