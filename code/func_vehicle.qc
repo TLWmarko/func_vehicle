@@ -19,6 +19,28 @@ entity() hotrod;
 entity() triton;
 
 void() Spin_Tires;
+float() crandom;
+void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
+void(vector org, vector vel, float damage) SpawnBlood;
+
+float(float v) anglemodfast =
+{
+	return v - floor(v/360) * 360;
+}
+
+float(float f) sign =
+{
+	return (0 < f) - (f < 0);
+}
+
+float(float current, float target, float maxDelta) MoveTowards =
+{
+	if (fabs(target - current) <= maxDelta)
+    {
+        return target;
+    }
+    return current + sign(target - current) * maxDelta;
+}
 
 void PushAndDamageThink(){
 	entity e = self.p_damage_next;
@@ -170,7 +192,52 @@ void(float turn, float pitch) Gun_Turn =
 	body.relative_left = matrix_left;
 	body.relative_up = matrix_up;
 
-	barrel.ideal_yaw += -1000*frametime;
+	if (self.button0){
+		barrel.yaw_speed = -1500*frametime;
+		if (car.attack_finished <= time){
+			car.attack_finished = time + 0.06;
+
+			vector ang = body.angles;
+			ang_x = -ang_x;
+			makevectors(ang);
+
+			sound (barrel, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
+
+			vector src = body.origin + v_forward*10;
+
+			vector spread = [0,0,0];
+
+			vector direction = v_forward + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+
+			traceline (src, src + direction*2048, FALSE, self);
+			if (trace_fraction != 1.0){
+				vector vel = normalize(direction + v_up*crandom() + v_right*crandom());
+				vel = vel + 2*trace_plane_normal;
+				vel = vel * 200;
+
+				vector org = trace_endpos - direction*4;
+
+				if (trace_ent.takedamage)
+				{
+					SpawnBlood (org, vel*0.2, 10);
+					T_Damage (trace_ent, self, self, 10);
+				}
+				else
+				{
+					WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+					WriteByte (MSG_BROADCAST, TE_GUNSHOT);
+					WriteCoord (MSG_BROADCAST, org_x);
+					WriteCoord (MSG_BROADCAST, org_y);
+					WriteCoord (MSG_BROADCAST, org_z);
+				}
+			}
+
+		}
+	}
+	else {
+		barrel.yaw_speed = MoveTowards(barrel.yaw_speed, 0, 10 * frametime);
+	}
+	barrel.ideal_yaw += barrel.yaw_speed;
 	Matrix_RotateByAxisAngle(matrix_forward, barrel.ideal_yaw);
 	barrel.relative_forward = matrix_forward;
 	barrel.relative_left = matrix_left;
@@ -370,25 +437,6 @@ void(entity attacker, float damage) Car_Pain = {
 	T_Damage(self.realowner.driving, attacker, attacker, damage * 0.5); // driving provides protection
 };
 
-float(float v) anglemodfast =
-{
-	return v - floor(v/360) * 360;
-}
-
-float(float f) sign =
-{
-	return (0 < f) - (f < 0);
-}
-
-float(float current, float target, float maxDelta) MoveTowards =
-{
-	if (fabs(target - current) <= maxDelta)
-    {
-        return target;
-    }
-    return current + sign(target - current) * maxDelta;
-}
-
 void(entity tire, float doMatrix) Spin_A_Tire =
 {
 	entity vistire = tire.enemy;
@@ -569,6 +617,7 @@ void TryUpdateVehicle(){
 	}
 	if (!self.driving)
 		return;
+	self.attack_finished = time + 10; // don't allow shooting besides the gun on the car
 	entity car = self.driving;
 	car.physobj_flags -= (car.physobj_flags & PHFLAGS_RESTING);
 	setorigin(self, Car_SpringyOrigin());
