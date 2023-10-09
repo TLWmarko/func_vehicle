@@ -205,11 +205,11 @@ void(float turn, float pitch) Gun_Turn =
 
 			vector src = body.origin + v_forward*10;
 
-			vector spread = [0,0,0];
+			vector spread = [0.01,0.01,0];
 
 			vector direction = v_forward + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
-			traceline (src, src + direction*2048, FALSE, self);
+			traceline (src, src + direction*4096, FALSE, self);
 			if (trace_fraction != 1.0){
 				vector vel = normalize(direction + v_up*crandom() + v_right*crandom());
 				vel = vel + 2*trace_plane_normal;
