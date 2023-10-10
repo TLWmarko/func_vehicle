@@ -915,7 +915,7 @@ void() func_vehicle_builtins =
 	car.angles = self.angles;
 	car.think = StartBuiltinVehicle;
 	car.nextthink = time;
-	car.spawnflags = self.spawnflags | VEHICLE_PERMANENT_GUN;
+	car.spawnflags = self.spawnflags;
 };
 // legacy, hopefully can remove in next release
 void() func_vehicle_triton =

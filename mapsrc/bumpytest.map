@@ -3977,6 +3977,7 @@
 "origin" "208 0 184"
 "angle" "90"
 "netname" "hotrod"
+"spawnflags" "2"
 }
 // entity 4
 {
