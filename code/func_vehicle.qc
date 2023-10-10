@@ -578,7 +578,6 @@ void TryUpdateVehicle(){
 	}
 	if (!self.driving)
 		return;
-	self.attack_finished = time + 10; // don't allow shooting besides the gun on the car
 	entity car = self.driving;
 	car.physobj_flags -= (car.physobj_flags & PHFLAGS_RESTING);
 	setorigin(self, Car_SpringyOrigin());
@@ -600,20 +599,6 @@ void TryUpdateVehicle(){
 	}
 	else if (roll < -100){
 		Car_Roll(car.max_roll_speed, car.accelerate_roll);
-	}
-	float car_angs = self.driving.angles_y;
-	if (car_angs > 180)
-		car_angs -= 360;
-	float move = car_angs - self.v_angle_y;
-	if (car_angs > self.v_angle_y)
-	{
-		if (move > 180)
-			move = move - 360;
-	}
-	else
-	{
-		if (move < -180)
-			move = move + 360;
 	}
 	makevectors(car.angles);
 	v_forward_z = 0;
