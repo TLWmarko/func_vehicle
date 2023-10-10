@@ -1,4 +1,45 @@
 
+void(entity obj, vector org, vector rot, float keep_velocity) TeleportPhysObject =
+{
+	local entity e;
+	local vector v, forward, left, up;
+
+	makevectors(rot);
+	forward = v_forward;
+	left = -v_right;
+	up = v_up;
+
+	obj.physobj_flags -= (obj.physobj_flags & PHFLAGS_RESTING);
+
+	e = obj.physobj_particlelist;
+	while(e)
+	{
+		v = org + up*e.relative_org_z + left*e.relative_org_y + forward*e.relative_org_x;
+		e.physobj_flags -= (e.physobj_flags & PHFLAGS_RESTING);
+
+		setorigin(e, v);
+		e.destorigin = e.pushorigin = e.oldorigin = e.origin;
+		//if (!keep_velocity) // FIXME: need to figure out how to make this relative to orientation
+			setvelocity(e, 0);
+
+		e = e.physobj_next;
+	}
+}
+
+// teleport testing stuff
+/*
+void() lethink =
+{
+	entity car = find(world, classname, "physics_object");
+	TeleportPhysObject(car, self.origin, self.angles, TRUE);
+}
+
+void() physobj_teleporter =
+{
+	self.think = lethink;
+	self.nextthink = time + 5;
+}
+*/
 void(entity instigator, entity targ) DoNothing ={}
 
 void() StartPhysObject =
