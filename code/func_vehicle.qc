@@ -1,5 +1,5 @@
 .entity frontright, frontleft, backright, backleft;
-.entity gun;
+.entity gun, driver;
 
 .float max_forward_speed;
 .float max_reverse_speed;
@@ -307,6 +307,12 @@ void(entity car) Car_InitVehicle =
 				e.modelindex = 0;
 			}
 		}
+		else if (e.netname == "driver")
+		{
+			car.driver = e;
+			e.mdl = e.model;
+			e.modelindex = 0;
+		}
 		else if (e.netname == "turretbase")
 		{
 			car.gun = e;
@@ -360,6 +366,7 @@ void(entity ply, entity car) Car_AttachToVehicle =
 							TryPlacePlayer(FindStaticOfName("frontexit", car));
 		self = oself;
 		car.driving = world;
+		car.driver.modelindex = 0;
 	}
 	else {
 		//ply.view_ofs = '0 0 16';
@@ -372,6 +379,7 @@ void(entity ply, entity car) Car_AttachToVehicle =
 		stuffcmd(ply, "crosshair 0\n");
 		setorigin(ply, car.origin);
 		car.driving = ply;
+		setmodel(car.driver, car.driver.mdl);
 	}
 };
 
