@@ -205,7 +205,7 @@ void(entity targ) Phys_CheckStatus =
 void(float ftime, float sv_gravity) Phys_Acceleration =
 {
 	local float p;
-	local vector spring, v;
+	local vector spring;//, v;
 	local entity part, hitmodel;
 
 	const float ANTIROLL_MULT = 1.25;
@@ -227,20 +227,32 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 			part.velocity_z = part.velocity_z + sv_gravity*part.physobj_buoyancy*ftime; // Buoyancy
 		else
 			part.velocity_z = part.velocity_z - sv_gravity*ftime; // Gravity
+		
 		if (part.physobj_spring_length)
 		{
 			if (part.flags & FL_ONGROUND && part.physobj_flags & PHFLAGS_SPRING_TOUCH)
 			{
-				spring = -part.lmat_up;
-				p = (1-part.physobj_floor_frac);
-				part.frags = lerp(sv_gravity*part.physobj_spring_force_x, sv_gravity*part.physobj_spring_force_y, p*p) * part.physobj_spring_mult;
-				v = spring*part.frags*ftime;
-				part.velocity = part.velocity - v;
-				// Marko 2021: I have no idea what the point of this is, or why it says FIXME, but it stays since it works.
-				// It appears to simply undo some spring force, making springs a bit slower, but that should be handled by dampeners already.
-				// Removing it makes springs bouncier, nothing really breaks
-				//FIXME
-				part.velocity = part.velocity + spring*part.physobj_floor_frac*100*ftime;
+				// EXPERIMENTS
+				//float offsetDistance = part.physobj_spring_length;
+				//float currentDistance = part.physobj_spring_length * p;
+				//float f = fabs(currentDistance-offsetDistance)*0.4;
+				//spring = springdir * max(0, (sf.y * p * ftime - damping * ftime));
+				//spring = springdir*max(0,fabs(currentDistance-offsetDistance)*700*ftime-damping*ftime);
+				//vector dampingForce = (normalize(part.velocity) * springdir) * springdir * damping;
+
+				float damping = part.physobj_spring_force_z;
+				vector springdir = part.lmat_up;
+				p = part.physobj_floor_frac;
+
+				float f = part.physobj_spring_force.y * (1-p);
+
+				float dampingForce = (normalize(part.velocity) * springdir) * damping;
+				spring = sv_gravity * springdir * max(0, (f - dampingForce));
+
+				part.velocity += spring*ftime;
+
+				// basically the old damping
+				//part.velocity -= part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*damping*4*ftime;
 			}
 			else
 			{
@@ -249,7 +261,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		}
 		// Build future positions for particles
 		part.destorigin = part.origin + part.velocity * ftime * 2;
-		Particle_Friction(part, ftime * 2);
+		Particle_Friction(part, ftime);
 		part = part.physobj_next;
 	}
 
@@ -401,30 +413,91 @@ void(entity part) Particle_CheckOnGround =
 
 void(entity part, float ftime) Particle_Friction =
 {
-	local float vel, st, dot;
+	local float speed, st, dot;
+	vector dir, veldir;
 
 	if (part.flags & FL_ONGROUND)
 	{
+		speed = vlen(part.velocity);
 		// Stiction
 		if (part.physobj_stiction > 0)
 		{
-			vel = vlen(part.velocity);
-			if (vel <= part.physobj_stiction) // stiction occurs when moving slow enough
+			if (speed <= part.physobj_stiction) // stiction occurs when moving slow enough
 			{
-				st = vel/part.physobj_stiction;
-				//part.velocity = part.velocity*st*ftime;
-				part.velocity = part.velocity*st;
+				st = speed/part.physobj_stiction;
+				//part.velocity *= st*scaledftime;
+				part.velocity *= st;//*ftime;
 			}
 		}
 		// Directional ground friction
-		dot = part.physobj_floor_plane_normal*normalize(part.velocity)*-1;
-		if (part.physobj_friction_ground_x)
-			part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_forward)*part.physobj_friction_ground_x*2*ftime;//(1+dot)*ftime;
-		if (part.physobj_friction_ground_y)
-			part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_left)*part.physobj_friction_ground_y*2*ftime;//(1+dot)*ftime;
-		if (part.physobj_friction_ground_z)
-			part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*part.physobj_friction_ground_z*2*ftime;//(1+dot)*ftime;
-		//print(ftos(vlen(part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*part.physobj_friction_ground_z*(1+dot)*ftime)), "\n");
+		vector normal = part.physobj_floor_plane_normal;
+
+		veldir = normalize(part.velocity);
+		if (part.physobj_friction_ground_x){
+			vector forwardVel = part.lmat_forward * (part.velocity * part.lmat_forward);
+			dir = normalize(forwardVel);
+			dot = 1-fabs(dir * normal);
+			part.velocity -= part.lmat_forward*speed*(veldir*part.lmat_forward)*part.physobj_friction_ground_x*4*ftime*dot;
+		}
+		if (part.physobj_friction_ground_y){
+			vector sideVel = part.lmat_left * (part.velocity * part.lmat_left);
+			dir = normalize(sideVel);
+			dot = 1-fabs(dir * normal);
+			part.velocity -= part.lmat_left*speed*(veldir*part.lmat_left)*part.physobj_friction_ground_y*4*ftime*dot;
+		}
+		if (part.physobj_friction_ground_z){
+			vector upVel = part.lmat_up * (part.velocity * part.lmat_up);
+			dir = normalize(upVel);
+			dot = 1-fabs(dir * normal);
+			part.velocity -= part.lmat_up*speed*(veldir*part.lmat_up)*part.physobj_friction_ground_z*4*ftime*dot;
+		}
+		
+		/*
+		vector normal = part.physobj_floor_plane_normal;
+		vector forwardVel = part.lmat_forward * (part.velocity * part.lmat_forward);
+		vector sideVel = part.lmat_left * (part.velocity * part.lmat_left);
+		vector upVel = part.lmat_up * (part.velocity * part.lmat_up);
+		
+		//vector tangent = normalize(forwardVel - (forwardVel * normal) * normal);
+		float scaledftime = ftime * 275;
+
+		// forward friction
+		speed = vlen(forwardVel);
+		dir = normalize(forwardVel);
+		dot = 1-fabs(dir * normal);
+		speed = max(0, speed - part.physobj_friction_ground_x * 5 * scaledftime * dot);
+		forwardVel = dir * speed;
+		
+		// sideways friction
+		speed = vlen(sideVel);
+		dir = normalize(sideVel);
+		dot = 1-fabs(dir * normal);
+
+		// increase sideways friction based on side speed
+
+		// EXPERIMENT
+		//float dot2 = dir * tangent;
+		//float det = normal * CrossProduct(dir, tangent);
+		//float ang = atan2(det, dot2);
+		//dprint(ftos(ang));
+		//dprint("\n");
+		//float sidedot = 1;//remap(ang, );
+		//float fricc = part.physobj_friction_ground_y * 4 * sidedot;
+
+		//EXPERIMENT 2
+		float fricc = part.physobj_friction_ground_y * 2 + speed * 0.045;
+		speed = max(0, speed - fricc * scaledftime * dot);
+		sideVel = dir * speed;
+
+		// up friction
+		speed = vlen(upVel);
+		dir = normalize(upVel);
+		dot = 1-fabs(dir * normal);
+		speed = max(0, speed - part.physobj_friction_ground_z * 5 * scaledftime * dot);
+		upVel = dir * speed;
+		
+		part.velocity = forwardVel + sideVel + upVel;
+		*/
 	}
 	traceline(part.origin, part.origin, TRUE, part);
 	//tracebox(part.origin, part.mins, part.maxs, part.origin, TRUE, part);
@@ -460,7 +533,6 @@ void(float ftime) Phys_Move =
 {
 	local float bump, it;
 	local float t, f, inverse_frametime;
-	local float dot;
 	local float stuck;
 	local vector test_org;
 	local entity part, killme, hitmodel;
@@ -540,12 +612,6 @@ void(float ftime) Phys_Move =
 			trace_plane_normal = save_normal;
 			trace_fraction = save_fraction;
 			t = t*(1-trace_fraction);
-			dot = trace_plane_normal*normalize(part.velocity)*-1;
-			/*if (trace_fraction == 1)
-			if (part.flags & FL_ONGROUND && part.physobj_flags & PHFLAGS_SPRING_TOUCH)
-			{
-				
-			}*/
 			if (trace_fraction < 1)
 			{
 				// Check for stair steps
