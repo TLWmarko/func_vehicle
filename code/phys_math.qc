@@ -20,3 +20,12 @@ float(float current, float target, float maxDelta) MoveTowardsAngle =
 	target = current + deltaAngle;
 	return MoveTowards(current, target, maxDelta);
 }
+
+float invlerp( float a, float b, float v ){
+	return (v-a)/(b-a);
+}
+
+float remap(float v, float ilow, float ihigh, float olow, float ohigh){
+	float t = invlerp(ilow, ihigh, v);
+	return lerp(olow, ohigh, t );
+}

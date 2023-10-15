@@ -18,15 +18,6 @@ vector(vector c_maxs, vector c_mins, vector c_org) Clamp =
 	return ret_vec;
 };
 
-float invlerp( float a, float b, float v ){
-	return (v-a)/(b-a);
-}
-
-float remap(float v, float ilow, float ihigh, float olow, float ohigh){
-	float t = invlerp(ilow, ihigh, v);
-	return lerp(olow, ohigh, t );
-}
-
 void(entity targ, vector vel) setvelocity =
 {
 	targ.physobj_flags = targ.physobj_flags | PHFLAGS_FORCE;
