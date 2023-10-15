@@ -246,7 +246,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 
 				float f = part.physobj_spring_force.y * (1-p);
 
-				float dampingForce = (normalize(part.velocity) * springdir) * damping;
+				float dampingForce = fabs(normalize(part.velocity) * springdir) * damping;
 				spring = sv_gravity * springdir * max(0, (f - dampingForce));
 
 				part.velocity += spring*ftime;
