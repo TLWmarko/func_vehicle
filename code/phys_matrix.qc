@@ -187,17 +187,17 @@ vector vectoangles2 (vector forward, vector up) {
 	if (forward.x == 0 && forward.y == 0) {	//either vertically up or down
 		if (forward.z > 0) {
 			result.x = -90;
-			result.y = atan2(-up.y, -up.x);
+			result.y = atan2_smooth(-up.y, -up.x);
 		}
 		else {
 			result.x = 90;
-			result.y = atan2(up.y, up.x);
+			result.y = atan2_smooth(up.y, up.x);
 		}
 		result.z = 0;
 	}
 	else {
-		result.x = -atan2(forward.z, sqrt(DotProduct2(forward, forward)));
-		result.y = atan2(forward.y, forward.x);
+		result.x = -atan2_smooth(forward.z, sqrt(DotProduct2(forward, forward)));
+		result.y = atan2_smooth(forward.y, forward.x);
 
 		vector sincos_resultx = SinCos(result.x);
 		vector sincos_resulty = SinCos(result.y);
@@ -210,7 +210,7 @@ vector vectoangles2 (vector forward, vector up) {
 		tup.x = sp*cy;
 		tup.y = sp*sy;
 		tup.z = cp;
-		result.z = -atan2(up * tleft, up * tup);
+		result.z = -atan2_smooth(up * tleft, up * tup);
 	}
 	result.x = -result.x;
 	return result;
