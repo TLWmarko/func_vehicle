@@ -6,6 +6,8 @@
 "classname" "worldspawn"
 "wad" "C:/Quakestuff/QuakeResources/Prototype/prototype_1_2.wad"
 "_tb_mod" "func_vehicle"
+"_bounce" "1"
+"_minlight" "10"
 // brush 0
 {
 ( -1472 -1152 -16 ) ( -1472 -1151 -16 ) ( -1472 -1152 -15 ) 128_grey_2 [ 0 -1 0 0 ] [ 0 0 -1 0 ] 0 1 1
