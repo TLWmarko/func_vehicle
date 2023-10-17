@@ -397,11 +397,9 @@ void(entity part) Particle_CheckOnGround =
 		traceline(part.origin, part.origin + '0 0 -1', FALSE, part);
 	}
 	// We're touching the ground
-	if (trace_fraction < 1 && trace_plane_normal_z > 0.7)
+	if (trace_fraction < 1)
 	{
 		part.flags = part.flags | FL_ONGROUND;
-		// FIXME: this almost works, and it'd be awesome to have
-		//part.physobj_floor_plane = trace_plane_normal*(trace_plane_normal*normalize(trace_endpos))*vlen(trace_endpos);
 		part.physobj_floor_plane_normal = trace_plane_normal;
 		part.physobj_floor_frac = trace_fraction;
 	}
