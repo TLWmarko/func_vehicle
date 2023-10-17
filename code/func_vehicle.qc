@@ -366,7 +366,8 @@ void(entity ply, entity car) Car_AttachToVehicle =
 							TryPlacePlayer(FindStaticOfName("frontexit", car));
 		self = oself;
 		car.driving = world;
-		car.driver.modelindex = 0;
+		if (car.driver)
+			car.driver.modelindex = 0;
 	}
 	else {
 		//ply.view_ofs = '0 0 16';
@@ -379,7 +380,8 @@ void(entity ply, entity car) Car_AttachToVehicle =
 		stuffcmd(ply, "crosshair 0\n");
 		setorigin(ply, car.origin);
 		car.driving = ply;
-		setmodel(car.driver, car.driver.mdl);
+		if (car.driver)
+			setmodel(car.driver, car.driver.mdl);
 	}
 };
 
