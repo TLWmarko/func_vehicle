@@ -204,8 +204,6 @@ void(entity targ) Phys_CheckStatus =
 // Particle acceleration, such as gravity, buoyancy
 void(float ftime, float sv_gravity) Phys_Acceleration =
 {
-	local float p;
-	local vector spring;//, v;
 	local entity part, hitmodel;
 
 	const float ANTIROLL_MULT = 1.25;
@@ -234,20 +232,23 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 			{
 				// EXPERIMENTS
 				//float offsetDistance = part.physobj_spring_length;
-				//float currentDistance = part.physobj_spring_length * p;
-				//float f = fabs(currentDistance-offsetDistance)*0.4;
+				//float currentDistance = part.physobj_spring_length * part.physobj_floor_frac;
+				//float sf = 0.4;
+				//float f = (offsetDistance-currentDistance)*sf * part.physobj_spring_mult;
 				//spring = springdir * max(0, (sf.y * p * ftime - damping * ftime));
-				//spring = springdir*max(0,fabs(currentDistance-offsetDistance)*700*ftime-damping*ftime);
-				//vector dampingForce = (normalize(part.velocity) * springdir) * springdir * damping;
+				
+				float p = 1-part.physobj_floor_frac;
+				vector v = part.physobj_spring_force;
+				float f = lerp(v_x, v_y, p*p) * part.physobj_spring_mult;
+
+				//Debug_DrawLine(part.origin, part.origin + part.lmat_up * 50 * part.physobj_spring_mult, 0.02);
 
 				float damping = part.physobj_spring_force_z;
 				vector springdir = part.lmat_up;
-				p = part.physobj_floor_frac;
 
-				float f = part.physobj_spring_force.y * (1-p);
-
-				float dampingForce = fabs(normalize(part.velocity) * springdir) * damping;
-				spring = sv_gravity * springdir * max(0, (f - dampingForce));
+				float dampingForce = (normalize(part.velocity) * springdir) * vlen(part.velocity) * damping;
+				part.frags = sv_gravity * max(0, (f - dampingForce));
+				vector spring = springdir * part.frags;
 
 				part.velocity += spring*ftime;
 
