@@ -310,7 +310,7 @@ void(entity car) Car_InitVehicle =
 		else if (e.netname == "driver")
 		{
 			car.driver = e;
-			e.mdl = e.model;
+			e.weaponmodel = e.model;
 			e.modelindex = 0;
 		}
 		else if (e.netname == "turretbase")
@@ -381,7 +381,7 @@ void(entity ply, entity car) Car_AttachToVehicle =
 		setorigin(ply, car.origin);
 		car.driving = ply;
 		if (car.driver)
-			setmodel(car.driver, car.driver.mdl);
+			setmodel(car.driver, car.driver.weaponmodel);
 	}
 };
 
