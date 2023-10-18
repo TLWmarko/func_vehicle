@@ -1300,6 +1300,7 @@ void(entity obj) Phys_AssignFirstThreeParticles =
 {
 	entity e;
 	vector v = '10000 10000 10000';
+	vector sv;
 	e = obj.physobj_particlelist;
 	while(e)
 	{
@@ -1309,12 +1310,13 @@ void(entity obj) Phys_AssignFirstThreeParticles =
 		}
 		e = e.physobj_next;
 	}
+	sv = v;
 	e = obj.physobj_particlelist;
 	while(e)
 	{
-		if (e.relative_org.x > v.x){
+		if (e.relative_org.x > sv.x){
 			obj.physobj_p2 = e;
-			v = e.relative_org;
+			sv = e.relative_org;
 		}
 		e = e.physobj_next;
 	}
