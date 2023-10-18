@@ -26,8 +26,9 @@ void(vector axis, float angle) Matrix_RotateByAxisAngle =
 #endif
 
 	axis = normalize(axis);
-	vector sincos_angle = SinCos(angle);
-	c = sincos_angle.y;mc = 1 - c;
+	vector sincos_angle = SinCos_Trick(angle);
+	c = sincos_angle.y;
+	mc = 1 - c;
 	s = sincos_angle.x;
 
 	rforward_x = axis_x * axis_x + c * (1 - axis_x * axis_x);

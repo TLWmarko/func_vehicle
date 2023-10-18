@@ -56,3 +56,25 @@ float(float y, float x) atan2_smooth = {
     if (q >= 2) uatan_2q = 1 - uatan_2q;
     return (q + uatan_2q) * 90;
 }
+
+// from maths.qc in Copper, thanks Lunaran
+// fixed divide by 0
+vector(float num) SinCos_Trick =
+{
+	local vector angle, vf, vu, vr, result;
+	
+	vf = v_forward;
+	vu = v_up;
+	vr = v_right;
+	
+	angle = '0 1 0' * num;
+	makevectors(angle);
+
+	result = [v_forward_y, v_forward_x, 0];
+	
+	v_forward = vf;
+	v_up = vu;
+	v_right = vr;
+	
+	return result;
+}
