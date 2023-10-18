@@ -5221,4 +5221,5 @@
 "physobj_friction_ground" "8 8 8"
 "physobj_stepup" "1"
 "physobj_stiction" "10"
+"netname" "yoo"
 }
