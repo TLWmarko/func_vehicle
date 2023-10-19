@@ -200,8 +200,8 @@ vector vectoangles2 (vector forward, vector up) {
 		result.x = -atan2_smooth(forward.z, sqrt(DotProduct2(forward, forward)));
 		result.y = atan2_smooth(forward.y, forward.x);
 
-		vector sincos_resultx = SinCos(result.x);
-		vector sincos_resulty = SinCos(result.y);
+		vector sincos_resultx = SinCos_Trick(result.x);
+		vector sincos_resulty = SinCos_Trick(result.y);
 		float cp = sincos_resultx.y, sp = sincos_resultx.x;
 		float cy = sincos_resulty.y, sy = sincos_resulty.x;
 		vector tleft, tup;
