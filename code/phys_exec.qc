@@ -1296,7 +1296,7 @@ void() Phys_SpawnSticks =
 */
 
 // find some particles far apart from eachother, nice for orientation of visible meshes
-void(entity obj) Phys_AssignFirstThreeParticles =
+void(entity obj) Phys_FindNiceOrientationParticles =
 {
 	entity e;
 	vector v = '10000 10000 10000';
@@ -1342,6 +1342,17 @@ void(entity obj) Phys_AssignFirstThreeParticles =
 	}
 }
 
+void(entity obj) Phys_CheckFirstThreeParticles =
+{
+	if(obj.physobj_p1 != obj.physobj_p2)
+	if(obj.physobj_p1 != obj.physobj_p3)
+	if(obj.physobj_p2 != obj.physobj_p3)
+		return;
+	obj.physobj_p1 = obj.physobj_particlelist;
+	obj.physobj_p2 = obj.physobj_p1.physobj_next;
+	obj.physobj_p3 = obj.physobj_p2.physobj_next;
+}
+
 entity(entity obj, vector org, vector forward, vector left, vector up) Phys_InitPhysicsObject =
 {
 	local float f;
@@ -1349,7 +1360,8 @@ entity(entity obj, vector org, vector forward, vector left, vector up) Phys_Init
 	local vector org1, org2, org3, v;
 
 	// Assign the first three particles, used for origin and orientation of the object ingame
-	Phys_AssignFirstThreeParticles(obj);
+	Phys_FindNiceOrientationParticles(obj);
+	Phys_CheckFirstThreeParticles(obj);
 
 	// Recalculate relative_org for use ingame
 	e = obj.physobj_hitmodel;
