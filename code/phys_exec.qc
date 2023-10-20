@@ -1003,7 +1003,8 @@ entity(vector org, entity e, entity obj) Phys_InitHitmodel =
 	e.movetype = MOVETYPE_PUSH;
 	e.health = 99999999;
 	//e.effects = EF_NOMODELFLAGS;
-	e.model = ""; // better way to nosend than EF_NODRAW
+	if (cvar("developer") < 3)
+		e.model = ""; // better way to nosend than EF_NODRAW
 
 	e.th_die = SUB_Null;
 	//e.contentstransition = SUB_Null;
