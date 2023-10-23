@@ -661,12 +661,11 @@ void(float ftime) Phys_Move =
 				trace_fraction = save_fraction;
 				trace_endpos = save_endpos;
 			}
-			if (trace_fraction >= 0.0001)
-			{
-				setorigin(part, trace_endpos);
-				force_retouch = 2;
-				test_org = part.origin;
-			}
+			
+			setorigin(part, trace_endpos);
+			force_retouch = 2;
+			test_org = part.origin;
+
 			if (trace_fraction == 1)
 				break;
 		}
