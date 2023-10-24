@@ -1,3 +1,5 @@
+void StartFuncVehicle();
+
 
 void(entity obj, vector org, vector rot, float keep_velocity) TeleportPhysObject =
 {
@@ -128,13 +130,11 @@ void() StartPhysObject =
 
 void() phys_object =
 {
-	if (cvar("developer") != 0){
-		precache_model("progs/debug/org.mdl");
-		precache_model("progs/debug/orgbig.mdl");
-	}
+	if (cvar("developer") != 0)
+		Debug_Precache();
+	
 	precache_model("progs/null.spr");
-	precache_model("progs/debug/point.spr");
 
-	self.think = StartPhysObject;
-	self.nextthink = 0.2;
+	self.think = StartFuncVehicle;
+	self.nextthink = time;
 };

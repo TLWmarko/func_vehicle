@@ -714,8 +714,13 @@ void() StartFuncVehicle =
 	}
 
 	Phys_MakeIntoPhysicsObject(self, self.origin, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
-	self.physobj_impactevent = PushAndDamageTarget;
-	Car_InitVehicle(self);
+	if (self.classname == "func_vehicle"){
+		self.physobj_impactevent = PushAndDamageTarget;
+		Car_InitVehicle(self);
+	}
+	else {
+		self.physobj_impactevent = DoNothing;
+	}
 }
 
 // keeping the titular name for the memes, but this is a point entity

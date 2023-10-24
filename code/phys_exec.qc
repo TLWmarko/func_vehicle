@@ -1298,47 +1298,69 @@ void() Phys_SpawnSticks =
 // find some particles far apart from eachother, nice for orientation of visible meshes
 void(entity obj) Phys_FindNiceOrientationParticles =
 {
-	entity e;
+	entity e, temp;
 	vector v = '10000 10000 10000';
 	vector sv;
 	e = obj.physobj_particlelist;
 	while(e)
 	{
-		if (e.relative_org.x <= v.x && e.relative_org.y <= v.y && e.relative_org.z <= v.z){
-			obj.physobj_p1 = e;
-			v = e.relative_org;
-		}
+		temp = e;
 		e = e.physobj_next;
+		if (temp.classname == "support_particle")
+			continue;
+		if (temp.relative_org.x <= v.x && temp.relative_org.y <= v.y && temp.relative_org.z <= v.z){
+			obj.physobj_p1 = temp;
+			v = temp.relative_org;
+		}
 	}
 	sv = v;
 	e = obj.physobj_particlelist;
 	while(e)
 	{
-		if (e.relative_org.x > sv.x){
-			obj.physobj_p2 = e;
-			sv = e.relative_org;
-		}
+		temp = e;
 		e = e.physobj_next;
+		if (temp.classname == "support_particle")
+			continue;
+		if (temp == obj.physobj_p1)
+			continue;
+		if (temp.relative_org.x >= sv.x){
+			obj.physobj_p2 = temp;
+			sv = temp.relative_org;
+		}
 	}
 	e = obj.physobj_particlelist;
 	while(e)
 	{
-		if (e.relative_org.y > v.y){
-			obj.physobj_p3 = e;
-			v = e.relative_org;
-		}
+		temp = e;
 		e = e.physobj_next;
+		if (temp.classname == "support_particle")
+			continue;
+		if (temp == obj.physobj_p1)
+			continue;
+		if (temp == obj.physobj_p2)
+			continue;
+		if (temp.relative_org.y >= v.y){
+			obj.physobj_p3 = temp;
+			v = temp.relative_org;
+		}
 	}
 	if (obj.physobj_p3)
 		return;
 	e = obj.physobj_particlelist;
 	while(e)
 	{
-		if (e.relative_org.y < v.y){
-			obj.physobj_p3 = e;
-			v = e.relative_org;
-		}
+		temp = e;
 		e = e.physobj_next;
+		if (temp.classname == "support_particle")
+			continue;
+		if (temp == obj.physobj_p1)
+			continue;
+		if (temp == obj.physobj_p2)
+			continue;
+		if (temp.relative_org.y <= v.y){
+			obj.physobj_p3 = temp;
+			v = temp.relative_org;
+		}
 	}
 }
 
@@ -1349,8 +1371,14 @@ void(entity obj) Phys_CheckFirstThreeParticles =
 	if(obj.physobj_p2 != obj.physobj_p3)
 		return;
 	obj.physobj_p1 = obj.physobj_particlelist;
+	while(obj.physobj_p1 && obj.physobj_p1.classname == "support_particle")
+		obj.physobj_p1 = obj.physobj_p1.physobj_next;
 	obj.physobj_p2 = obj.physobj_p1.physobj_next;
+	while(obj.physobj_p2 && obj.physobj_p2.classname == "support_particle")
+		obj.physobj_p2 = obj.physobj_p2.physobj_next;
 	obj.physobj_p3 = obj.physobj_p2.physobj_next;
+	while(obj.physobj_p3 && obj.physobj_p3.classname == "support_particle")
+		obj.physobj_p3 = obj.physobj_p3.physobj_next;
 }
 
 entity(entity obj, vector org, vector forward, vector left, vector up) Phys_InitPhysicsObject =

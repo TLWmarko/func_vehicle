@@ -51,20 +51,36 @@ float(entity tetra, float local) GetTetraVolumeSextupled =
 
 entity(entity a, entity b, entity c, entity d) Tetrahedron_Circumcenter =
 {
+	const float EPSILON = 0.0001;
+
 	// Use coordinates relative to point 'a' of the tetrahedron.
 	vector ba = b.relative_org - a.relative_org;
 	vector ca = c.relative_org - a.relative_org;
 	vector da = d.relative_org - a.relative_org;
 
+	// Cross products of these edges.
+	vector cross_bc = CrossProduct(ba, ca);
+	float tripleproduct = (da) * (cross_bc);
+	if (fabs(tripleproduct) < EPSILON){
+		dprint("detected coplanar:\n");
+		dprint(vtos(a.relative_org));
+		dprint("\n");
+		dprint(vtos(b.relative_org));
+		dprint("\n");
+		dprint(vtos(c.relative_org));
+		dprint("\n");
+		dprint(vtos(d.relative_org));
+		dprint(" - end\n");
+
+		return world;
+	}
+	vector cross_cd = CrossProduct(ca, da);
+	vector cross_db = CrossProduct(da, ba);
+
 	// Squares of lengths of the edges incident to 'a'.
 	float len_ba = vlensqr(ba);
 	float len_ca = vlensqr(ca);
 	float len_da = vlensqr(da);
-
-	// Cross products of these edges.
-	vector cross_cd = CrossProduct(ca, da);
-	vector cross_db = CrossProduct(da, ba);
-	vector cross_bc = CrossProduct(ba, ca);
 
 	// Calculate the denominator of the formula.
 	float denominator = 0.5 / (ba * cross_cd);
@@ -273,9 +289,10 @@ void(entity e, entity bad_tetra_list, entity volume_list, entity support_triangl
 		volume_pointer = volume_list;
 		for (i = 0; i < volume_size; i++){
 			tetra = Tetrahedron_Circumcenter(e, volume_pointer.physobj_p1, volume_pointer.physobj_p2, volume_pointer.physobj_p3);
-
-			tetra.physobj_next = self.physobj_tetralist;
-			self.physobj_tetralist = tetra;
+			if (tetra) {
+				tetra.physobj_next = self.physobj_tetralist;
+				self.physobj_tetralist = tetra;
+			}
 			volume_pointer = volume_pointer.physobj_next;
 		}
 }
