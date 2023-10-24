@@ -5120,6 +5120,7 @@
 "physobj_stepup" "1"
 "physobj_stiction" "10"
 "netname" "bot2"
+"relative_size" "10"
 }
 // entity 26
 {
@@ -5133,6 +5134,7 @@
 "physobj_stepup" "1"
 "physobj_stiction" "10"
 "netname" "bot1"
+"relative_size" "10"
 }
 // entity 27
 {
@@ -5146,21 +5148,9 @@
 "physobj_friction_ground" "8 8 8"
 "physobj_bounce" "1.025"
 "netname" "bot3"
+"relative_size" "10"
 }
 // entity 28
-{
-"classname" "phys_particle"
-"origin" "344 -240 200"
-"angle" "90"
-"targetname" "part1"
-"physobj_bounce" "1.025"
-"part_mass" "1"
-"physobj_friction_ground" "8 8 8"
-"physobj_stepup" "1"
-"physobj_stiction" "10"
-"netname" "bot4"
-}
-// entity 29
 {
 "classname" "phys_particle"
 "origin" "280 -160 264"
@@ -5172,21 +5162,9 @@
 "physobj_stepup" "1"
 "physobj_stiction" "10"
 "netname" "top1"
+"relative_size" "10"
 }
-// entity 30
-{
-"classname" "phys_particle"
-"origin" "344 -160 264"
-"angle" "90"
-"targetname" "part1"
-"physobj_bounce" "1.025"
-"part_mass" "1"
-"physobj_friction_ground" "8 8 8"
-"physobj_stepup" "1"
-"physobj_stiction" "10"
-"netname" "top2"
-}
-// entity 31
+// entity 29
 {
 "classname" "phys_particle"
 "origin" "280 -240 264"
@@ -5198,8 +5176,9 @@
 "physobj_stepup" "1"
 "physobj_stiction" "10"
 "netname" "top3"
+"relative_size" "10"
 }
-// entity 32
+// entity 30
 {
 "classname" "phys_particle"
 "origin" "344 -240 264"
@@ -5211,4 +5190,33 @@
 "physobj_stepup" "1"
 "physobj_stiction" "10"
 "netname" "top4"
+"relative_size" "10"
+}
+// entity 31
+{
+"classname" "phys_particle"
+"origin" "344 -160 264"
+"angle" "90"
+"targetname" "part1"
+"physobj_bounce" "1.025"
+"part_mass" "1"
+"physobj_friction_ground" "8 8 8"
+"physobj_stepup" "1"
+"physobj_stiction" "10"
+"netname" "top2"
+"relative_size" "10"
+}
+// entity 32
+{
+"classname" "phys_particle"
+"origin" "344 -240 200"
+"angle" "90"
+"targetname" "part1"
+"physobj_bounce" "1.025"
+"part_mass" "1"
+"physobj_friction_ground" "8 8 8"
+"physobj_stepup" "1"
+"physobj_stiction" "10"
+"netname" "bot4"
+"relative_size" "10"
 }
