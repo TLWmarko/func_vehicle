@@ -392,7 +392,7 @@ void Car_CheckAttach(){
 	}
 	entity e = findradius(self.origin + self.view_ofs, 100);
 	while(e){
-		if (e.classname == "physics_object"){
+		if (e.physobj_flags & PHFLAGS_VEHICLE){
 			if (!e.driving){
 				Car_AttachToVehicle(self, e);
 				break;
@@ -714,7 +714,7 @@ void() StartFuncVehicle =
 	}
 
 	Phys_MakeIntoPhysicsObject(self, self.origin, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
-	if (self.classname == "func_vehicle"){
+	if (self.physobj_flags & PHFLAGS_VEHICLE){
 		self.physobj_impactevent = PushAndDamageTarget;
 		Car_InitVehicle(self);
 	}
@@ -742,6 +742,7 @@ void() func_vehicle =
 	
 	precache_model("progs/null.spr");
 
+	self.physobj_flags |= PHFLAGS_VEHICLE;
 	self.think = StartFuncVehicle;
 	self.nextthink = time;
 };
@@ -919,6 +920,7 @@ void() func_vehicle_builtins =
 		car = hotrod();
 	}
 	
+	car.physobj_flags |= PHFLAGS_VEHICLE;
 	car.angles = self.angles;
 	car.think = StartBuiltinVehicle;
 	car.nextthink = time;
@@ -941,6 +943,7 @@ void() func_vehicle_triton =
 	precache_model("progs/test/triton.mdl");
 	entity car = triton();
 
+	car.physobj_flags |= PHFLAGS_VEHICLE;
 	car.angles = self.angles;
 	car.think = StartBuiltinVehicle;
 	car.nextthink = time;
@@ -979,6 +982,7 @@ void() vehicle_hotrod =
 	precache_model("progs/HotRod_turret_barrel.mdl");
 	entity car = hotrod();
 	
+	car.physobj_flags |= PHFLAGS_VEHICLE;
 	car.angles = self.angles;
 	car.think = StartBuiltinVehicle;
 	car.nextthink = time;
