@@ -77,7 +77,7 @@ void(entity targ) Phys_CheckStatus =
 {
 	local float inverse_frametime, dot, success, best_dot, best_dist;
 	local vector best_normal;
-	local entity stick, part, oself, t_ent, hitmodel;
+	local entity stick, part, oself, t_ent;
 	local float f;
 
 	oself = self;
@@ -89,13 +89,7 @@ void(entity targ) Phys_CheckStatus =
 	}
 	else
 		part = self.physobj_particlelist;
-	// make our hitmodels non-collidey for a moment
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_NOT;
-		hitmodel = hitmodel.physobj_next;
-	}
+
 	while(part)
 	{
 		Particle_CheckOnGround(part);
@@ -191,29 +185,16 @@ void(entity targ) Phys_CheckStatus =
 	}
 	if (f < 3)
 		self.physobj_flags -= (self.physobj_flags & PHFLAGS_RESTING);
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
+
 	self = oself;
 };
 
 // Particle acceleration, such as gravity, buoyancy
 void(float ftime, float sv_gravity) Phys_Acceleration =
 {
-	local entity part, hitmodel;
+	local entity part;
 
 	const float ANTIROLL_MULT = 1.25;
-
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_NOT;
-		hitmodel = hitmodel.physobj_next;
-	}
 
 	part = self.physobj_particlelist;
 	while(part)
@@ -264,14 +245,6 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		part.destorigin = part.origin + part.velocity * ftime * 2;
 		Particle_Friction(part, ftime);
 		part = part.physobj_next;
-	}
-
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
 	}
 };
 
@@ -534,20 +507,13 @@ void(float ftime) Phys_Move =
 	local float t, f, inverse_frametime;
 	local float stuck;
 	local vector test_org;
-	local entity part, killme, hitmodel;
+	local entity part, killme;
 
 	local vector save_endpos;
 	local vector save_normal;
 	local vector save_velocity;
 	local float save_fraction;
 	local entity save_ent;
-
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_NOT;
-		hitmodel = hitmodel.physobj_next;
-	}
 
 	inverse_frametime = 1 / ftime;
 
@@ -691,13 +657,7 @@ void(float ftime) Phys_Move =
 		else
 			part = part.physobj_next;
 	}
-	hitmodel = self.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
+
 	if (f < 3)
 		resting_allowed = FALSE;
 };
@@ -715,6 +675,13 @@ void() Phys_ObjectThink =
 	local float sv_gravity = cvar("sv_gravity");
 
 	Phys_CheckStatus(world); // Check in case we got pushed, got stuck, or the ground beneath us disappeared
+	hitmodel = self.physobj_hitmodel;
+	while (hitmodel)
+	{
+		hitmodel.solid = SOLID_NOT;
+		hitmodel = hitmodel.physobj_next;
+	}
+
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
@@ -815,6 +782,9 @@ void() Phys_ObjectThink =
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
+		hitmodel.solid = SOLID_BSP;
+		setorigin(hitmodel, hitmodel.origin); // relink
+
 		Matrix_Multiply(hitmodel.relative_forward, hitmodel.relative_left, hitmodel.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
 		f = 1 / frametime;
 		vector offset = self.physobj_p1.origin + self.lmat_forward*hitmodel.relative_org_x + self.lmat_left*hitmodel.relative_org_y + self.lmat_up*hitmodel.relative_org_z;
