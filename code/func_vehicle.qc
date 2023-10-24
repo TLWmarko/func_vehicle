@@ -80,11 +80,18 @@ void() PhysCrush =
 void Car_TirePlace(entity tire){
 	entity tireparticle = tire.enemy;
 
-	traceline(tireparticle.origin, tireparticle.origin + tireparticle.lmat_up * -tire.frags, TRUE, tire);
-	float tracelen = fabs(tireparticle.physobj_spring_length);
-	tire.frags = min(tire.frags + frametime*30, tracelen*trace_fraction);
+	traceline(tireparticle.origin, tireparticle.origin - tireparticle.lmat_up * tire.frags, TRUE, tire);
 	tire.oldorigin = tire.origin;
-	setorigin(tire, trace_endpos + tireparticle.lmat_up * tireparticle.relative_size);
+	if (trace_fraction == 1 || trace_plane_normal_z > 0.7){
+		float tracelen = fabs(tireparticle.physobj_spring_length + tireparticle.relative_size);
+		tire.frags = min(tire.frags + frametime*30, tracelen*trace_fraction);
+		tire.punchangle = trace_endpos + tireparticle.lmat_up * tireparticle.relative_size;
+		setorigin(tire, tire.punchangle);
+		tire.punchangle -= tireparticle.origin;
+	}
+	else {
+		setorigin(tire, tireparticle.origin + tire.punchangle);
+	}
 }
 
 void() Car_ChassiThink =

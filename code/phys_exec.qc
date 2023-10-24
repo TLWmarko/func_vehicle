@@ -239,7 +239,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		
 		if (part.physobj_spring_length)
 		{
-			if (part.flags & FL_ONGROUND && part.physobj_flags & PHFLAGS_SPRING_TOUCH)
+			if (part.physobj_flags & PHFLAGS_SPRING_TOUCH)
 			{
 				// EXPERIMENTS
 				//float offsetDistance = part.physobj_spring_length;
@@ -247,10 +247,12 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 				//float sf = 0.4;
 				//float f = (offsetDistance-currentDistance)*sf * part.physobj_spring_mult;
 				//spring = springdir * max(0, (sf.y * p * ftime - damping * ftime));
+
+				float springdist = max(0, part.physobj_floor_dist - part.relative_size);
+				float spring_frac = 1 - springdist / part.physobj_spring_length;
 				
-				float p = 1-part.physobj_floor_frac;
 				vector v = part.physobj_spring_force;
-				float f = lerp(v_x, v_y, p*p) * part.physobj_spring_mult;
+				float f = lerp(v_x, v_y, spring_frac*spring_frac) * part.physobj_spring_mult;
 
 				//Debug_DrawLine(part.origin, part.origin + part.lmat_up * 50 * part.physobj_spring_mult, 0.02);
 
@@ -273,12 +275,13 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		}
 		// Build future positions for particles
 		part.destorigin = part.origin + part.velocity * ftime * 2;
+		part.lip = 0;
 		Particle_Friction(part, ftime);
 		part = part.physobj_next;
 	}
 };
 
-const float STABILITY_MULTIPLIER = 1; // lower values make the object more soft, but less prone to randomly exploding
+const float STABILITY_MULTIPLIER = 0.9;
 
 vector(entity p1, entity p2, entity p3) GetGradient =
 {
@@ -344,7 +347,7 @@ void(float ftime) Phys_Constraints_Volume =
 // Run constraints on all sticks
 void(float ftime) Phys_Constraints_Linear =
 {
-	local float offsetlength, diff, lendiff;
+	local float offsetlength, diff, lendiff, springdist;
 	local vector offset;
 	local entity stick;
 	local entity p1, p2;
@@ -356,9 +359,14 @@ void(float ftime) Phys_Constraints_Linear =
 		p1 = stick.physobj_p1;
 		p2 = stick.physobj_p2;
 
-		if (stick.physobj_flags & PHFLAGS_STABILIZERBAR){
-			float p1_mult = p2.physobj_floor_frac - p1.physobj_floor_frac;
-			float p2_mult = p1.physobj_floor_frac - p2.physobj_floor_frac;
+		if (stick.physobj_flags & PHFLAGS_STABILIZERBAR && p1.physobj_spring_length && p2.physobj_spring_length){
+			springdist = max(0, p1.physobj_floor_dist - p1.relative_size);
+			float p1_spring_frac = springdist / p1.physobj_spring_length;
+			springdist = max(0, p2.physobj_floor_dist - p2.relative_size);
+			float p2_spring_frac = springdist / p2.physobj_spring_length;
+
+			float p1_mult = p2_spring_frac - p1_spring_frac;
+			float p2_mult = p1_spring_frac - p2_spring_frac;
 			
 			if (p1_mult < 0)
 				p1.physobj_spring_mult = remap(p1_mult + 1, 0, 1, -0.5, 1);
@@ -383,33 +391,75 @@ void(float ftime) Phys_Constraints_Linear =
 	}
 };
 
+// Floor offset constraint
+void(float ftime) Phys_Constraints_Floor =
+{
+	vector add;
+
+	entity part = self.physobj_particlelist;
+	while(part)
+	{
+		if (part.relative_size){
+			traceline(part.origin, part.destorigin, part.physobj_movetype, part);
+			vector testpos = trace_endpos;
+			traceline(testpos, testpos - [0, 0, part.relative_size], part.physobj_movetype, part);
+			if (trace_fraction < 1 && trace_plane_normal_z > 0.7){
+				vector save_normal = trace_plane_normal;
+				vector save_endpos = trace_endpos;
+				float save_fraction = trace_fraction;
+				traceline(testpos, testpos - trace_plane_normal * part.relative_size, part.physobj_movetype, part);
+				if (trace_fraction < 1 && trace_plane_normal_z > 0.7){
+					add = trace_plane_normal * (part.relative_size * (1-trace_fraction));
+					//Debug_DrawLine(trace_endpos, trace_endpos + trace_plane_normal * 16, 10);
+				}
+				else{
+					add = save_normal * (part.relative_size * (1-save_fraction));
+					//Debug_DrawLine(save_endpos, save_endpos + save_normal * 16, 10);
+				}
+				part.lip = add_z;
+				part.destorigin += add;
+				// this doesn't add energy to the system, but will result in big rigs off the road racing, so let's not
+				//part.destorigin += [0, 0, part.relative_size * (1-trace_fraction)];
+			}
+		}
+		part = part.physobj_next;
+	}
+};
+
 void(entity part) Particle_CheckOnGround =
 {
-	local vector spring;
-
-	if (part.physobj_spring_length) // check for springs
+	traceline(part.origin, part.origin - [0, 0, 1 + part.relative_size], FALSE, part);
+	if (trace_fraction < 1 && trace_plane_normal_z > 0.7)
 	{
-		spring = -part.lmat_up * part.physobj_spring_length;
-		traceline(part.origin, part.origin + spring, FALSE, part);
-		if (trace_fraction < 1)
-			part.physobj_flags = part.physobj_flags | PHFLAGS_SPRING_TOUCH;
-		else
-			part.physobj_flags = part.physobj_flags - (part.physobj_flags & PHFLAGS_SPRING_TOUCH);
+		part.flags = part.flags | FL_ONGROUND;
+		part.groundentity = trace_ent;
+		part.physobj_floor_plane_normal = trace_plane_normal;
+
 	}
 	else
 	{
-		traceline(part.origin, part.origin + '0 0 -1', FALSE, part);
+		part.flags -= (part.flags & FL_ONGROUND);
+		part.groundentity = world;
 	}
-	// We're touching the ground
-	if (trace_fraction < 1)
-	{
-		part.flags = part.flags | FL_ONGROUND;
-		part.physobj_floor_plane_normal = trace_plane_normal;
-		part.physobj_floor_frac = trace_fraction;
-	}
-	else{
-		part.flags = part.flags - (part.flags & FL_ONGROUND);
-		part.physobj_floor_frac = 1;
+
+
+	if (part.physobj_spring_length){
+		float checklen = part.relative_size + part.physobj_spring_length;
+
+		traceline(part.origin, part.origin - part.lmat_up * checklen, FALSE, part);
+		part.physobj_floor_dist = checklen * trace_fraction;
+		if (trace_fraction < 1 && trace_plane_normal_z > 0.7)
+		{
+			part.physobj_flags = part.physobj_flags | PHFLAGS_SPRING_TOUCH;
+			part.flags = part.flags | FL_ONGROUND;
+			part.groundentity = trace_ent;
+			part.physobj_floor_plane_normal = trace_plane_normal;
+			//Debug_DrawLine(trace_endpos, trace_endpos + trace_plane_normal * 16, 2);
+		}
+		else
+		{
+			part.physobj_flags -= (part.physobj_flags & PHFLAGS_SPRING_TOUCH);
+		}
 	}
 }
 
@@ -554,6 +604,7 @@ void(float ftime) Phys_Move =
 	{
 		// Convert back from future positions set by constraints to velocities again
 		part.velocity = (part.destorigin - part.origin) * inverse_frametime;
+		part.velocity_z -= part.lip;
 
 		part.oldorigin = part.origin;
 		bump = 0;
@@ -610,7 +661,6 @@ void(float ftime) Phys_Move =
 			trace_plane_normal = save_normal;
 			trace_fraction = save_fraction;
 			*/
-			t = t*(1-trace_fraction);
 			if (trace_fraction < 1)
 			{
 				// Check for stair steps
@@ -620,15 +670,19 @@ void(float ftime) Phys_Move =
 					save_normal = trace_plane_normal;
 					save_endpos = trace_endpos;
 					save_ent = trace_ent;
-					traceline(trace_endpos + '0 0 1'*part.physobj_stepup, trace_endpos + '0 0 1'*part.physobj_stepup + part.velocity * t, part.physobj_movetype, part);
+					vector testpos = test_org + [0, 0, part.physobj_stepup];
+					vector testvel = part.velocity;
+					testvel_z = 0;
+					traceline(testpos, testpos + testvel * t, part.physobj_movetype, part);
 					//tracebox(trace_endpos + '0 0 1'*part.physobj_stepup, part.mins, part.maxs, trace_endpos + '0 0 1'*part.physobj_stepup + part.velocity * t, part.physobj_movetype, part);
 					if (!trace_startsolid && trace_fraction > 0.0001)
 					{
 						t = t * (1 - trace_fraction);
 						save_ent = trace_ent;
 						save_normal = trace_plane_normal;
-						traceline(trace_endpos, trace_endpos + '0 0 -1'*part.physobj_stepup, part.physobj_movetype, part);
+						traceline(trace_endpos, trace_endpos - [0, 0, part.physobj_stepup], part.physobj_movetype, part);
 						//tracebox(trace_endpos, part.mins, part.maxs, trace_endpos + '0 0 -1'*part.physobj_stepup, part.physobj_movetype, part);
+						//trace_plane_normal = save_normal;
 						trace_fraction = save_fraction;
 						trace_ent = save_ent;
 					}
@@ -638,6 +692,7 @@ void(float ftime) Phys_Move =
 						trace_plane_normal = save_normal;
 						trace_fraction = save_fraction;
 						trace_ent = save_ent;
+						t = t * (1 - trace_fraction);
 					}
 				}
 				// Let's push stuff we hit
@@ -649,6 +704,7 @@ void(float ftime) Phys_Move =
 				part.velocity = part.velocity - part.physobj_bounce*(trace_plane_normal * (trace_plane_normal * part.velocity));
 			}
 			else {
+				t = t*(1-trace_fraction);
 				// let's push monsters and players
 				save_fraction = trace_fraction;
 				save_endpos = trace_endpos;
@@ -730,11 +786,13 @@ void() Phys_ObjectThink =
 		{
 			steps--;
 			Phys_Acceleration(ftime*0.5, sv_gravity);
+			Phys_Constraints_Floor(ftime);
 			Phys_Constraints_Volume(ftime);
 			Phys_Constraints_Linear(ftime);
 			Phys_Move(ftime);
 			Phys_Acceleration(ftime*0.5, sv_gravity);
 		}
+
 		self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_FORCE);
 
 		if (resting_allowed) // resting still allowed after various checks
