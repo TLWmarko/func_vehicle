@@ -72,6 +72,36 @@ void(entity targ, float in_mass, vector inforce, vector hitspot, vector normal) 
 	}
 };
 
+void(entity obj) Phys_UpdateStatus = {
+	float f;
+	float developer = cvar("developer");
+
+	entity part = obj.physobj_particlelist;
+	while(part){
+		Particle_CheckOnGround(part);
+		if (part.flags & FL_ONGROUND)
+			f++;
+		traceline(part.origin, part.origin, TRUE, part);
+		if (trace_startsolid) // we got jammed by a hitmodel or are generally stuck
+		{
+			//dprint("stuck :(\n");
+			traceline(obj.origin, part.origin, TRUE, part);
+			if (trace_fraction < 1){
+				//dprint("!!UNSTUCK!!\n");
+				if (developer)
+					Debug_DrawLine(obj.origin, part.origin, 100);
+				setorigin(part, trace_endpos + normalize(obj.origin - part.origin));
+				if (developer)
+					Debug_DrawLine(part.origin, part.origin + '0 0 32', 100);
+				obj.physobj_flags -= (obj.physobj_flags & PHFLAGS_RESTING);
+			}
+		}
+		part = part.physobj_next;
+	}
+	if (f < 3)
+		obj.physobj_flags -= (obj.physobj_flags & PHFLAGS_RESTING);
+}
+
 // Fixes the worst cases of being stuck inside walls and objects
 void(entity targ) Phys_CheckStatus =
 {
@@ -503,7 +533,7 @@ void(entity part, float ftime) Particle_Friction =
 // Velocity Verlet physics, meant to be used for all moving entities in the game
 void(float ftime) Phys_Move =
 {
-	local float bump, it;
+	local float bump;//, it;
 	local float t, f, inverse_frametime;
 	local float stuck;
 	local vector test_org;
@@ -527,15 +557,16 @@ void(float ftime) Phys_Move =
 
 		part.oldorigin = part.origin;
 		bump = 0;
-		it = 0;
+		//it = 0;
 		stuck = FALSE;
 		t = ftime;
 		test_org = part.origin;
 		while (bump < 24)
 		{
 			// let's test if we're stuck first
-			it = 0;
+			//it = 0;
 			bump = bump + 1;
+			/*
 			if (!stuck && !(part.physobj_flags & PHFLAGS_BLOCKED))
 			{
 				traceline(part.origin, part.origin, TRUE, part);
@@ -557,8 +588,10 @@ void(float ftime) Phys_Move =
 				else
 					test_org = part.origin;
 			}
+			*/
 			traceline(test_org, test_org + part.velocity*t, part.physobj_movetype, part);
 			//tracebox(test_org, part.mins, part.maxs, test_org + part.velocity*t, part.physobj_movetype, part);
+			/*
 			save_fraction = trace_fraction;
 			save_normal = trace_plane_normal;
 			save_endpos = trace_endpos;
@@ -576,6 +609,7 @@ void(float ftime) Phys_Move =
 			trace_endpos = save_endpos;
 			trace_plane_normal = save_normal;
 			trace_fraction = save_fraction;
+			*/
 			t = t*(1-trace_fraction);
 			if (trace_fraction < 1)
 			{
@@ -674,7 +708,6 @@ void() Phys_ObjectThink =
 
 	local float sv_gravity = cvar("sv_gravity");
 
-	Phys_CheckStatus(world); // Check in case we got pushed, got stuck, or the ground beneath us disappeared
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
@@ -682,6 +715,8 @@ void() Phys_ObjectThink =
 		hitmodel = hitmodel.physobj_next;
 	}
 
+	//Phys_CheckStatus(world); // Check in case we got pushed, got stuck, or the ground beneath us disappeared
+	Phys_UpdateStatus(self);
 
 	if (!(self.physobj_flags & PHFLAGS_RESTING))
 	{
