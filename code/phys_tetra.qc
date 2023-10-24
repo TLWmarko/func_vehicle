@@ -62,6 +62,7 @@ entity(entity a, entity b, entity c, entity d) Tetrahedron_Circumcenter =
 	vector cross_bc = CrossProduct(ba, ca);
 	float tripleproduct = (da) * (cross_bc);
 	if (fabs(tripleproduct) < EPSILON){
+		/*
 		dprint("detected coplanar:\n");
 		dprint(vtos(a.relative_org));
 		dprint("\n");
@@ -71,7 +72,7 @@ entity(entity a, entity b, entity c, entity d) Tetrahedron_Circumcenter =
 		dprint("\n");
 		dprint(vtos(d.relative_org));
 		dprint(" - end\n");
-
+		*/
 		return world;
 	}
 	vector cross_cd = CrossProduct(ca, da);

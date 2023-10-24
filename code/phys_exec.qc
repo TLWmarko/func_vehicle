@@ -1300,7 +1300,8 @@ void(entity obj) Phys_FindNiceOrientationParticles =
 {
 	entity e, temp;
 	vector v = '10000 10000 10000';
-	vector sv;
+
+	// first particle
 	e = obj.physobj_particlelist;
 	while(e)
 	{
@@ -1313,7 +1314,8 @@ void(entity obj) Phys_FindNiceOrientationParticles =
 			v = temp.relative_org;
 		}
 	}
-	sv = v;
+
+	// second particle
 	e = obj.physobj_particlelist;
 	while(e)
 	{
@@ -1323,11 +1325,30 @@ void(entity obj) Phys_FindNiceOrientationParticles =
 			continue;
 		if (temp == obj.physobj_p1)
 			continue;
-		if (temp.relative_org.x >= sv.x){
+		if (temp.relative_org.x > v.x){
 			obj.physobj_p2 = temp;
-			sv = temp.relative_org;
+			v = temp.relative_org;
 		}
 	}
+	// found no second particle, include an equals check to be safe
+	if (!obj.physobj_p2){
+		e = obj.physobj_particlelist;
+		while(e)
+		{
+			temp = e;
+			e = e.physobj_next;
+			if (temp.classname == "support_particle")
+				continue;
+			if (temp == obj.physobj_p1)
+				continue;
+			if (temp.relative_org.x >= v.x){
+				obj.physobj_p2 = temp;
+				v = temp.relative_org;
+			}
+		}
+	}
+
+	// third particle
 	e = obj.physobj_particlelist;
 	while(e)
 	{
@@ -1339,13 +1360,33 @@ void(entity obj) Phys_FindNiceOrientationParticles =
 			continue;
 		if (temp == obj.physobj_p2)
 			continue;
-		if (temp.relative_org.y >= v.y){
+		if (temp.relative_org.y > v.y){
 			obj.physobj_p3 = temp;
 			v = temp.relative_org;
+		}
+	}
+	// found no third particle, include an equals check to be safe
+	if (!obj.physobj_p3){
+		e = obj.physobj_particlelist;
+		while(e)
+		{
+			temp = e;
+			e = e.physobj_next;
+			if (temp.classname == "support_particle")
+				continue;
+			if (temp == obj.physobj_p1)
+				continue;
+			if (temp == obj.physobj_p2)
+				continue;
+			if (temp.relative_org.y >= v.y){
+				obj.physobj_p3 = temp;
+				v = temp.relative_org;
+			}
 		}
 	}
 	if (obj.physobj_p3)
 		return;
+	// still found no third particle, do the same thing but in the other direction
 	e = obj.physobj_particlelist;
 	while(e)
 	{
@@ -1357,19 +1398,41 @@ void(entity obj) Phys_FindNiceOrientationParticles =
 			continue;
 		if (temp == obj.physobj_p2)
 			continue;
-		if (temp.relative_org.y <= v.y){
+		if (temp.relative_org.y < v.y){
 			obj.physobj_p3 = temp;
 			v = temp.relative_org;
+		}
+	}
+	if (!obj.physobj_p3){
+		e = obj.physobj_particlelist;
+		while(e)
+		{
+			temp = e;
+			e = e.physobj_next;
+			if (temp.classname == "support_particle")
+				continue;
+			if (temp == obj.physobj_p1)
+				continue;
+			if (temp == obj.physobj_p2)
+				continue;
+			if (temp.relative_org.y <= v.y){
+				obj.physobj_p3 = temp;
+				v = temp.relative_org;
+			}
 		}
 	}
 }
 
 void(entity obj) Phys_CheckFirstThreeParticles =
 {
+	if(obj.physobj_p1)
+	if(obj.physobj_p2)
+	if(obj.physobj_p3)
 	if(obj.physobj_p1 != obj.physobj_p2)
 	if(obj.physobj_p1 != obj.physobj_p3)
 	if(obj.physobj_p2 != obj.physobj_p3)
 		return;
+	dprint("func_vehicle Error: First three particles were wrong somehow, fallback to original approach\n");
 	obj.physobj_p1 = obj.physobj_particlelist;
 	while(obj.physobj_p1 && obj.physobj_p1.classname == "support_particle")
 		obj.physobj_p1 = obj.physobj_p1.physobj_next;
