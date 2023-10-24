@@ -623,7 +623,7 @@ void TryUpdateVehicle(){
 			turn += 180;
 	}
 	Car_Turn(turn);
-	Gun_Turn(self.driving.angles_y - self.v_angle_y, mod(self.driving.angles_x - self.v_angle_x + 180, 360) - 180);
+	Gun_Turn(self.driving.angles_y - self.v_angle_y, mod(self.driving.angles_x - self.v_angle_x + 180 + 25, 360) - 180);
 	self.velocity = '0 0 0';
 	self.modelindex = modelindex_null;
 	self.frame = 0;
