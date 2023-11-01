@@ -117,7 +117,7 @@ entity(entity obj) SuperTetra {
 		e = e.physobj_next;
 	}
 
-	makevectors(self.angles);
+	makevectors(obj.angles);
 	matrix_forward = v_forward;
 	matrix_left = -v_right;
 	matrix_up = v_up;
@@ -209,7 +209,7 @@ entity(entity list_pointer, string name) AddEntityToSupportList =
 	return list_pointer.physobj_next;
 }
 
-void(entity e, entity bad_tetra_list, entity volume_list, entity support_triangles, entity super_tetra) GenerateTetrasForParticle = {
+void(entity obj, entity e, entity bad_tetra_list, entity volume_list, entity support_triangles, entity super_tetra) GenerateTetrasForParticle = {
 	entity bad_tetra_pointer;
 	entity volume_pointer;
 	entity tetra;
@@ -220,7 +220,7 @@ void(entity e, entity bad_tetra_list, entity volume_list, entity support_triangl
 		float badtetras = 0;
 		bad_tetra_pointer = bad_tetra_list;
 		// find all tetras whose circumcenter overlap the new point we are adding
-		tetra = self.physobj_tetralist;
+		tetra = obj.physobj_tetralist;
 		while(tetra){
 			float dist = vlen(e.relative_org - tetra.phys_center);
 			if(dist < tetra.phys_radius-EPSILON) {
@@ -268,10 +268,10 @@ void(entity e, entity bad_tetra_list, entity volume_list, entity support_triangl
 		bad_tetra_pointer = bad_tetra_list;
 		for (i = 0; i < badtetras; i++){
 			entity bad = bad_tetra_pointer.enemy;
-			if (self.physobj_tetralist == bad)
-				self.physobj_tetralist = bad.physobj_next;
+			if (obj.physobj_tetralist == bad)
+				obj.physobj_tetralist = bad.physobj_next;
 			else {
-				tetra = self.physobj_tetralist;
+				tetra = obj.physobj_tetralist;
 				while(tetra){
 					if (tetra.physobj_next == bad){
 						tetra.physobj_next = bad.physobj_next;
@@ -291,8 +291,8 @@ void(entity e, entity bad_tetra_list, entity volume_list, entity support_triangl
 		for (i = 0; i < volume_size; i++){
 			tetra = Tetrahedron_Circumcenter(e, volume_pointer.physobj_p1, volume_pointer.physobj_p2, volume_pointer.physobj_p3);
 			if (tetra) {
-				tetra.physobj_next = self.physobj_tetralist;
-				self.physobj_tetralist = tetra;
+				tetra.physobj_next = obj.physobj_tetralist;
+				obj.physobj_tetralist = tetra;
 			}
 			volume_pointer = volume_pointer.physobj_next;
 		}
@@ -360,7 +360,7 @@ void() ThinkGenerateTetras =
 {
 	entity e = self.physobj_next;
 	if (e){
-		GenerateTetrasForParticle(e, self.bad_tetra_start, self.volume_start, self.support_tris_start, self.super_tetra_save);
+		GenerateTetrasForParticle(self, e, self.bad_tetra_start, self.volume_start, self.support_tris_start, self.super_tetra_save);
 		self.physobj_next = e.physobj_next;
 		self.nextthink = time;
 		return;
@@ -395,7 +395,7 @@ void(entity obj) GenerateTetrahedrons =
 #ifdef QUICKSPAWN
 	entity e = obj.physobj_particlelist;
 	while (e) {
-		GenerateTetrasForParticle(e, obj.bad_tetra_start, obj.volume_start, obj.support_tris_start, obj.super_tetra_save);
+		GenerateTetrasForParticle(obj, e, obj.bad_tetra_start, obj.volume_start, obj.support_tris_start, obj.super_tetra_save);
 		e = e.physobj_next;
 	}
 	CleanUpOuterTetrasAndSupports(obj);
