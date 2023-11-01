@@ -900,6 +900,7 @@ entity(vector org, entity e, entity obj) Phys_InitStatic =
 {
 	local vector v;
 
+	e.solid = SOLID_NOT;
 	if (e.model)
 		setmodel(e, e.model);
 
