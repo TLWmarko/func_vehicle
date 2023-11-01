@@ -532,9 +532,32 @@ void() Spin_Tires =
 {
 	if (self.driving)
 		return;
+	
+	entity tleft = self.frontleft;
+	entity tright = self.frontright;
 
-	Spin_A_Tire(self.frontleft, TRUE);
-	Spin_A_Tire(self.frontright, TRUE);
+	// left tire
+	makevectors(tleft.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = -v_right;
+	matrix_up = v_up;
+	Matrix_RotateByAxisAngle('0 0 1', self.ideal_yaw);
+	tleft.relative_forward = matrix_forward;
+	tleft.relative_left = matrix_left;
+	tleft.relative_up = matrix_up;
+	Spin_A_Tire(tleft, FALSE);
+
+	// right tire
+	makevectors(tright.base_pose);
+	matrix_forward = v_forward;
+	matrix_left = -v_right;
+	matrix_up = v_up;
+	Matrix_RotateByAxisAngle('0 0 1', self.ideal_yaw);
+	tright.relative_forward = matrix_forward;
+	tright.relative_left = matrix_left;
+	tright.relative_up = matrix_up;
+	Spin_A_Tire(tright, FALSE);
+
 	Spin_A_Tire(self.backleft, TRUE);
 	Spin_A_Tire(self.backright, TRUE);
 };
