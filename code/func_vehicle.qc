@@ -83,9 +83,9 @@ void Car_TirePlace(entity tire){
 	traceline(tireparticle.origin, tireparticle.origin - tireparticle.lmat_up * tire.frags, TRUE, tire);
 	tire.oldorigin = tire.origin;
 	if (trace_fraction == 1 || trace_plane_normal_z > 0.7){
-		float tracelen = fabs(tireparticle.physobj_spring_length + tireparticle.relative_size);
+		float tracelen = fabs(tireparticle.physobj_spring_length + tire.relative_size);
 		tire.frags = min(tire.frags + frametime*30, tracelen*trace_fraction);
-		tire.punchangle = trace_endpos + tireparticle.lmat_up * tireparticle.relative_size;
+		tire.punchangle = trace_endpos + tireparticle.lmat_up * tire.relative_size;
 		setorigin(tire, tire.punchangle);
 		tire.punchangle -= tireparticle.origin;
 	}
@@ -659,6 +659,7 @@ void(entity wheel, entity car) AddWheelStatic =
 	stat.relative_forward = wheel.relative_forward;
 	stat.relative_left = wheel.relative_forward;
 	stat.relative_up = wheel.relative_forward;
+	stat.relative_size = wheel.relative_size;
 
 	stat.physobj_next = car.physobj_staticlist;
 	car.physobj_staticlist = stat;
