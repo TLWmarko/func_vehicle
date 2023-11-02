@@ -824,9 +824,11 @@ void() Phys_ObjectThink =
 			part.lmat_left = matrix_left;
 			part.lmat_up = matrix_up;
 			// Update euler angles for viewing ingame
-			part.angles = vectoangles2(matrix_forward, matrix_up);
-			if (part.physobj_flags & PHFLAGS_BSPMODEL)
-				part.angles_x = part.angles_x*-1;
+			if (part.modelindex){
+				part.angles = vectoangles2(matrix_forward, matrix_up);
+				if (part.physobj_flags & PHFLAGS_BSPMODEL)
+					part.angles_x = part.angles_x*-1;
+			}
 			part = part.physobj_next;
 		}
 		// Update static object orientations and origins
@@ -839,9 +841,11 @@ void() Phys_ObjectThink =
 			stat.lmat_up = matrix_up;
 			// Update euler angles for viewing ingame
 			// Static objects aren't affected by physics
-			stat.angles = vectoangles2(matrix_forward, matrix_up);
-			if (stat.physobj_flags & PHFLAGS_BSPMODEL)
-				stat.angles_x = stat.angles_x*-1;
+			if (stat.modelindex){
+				stat.angles = vectoangles2(matrix_forward, matrix_up);
+				if (stat.physobj_flags & PHFLAGS_BSPMODEL)
+					stat.angles_x = stat.angles_x*-1;
+			}
 			stat.oldorigin = stat.origin;
 			setorigin (stat, self.physobj_p1.origin + self.lmat_forward*stat.relative_org_x + self.lmat_left*stat.relative_org_y + self.lmat_up*stat.relative_org_z);
 			stat = stat.physobj_next;
