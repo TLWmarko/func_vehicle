@@ -501,16 +501,13 @@ void(entity tire, float frame_acc) Accelerate_A_Tire =
 	vistire.relative_up = matrix_up;
 }
 
-void(float accel, float maxspeed) Car_Accelerate =
+void(float accel, float maxspeed, entity tleft, entity tright) Car_Accelerate =
 {
 	float frame_acc;
-	local entity tright, tleft;
 
 	if (!self.driving)
 		return;
 	entity car = self.driving;
-	tleft = car.backleft;
-	tright = car.backright;
 
 	frame_acc = accel*frametime;
 	if (accel != 0) {
@@ -616,13 +613,16 @@ void TryUpdateVehicle(){
 	makevectors(self.v_angle);
 	float forw = v_forward * self.velocity;
 	if (forw > 100){
-		Car_Accelerate(car.accelerate_forward, car.max_forward_speed);
+		Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft, car.backright);
+		//Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft, car.frontright);
 	}
 	else if (forw < -100){
-		Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed);
+		Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft, car.backright);
+		//Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft, car.frontright);
 	}
 	else {
-		Car_Accelerate(0, 0);
+		Car_Accelerate(0, 0, car.backleft, car.backright);
+		//Car_Accelerate(0, 0, car.frontleft, car.frontright);
 	}
 	makevectors(self.v_angle);
 	float roll = v_right * self.velocity;
