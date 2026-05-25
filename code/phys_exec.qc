@@ -252,7 +252,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 				float spring_frac = 1 - springdist / part.physobj_spring_length;
 				
 				vector v = part.physobj_spring_force;
-				float f = lerp(v_x, v_y, spring_frac*spring_frac) * part.physobj_spring_mult;
+				float f = lerp(v_x, v_y, spring_frac) * part.physobj_spring_mult;
 
 				//Debug_DrawLine(part.origin, part.origin + part.lmat_up * 50 * part.physobj_spring_mult, 0.02);
 
