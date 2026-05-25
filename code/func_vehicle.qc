@@ -616,10 +616,10 @@ void TryUpdateVehicle(){
 	makevectors(self.v_angle);
 	float forw = v_forward * self.velocity;
 	if (forw > 100){
-		Car_Accelerate(car.max_forward_speed, car.accelerate_forward);
+		Car_Accelerate(car.accelerate_forward, car.max_forward_speed);
 	}
 	else if (forw < -100){
-		Car_Accelerate(-car.max_reverse_speed, car.accelerate_reverse);
+		Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed);
 	}
 	else {
 		Car_Accelerate(0, 0);

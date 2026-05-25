@@ -200,11 +200,11 @@ entity() hotrod =
 	setorigin(obj, self.origin);
 
 	obj.lip = 16;
-	obj.max_forward_speed = 3000;
-	obj.max_reverse_speed = 2500;
+	obj.max_forward_speed = 950;
+	obj.max_reverse_speed = 800;
 	obj.max_roll_speed = 2000;
-	obj.accelerate_forward = 950;
-	obj.accelerate_reverse = 800;
+	obj.accelerate_forward = 3000;
+	obj.accelerate_reverse = 2500;
 	obj.accelerate_roll = 350;
 	obj.max_turn = 35;
 	obj.turn_speed = 125;
