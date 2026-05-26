@@ -77,7 +77,9 @@ void() PhysCrush =
 	PushAndDamageTarget(other, self);
 };
 
-void Car_TirePlace(entity tire){
+void Car_TirePlace(entity car, entity tire){
+	vector base_position;
+
 	entity tireparticle = tire.enemy;
 
 	traceline(tireparticle.origin, tireparticle.origin - tireparticle.lmat_up * tire.frags, TRUE, tire);
@@ -86,11 +88,13 @@ void Car_TirePlace(entity tire){
 		float tracelen = fabs(tireparticle.physobj_spring_length + tireparticle.relative_size);
 		tire.frags = min(tire.frags + frametime*30, tracelen*trace_fraction);
 		tire.punchangle = trace_endpos + tireparticle.lmat_up * tireparticle.relative_size;
-		setorigin(tire, tire.punchangle);
 		tire.punchangle -= tireparticle.origin;
+		base_position = car.physobj_p1.origin + car.lmat_forward*tire.relative_org_x + car.lmat_left*tire.relative_org_y + car.lmat_up*tire.relative_org_z;
+		setorigin(tire, base_position + tire.punchangle);
 	}
 	else {
-		setorigin(tire, tireparticle.origin + tire.punchangle);
+		base_position = car.physobj_p1.origin + car.lmat_forward*tire.relative_org_x + car.lmat_left*tire.relative_org_y + car.lmat_up*tire.relative_org_z;
+		setorigin(tire, base_position + tire.punchangle);
 	}
 }
 
@@ -111,10 +115,10 @@ void() Car_ChassiThink =
 		hitmodel = hitmodel.physobj_next;
 	}
 
-	Car_TirePlace(tbleft);
-	Car_TirePlace(tbright);
-	Car_TirePlace(tfleft);
-	Car_TirePlace(tfright);
+	Car_TirePlace(car, tbleft);
+	Car_TirePlace(car, tbright);
+	Car_TirePlace(car, tfleft);
+	Car_TirePlace(car, tfright);
 
 	hitmodel = self.realowner.physobj_hitmodel;
 	while (hitmodel)
