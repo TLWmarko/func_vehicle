@@ -275,7 +275,6 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		}
 		// Build future positions for particles
 		part.destorigin = part.origin + part.velocity * ftime * 2;
-		part.lip = 0;
 		Particle_Friction(part, ftime);
 		part = part.physobj_next;
 	}
@@ -416,8 +415,7 @@ void(float ftime) Phys_Constraints_Floor =
 					add = save_normal * (part.relative_size * (1-save_fraction));
 					//Debug_DrawLine(save_endpos, save_endpos + save_normal * 16, 10);
 				}
-				part.lip = add_z;
-				part.destorigin += add;
+				part.destorigin += add * min(1, ftime * 10);
 				// this doesn't add energy to the system, but will result in big rigs off the road racing, so let's not
 				//part.destorigin += [0, 0, part.relative_size * (1-trace_fraction)];
 			}
@@ -604,7 +602,6 @@ void(float ftime) Phys_Move =
 	{
 		// Convert back from future positions set by constraints to velocities again
 		part.velocity = (part.destorigin - part.origin) * inverse_frametime;
-		part.velocity_z -= part.lip;
 
 		part.oldorigin = part.origin;
 		bump = 0;
