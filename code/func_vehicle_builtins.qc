@@ -208,7 +208,7 @@ entity() hotrod =
 	obj.accelerate_roll = 350;
 	obj.max_turn = 35;
 	obj.turn_speed = 125;
-	obj.physobj_friction_ground_mult = '8 1 8';
+	obj.physobj_friction_logic_mult = '8 1 8';
 	obj.physobj_friction_braking_mult = '22.25 1 22.25';
 	
 	part = spawn();
@@ -970,7 +970,7 @@ entity() atv =
 	obj.accelerate_roll = 250;
 	obj.max_turn = 40;
 	obj.turn_speed = 150;
-	obj.physobj_friction_ground_mult = '8 1 8';
+	obj.physobj_friction_logic_mult = '8 1 8';
 	obj.physobj_friction_braking_mult = '22.25 1 22.25';
 
 	part = spawn();

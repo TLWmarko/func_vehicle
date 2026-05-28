@@ -118,10 +118,10 @@ void() Car_ChassiThink =
 
 	if (!car.driving)
 	{
-		car.backleft.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
-		car.backright.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
-		car.frontleft.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
-		car.frontright.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
+		car.backleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+		car.backright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+		car.frontleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+		car.frontright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
 	}
 
 	Car_TirePlace(car, tbleft);
@@ -631,17 +631,17 @@ void TryUpdateVehicle(){
 		forward_vel = car.velocity * car.lmat_forward;
 		if (forward_vel < -100) // braking
 		{
-			car.backleft.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
-			car.backright.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
-			car.frontleft.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
-			car.frontright.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
+			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.backright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
 		}
 		else
 		{
-			car.backleft.physobj_friction_ground_mult = '1 1 1';
-			car.backright.physobj_friction_ground_mult = '1 1 1';
-			car.frontleft.physobj_friction_ground_mult = '1 1 1';
-			car.frontright.physobj_friction_ground_mult = '1 1 1';
+			car.backleft.physobj_friction_logic_mult = '1 1 1';
+			car.backright.physobj_friction_logic_mult = '1 1 1';
+			car.frontleft.physobj_friction_logic_mult = '1 1 1';
+			car.frontright.physobj_friction_logic_mult = '1 1 1';
 			Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft, car.backright);
 			//Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft, car.frontright);
 		}
@@ -651,26 +651,26 @@ void TryUpdateVehicle(){
 
 		if (forward_vel > 100) // braking
 		{
-			car.backleft.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
-			car.backright.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
-			car.frontleft.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
-			car.frontright.physobj_friction_ground_mult = car.physobj_friction_braking_mult;
+			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.backright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
 		}
 		else
 		{
-			car.backleft.physobj_friction_ground_mult = '1 1 1';
-			car.backright.physobj_friction_ground_mult = '1 1 1';
-			car.frontleft.physobj_friction_ground_mult = '1 1 1';
-			car.frontright.physobj_friction_ground_mult = '1 1 1';
+			car.backleft.physobj_friction_logic_mult = '1 1 1';
+			car.backright.physobj_friction_logic_mult = '1 1 1';
+			car.frontleft.physobj_friction_logic_mult = '1 1 1';
+			car.frontright.physobj_friction_logic_mult = '1 1 1';
 			Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft, car.backright);
 			//Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft, car.frontright);
 		}
 	}
 	else {
-		car.backleft.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
-		car.backright.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
-		car.frontleft.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
-		car.frontright.physobj_friction_ground_mult = car.physobj_friction_ground_mult;
+		car.backleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+		car.backright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+		car.frontleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+		car.frontright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
 		Car_Accelerate(0, 0, car.backleft, car.backright);
 		//Car_Accelerate(0, 0, car.frontleft, car.frontright);
 	}
