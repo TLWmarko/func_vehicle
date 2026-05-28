@@ -459,6 +459,8 @@ void(entity part) Particle_CheckOnGround =
 		else
 		{
 			part.physobj_flags -= (part.physobj_flags & PHFLAGS_SPRING_TOUCH);
+			part.flags -= (part.flags & FL_ONGROUND);
+			part.groundentity = world;
 		}
 	}
 }
