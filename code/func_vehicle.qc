@@ -16,6 +16,7 @@ float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 
 entity() hotrod;
+entity() atv;
 entity() triton;
 
 void() Spin_Tires;
@@ -998,6 +999,11 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_turret_body.mdl");
 		precache_model("progs/HotRod_turret_barrel.mdl");
 		car = hotrod();
+	}
+	else if (self.netname == "atv"){
+		precache_model("progs/atv.mdl");
+		precache_model("progs/atvtire.mdl");
+		car = atv();
 	}
 	
 	car.physobj_flags |= PHFLAGS_VEHICLE;
