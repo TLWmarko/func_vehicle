@@ -489,19 +489,19 @@ void(entity part, float ftime) Particle_Friction =
 			vector forwardVel = part.lmat_forward * (part.velocity * part.lmat_forward);
 			dir = normalize(forwardVel);
 			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_forward*speed*(veldir*part.lmat_forward)*part.physobj_friction_ground_x*4*ftime*dot;
+			part.velocity -= part.lmat_forward*speed*(veldir*part.lmat_forward)*part.physobj_friction_ground_x*4*ftime*dot*part.physobj_friction_ground_mult_x;
 		}
 		if (part.physobj_friction_ground_y){
 			vector sideVel = part.lmat_left * (part.velocity * part.lmat_left);
 			dir = normalize(sideVel);
 			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_left*speed*(veldir*part.lmat_left)*part.physobj_friction_ground_y*4*ftime*dot;
+			part.velocity -= part.lmat_left*speed*(veldir*part.lmat_left)*part.physobj_friction_ground_y*4*ftime*dot*part.physobj_friction_ground_mult_y;
 		}
 		if (part.physobj_friction_ground_z){
 			vector upVel = part.lmat_up * (part.velocity * part.lmat_up);
 			dir = normalize(upVel);
 			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_up*speed*(veldir*part.lmat_up)*part.physobj_friction_ground_z*4*ftime*dot;
+			part.velocity -= part.lmat_up*speed*(veldir*part.lmat_up)*part.physobj_friction_ground_z*4*ftime*dot*part.physobj_friction_ground_mult_z;
 		}
 		
 		/*
@@ -978,6 +978,7 @@ entity(vector org, entity e, entity obj) Phys_InitParticle =
 	//e.movetype = MOVETYPE_STEP;
 	//e.flags = FL_FLY;
 	e.physobj_spring_mult = 1;
+	e.physobj_friction_ground_mult = '1 1 1';
 
 	e.th_die = SUB_Null;
 	e.th_pain = SUB_NullPain;
