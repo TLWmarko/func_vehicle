@@ -514,7 +514,7 @@ void(entity tire, float frame_acc) Accelerate_A_Tire =
 	vistire.relative_up = matrix_up;
 }
 
-void(float accel, float maxspeed, entity tleft, entity tright) Car_Accelerate =
+void(float accel, float maxspeed, entity tire) Car_Accelerate =
 {
 	float frame_acc;
 
@@ -523,19 +523,26 @@ void(float accel, float maxspeed, entity tleft, entity tright) Car_Accelerate =
 	entity car = self.driving;
 
 	frame_acc = accel*frametime;
-	if (accel != 0) {
-		float allowAccelerateRight = tright.velocity * tright.lmat_forward < maxspeed;
-		float allowAccelerateLeft = tleft.velocity * tleft.lmat_forward < maxspeed;
-		if (allowAccelerateRight && tright.flags & FL_ONGROUND){
-			tright.velocity = tright.velocity + tright.lmat_forward * frame_acc;
-		}
-		if (allowAccelerateLeft && tleft.flags & FL_ONGROUND){
-			tleft.velocity = tleft.velocity + tleft.lmat_forward * frame_acc;
+	if (accel != 0)
+	{
+		vector normal = tire.physobj_floor_plane_normal;
+		vector tangentVel = tire.velocity - normal * (tire.velocity * normal);
+		vector sideaxis = normalize(tire.lmat_left - normal * (tire.lmat_left * normal));
+
+		float sideSpeed = tangentVel * sideaxis;
+		vector noSideVel = tangentVel - sideaxis * sideSpeed;
+		float noSideSpeed = vlen(noSideVel);
+
+		float allowAccelerate = noSideSpeed < maxspeed;
+		if (allowAccelerate && tire.flags & FL_ONGROUND)
+		{
+			// TODO: this should use a constructed direction rather than tire.lmat_forward
+			// to work correctly even when vehicle is tilted forward or back
+			tire.velocity = tire.velocity + tire.lmat_forward * frame_acc;
 		}
 	}
 
-	Accelerate_A_Tire(tright, frame_acc);
-	Accelerate_A_Tire(tleft, frame_acc);
+	Accelerate_A_Tire(tire, frame_acc);
 };
 
 void() Spin_Tires =
@@ -642,8 +649,10 @@ void TryUpdateVehicle(){
 			car.backright.physobj_friction_logic_mult = '1 1 1';
 			car.frontleft.physobj_friction_logic_mult = '1 1 1';
 			car.frontright.physobj_friction_logic_mult = '1 1 1';
-			Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft, car.backright);
-			//Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft, car.frontright);
+			if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft);
+			if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backright);
+			if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft);
+			if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontright);
 		}
 	}
 	else if (forw < -100){
@@ -662,8 +671,10 @@ void TryUpdateVehicle(){
 			car.backright.physobj_friction_logic_mult = '1 1 1';
 			car.frontleft.physobj_friction_logic_mult = '1 1 1';
 			car.frontright.physobj_friction_logic_mult = '1 1 1';
-			Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft, car.backright);
-			//Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft, car.frontright);
+			if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft);
+			if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backright);
+			if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft);
+			if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontright);
 		}
 	}
 	else {
@@ -671,8 +682,10 @@ void TryUpdateVehicle(){
 		car.backright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
 		car.frontleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
 		car.frontright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
-		Car_Accelerate(0, 0, car.backleft, car.backright);
-		//Car_Accelerate(0, 0, car.frontleft, car.frontright);
+		if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.backleft);
+		if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.backright);
+		if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontleft);
+		if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontright);
 	}
 	makevectors(self.v_angle);
 	float roll = v_right * self.velocity;

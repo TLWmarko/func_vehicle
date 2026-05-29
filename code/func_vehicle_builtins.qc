@@ -452,6 +452,7 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
+	part.physobj_flags |= PHFLAGS_POWERED;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -487,6 +488,7 @@ entity() hotrod =
 	part.physobj_friction_water = '2 2 2';
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
+	part.physobj_flags |= PHFLAGS_POWERED;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
@@ -1107,6 +1109,7 @@ entity() atv =
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
 	part.netname = "frontleft";
+	part.physobj_flags |= PHFLAGS_POWERED;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -1127,6 +1130,7 @@ entity() atv =
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
 	part.netname = "frontright";
+	part.physobj_flags |= PHFLAGS_POWERED;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -1147,6 +1151,7 @@ entity() atv =
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
 	part.netname = "backright";
+	part.physobj_flags |= PHFLAGS_POWERED;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;
@@ -1167,6 +1172,7 @@ entity() atv =
 	part.physobj_bounce = 1.025;
 	part.physobj_buoyancy = -0.75;
 	part.netname = "backleft";
+	part.physobj_flags |= PHFLAGS_POWERED;
 
 	part = spawn();
 	part.physobj_next = obj.physobj_particlelist;

@@ -75,6 +75,7 @@ float PHFLAGS_FORCE = 64;
 float PHFLAGS_KILLME = 128;
 float PHFLAGS_STABILIZERBAR = 256;
 float PHFLAGS_VEHICLE = 512;
+float PHFLAGS_POWERED = 1024;
 
 .float force_calcdist, force_calcscale;
 
