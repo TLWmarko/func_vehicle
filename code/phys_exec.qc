@@ -467,93 +467,66 @@ void(entity part) Particle_CheckOnGround =
 
 void(entity part, float ftime) Particle_Friction =
 {
-	local float speed, st, dot;
-	vector dir, veldir;
+	local float speed, side_speed, no_side_speed, dot, friction, drop;
+	vector axis, dir, vel_dir, tangent_vel, side_axis, normal, side_vel, no_side_vel;
 
 	if (part.flags & FL_ONGROUND)
 	{
-		speed = vlen(part.velocity);
-		// Stiction
-		if (part.physobj_stiction > 0)
+		normal = part.physobj_floor_plane_normal;
+		tangent_vel = part.velocity - normal * (part.velocity * normal);
+
+		side_axis = part.lmat_left;
+		// this is arguably more correct than the above, but not projecting feels better
+		// when driving, the reason being that when the wheels tilt due to the springs
+		// being pushed by high forces, coulomb sideways friction lowers, making the
+		// vehicle less likely to tip over etc
+		//side_axis = normalize(part.lmat_left - normal * (part.lmat_left * normal));
+
+		side_speed = tangent_vel * side_axis;
+
+		if (part.physobj_friction_ground_x) // coulomb friction forwards
 		{
-			if (speed <= part.physobj_stiction) // stiction occurs when moving slow enough
-			{
-				st = speed/part.physobj_stiction;
-				//part.velocity *= st*scaledftime;
-				part.velocity *= st;//*ftime;
-			}
-		}
-		// Directional ground friction
-		vector normal = part.physobj_floor_plane_normal;
+			no_side_vel = tangent_vel - side_axis * side_speed;
+			axis = normalize(no_side_vel);
+			no_side_speed = no_side_vel * axis;
 
-		veldir = normalize(part.velocity);
-		if (part.physobj_friction_ground_x){
-			vector forwardVel = part.lmat_forward * (part.velocity * part.lmat_forward);
-			dir = normalize(forwardVel);
+			friction = part.physobj_friction_ground_x * part.physobj_friction_ground_mult * part.physobj_friction_logic_mult_x;
+
+			drop = friction * ftime;
+			
+			if (fabs(no_side_speed) <= drop)
+				no_side_speed = 0;
+			else
+				no_side_speed -= sign(no_side_speed) * drop;
+
+			tangent_vel += axis * (no_side_speed - (tangent_vel * axis));
+		}
+		if (part.physobj_friction_ground_y) // coulomb friction sideways
+		{
+			friction = part.physobj_friction_ground_y * part.physobj_friction_ground_mult * part.physobj_friction_logic_mult_y;
+
+			drop = friction * ftime;
+
+			if (fabs(side_speed) <= drop)
+				side_speed = 0;
+			else
+				side_speed -= sign(side_speed) * drop;
+
+			tangent_vel += side_axis * (side_speed - (tangent_vel * side_axis));
+		}
+		part.velocity = tangent_vel + normal * (part.velocity * normal);
+
+		if (part.physobj_friction_ground_z) // oldschool func_vehicle weird sideways friction for nicer handling at high speeds
+		{
+			speed = vlen(part.velocity);
+			vel_dir = part.velocity / speed;
+			side_vel = part.lmat_left * (part.velocity * part.lmat_left);
+			dir = normalize(side_vel);
 			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_forward*speed*(veldir*part.lmat_forward)*part.physobj_friction_ground_x*4*ftime*dot*part.physobj_friction_logic_mult_x*part.physobj_friction_ground_mult;
+			part.velocity -= part.lmat_left*speed*(vel_dir*part.lmat_left)*part.physobj_friction_ground_z*4*ftime*dot*part.physobj_friction_logic_mult_z*part.physobj_friction_ground_mult;
 		}
-		if (part.physobj_friction_ground_y){
-			vector sideVel = part.lmat_left * (part.velocity * part.lmat_left);
-			dir = normalize(sideVel);
-			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_left*speed*(veldir*part.lmat_left)*part.physobj_friction_ground_y*4*ftime*dot*part.physobj_friction_logic_mult_y*part.physobj_friction_ground_mult;
-		}
-		if (part.physobj_friction_ground_z){
-			vector upVel = part.lmat_up * (part.velocity * part.lmat_up);
-			dir = normalize(upVel);
-			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_up*speed*(veldir*part.lmat_up)*part.physobj_friction_ground_z*4*ftime*dot*part.physobj_friction_logic_mult_z*part.physobj_friction_ground_mult;
-		}
-		
-		/*
-		vector normal = part.physobj_floor_plane_normal;
-		vector forwardVel = part.lmat_forward * (part.velocity * part.lmat_forward);
-		vector sideVel = part.lmat_left * (part.velocity * part.lmat_left);
-		vector upVel = part.lmat_up * (part.velocity * part.lmat_up);
-		
-		//vector tangent = normalize(forwardVel - (forwardVel * normal) * normal);
-		float scaledftime = ftime * 275;
-
-		// forward friction
-		speed = vlen(forwardVel);
-		dir = normalize(forwardVel);
-		dot = 1-fabs(dir * normal);
-		speed = max(0, speed - part.physobj_friction_ground_x * 5 * scaledftime * dot);
-		forwardVel = dir * speed;
-		
-		// sideways friction
-		speed = vlen(sideVel);
-		dir = normalize(sideVel);
-		dot = 1-fabs(dir * normal);
-
-		// increase sideways friction based on side speed
-
-		// EXPERIMENT
-		//float dot2 = dir * tangent;
-		//float det = normal * CrossProduct(dir, tangent);
-		//float ang = atan2(det, dot2);
-		//dprint(ftos(ang));
-		//dprint("\n");
-		//float sidedot = 1;//remap(ang, );
-		//float fricc = part.physobj_friction_ground_y * 4 * sidedot;
-
-		//EXPERIMENT 2
-		float fricc = part.physobj_friction_ground_y * 2 + speed * 0.045;
-		speed = max(0, speed - fricc * scaledftime * dot);
-		sideVel = dir * speed;
-
-		// up friction
-		speed = vlen(upVel);
-		dir = normalize(upVel);
-		dot = 1-fabs(dir * normal);
-		speed = max(0, speed - part.physobj_friction_ground_z * 5 * scaledftime * dot);
-		upVel = dir * speed;
-		
-		part.velocity = forwardVel + sideVel + upVel;
-		*/
 	}
-	traceline(part.origin, part.origin, TRUE, part);
+	//traceline(part.origin, part.origin, TRUE, part);
 	//tracebox(part.origin, part.mins, part.maxs, part.origin, TRUE, part);
 	// Water friction
 	//if (trace_inwater)
