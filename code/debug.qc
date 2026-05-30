@@ -27,5 +27,5 @@ void(vector start, vector end, float lifetime) Debug_DrawLine =
 		e.nextthink = time + lifetime;
 		f++;
 	}
-	e.frame = 100 * remainder;
+	if (e) e.frame = 100 * remainder;
 }
