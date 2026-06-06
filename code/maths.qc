@@ -2,15 +2,6 @@
 //	MATHS.
 // ===================
 
-
-const float DEG2RAD = 0.0174532925199432957692369076848861271344287188854172545609719144;
-const float RAD2DEG = 57.2957795130823208767981548141051703324054724665643215491602438612;
-const float PI      = 3.1415926535897932384626433832795028841971693993751058209749445923;
-
-const float M_PI_DIV_180 = (PI / 180);
-
-
-
 float mathlib_accuracy; //accuracy of sqrt & pow
 
 // frikqcc doesn't like it when i swizzle directly
