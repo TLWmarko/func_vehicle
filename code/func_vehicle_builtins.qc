@@ -972,6 +972,8 @@ entity() atv =
 	obj.accelerate_roll = 250;
 	obj.max_turn = 35;
 	obj.turn_speed = 150;
+	obj.autolevel_force = '0.5 5 0';
+	obj.autolevel_maxangle = '35 20 0';
 	obj.physobj_friction_logic_mult = '2 1 1';
 	obj.physobj_friction_braking_mult = '22.25 1 1';
 

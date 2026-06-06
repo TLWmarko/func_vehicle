@@ -12,6 +12,9 @@
 .float max_turn;
 .float turn_speed;
 
+.vector autolevel_force;
+.vector autolevel_maxangle;
+
 float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 
@@ -582,6 +585,88 @@ void() Spin_Tires =
 	Spin_A_Tire(self.backright, TRUE);
 };
 
+void(entity part, vector com, vector axis, float angle, float inverse_frametime) Part_AutoLevel =
+{
+	vector rotated_pos = RotateVectorAxisAngle(part.origin - com, axis, angle) + com;
+	//Debug_DrawLine(part.origin, rotated_pos, 0.1);
+	part.velocity += (rotated_pos - part.origin) * inverse_frametime;
+}
+
+void(float ftime) Car_AutoLevel =
+{
+	entity car;
+	vector forw, left;
+	vector forw_axis, left_axis;
+	float forw_angle, left_angle;
+	float inverse_frametime = 1 / ftime;
+
+	if (!self.driving)
+		return;
+	car = self.driving;
+
+	float count = 0;
+	count += car.frontright.flags & FL_ONGROUND;
+	count += car.frontleft.flags & FL_ONGROUND;
+	count += car.backright.flags & FL_ONGROUND;
+	count += car.backleft.flags & FL_ONGROUND;
+	if (count > 2) return;
+
+	vector com = car.physobj_p1.origin + car.lmat_forward*car.relative_org_x + car.lmat_left*car.relative_org_y + car.lmat_up*car.relative_org_z;
+
+	forw = car.lmat_forward;
+	if (forw_z > 0.7) forw = -car.lmat_up;
+	else if (forw_z < -0.7) forw = car.lmat_up;
+	forw_z = 0;
+	forw = normalize(forw);
+	//Debug_DrawLine(car.origin, car.origin + forw * 200, 0.1);
+
+	left = car.lmat_left;
+	if (left_z > 0.7) left = -car.lmat_up;
+	else if (left_z < -0.7) left = car.lmat_up;
+	else if (car.lmat_up_z < 0) left = -left;
+	left_z = 0;
+	left = normalize(left);
+	//Debug_DrawLine(car.origin, car.origin + left * 200, 0.1);
+
+	forw_axis = crossproduct(forw, car.lmat_forward);
+	forw_angle = AngleBetweenVectors(forw, car.lmat_forward, forw_axis);
+	forw_axis = -normalize(forw_axis);
+	left_axis = crossproduct(left, car.lmat_left);
+	left_angle = AngleBetweenVectors(left, car.lmat_left, left_axis);
+	left_axis = -normalize(left_axis);
+
+	if (car.lmat_up_z < 0)
+	{
+		if (fabs(car.lmat_forward_z) > 0.7)
+		{
+			forw_angle = min(car.autolevel_maxangle_y, forw_angle) * ftime * car.autolevel_force_y;
+			left_angle = min(car.autolevel_maxangle_x, left_angle) * ftime * car.autolevel_force_x;
+		}
+		else
+		{
+			forw_angle = min(car.autolevel_maxangle_x, forw_angle) * ftime * car.autolevel_force_x;
+			left_angle = min(car.autolevel_maxangle_y, left_angle) * ftime * car.autolevel_force_y;
+		}
+	}
+	else
+	{
+		forw_angle = min(car.autolevel_maxangle_x, forw_angle) * ftime * car.autolevel_force_x;
+		left_angle = min(car.autolevel_maxangle_x, left_angle) * ftime * car.autolevel_force_x;
+	}
+
+	Part_AutoLevel(car.frontright, com, forw_axis, forw_angle, inverse_frametime);
+	Part_AutoLevel(car.frontright, com, left_axis, left_angle, inverse_frametime);
+
+	Part_AutoLevel(car.frontleft, com, forw_axis, forw_angle, inverse_frametime);
+	Part_AutoLevel(car.frontleft, com, left_axis, left_angle, inverse_frametime);
+
+	Part_AutoLevel(car.backright, com, forw_axis, forw_angle, inverse_frametime);
+	Part_AutoLevel(car.backright, com, left_axis, left_angle, inverse_frametime);
+
+	Part_AutoLevel(car.backleft, com, forw_axis, forw_angle, inverse_frametime);
+	Part_AutoLevel(car.backleft, com, left_axis, left_angle, inverse_frametime);
+}
+
 void(float accel, float maxspeed) Car_Roll =
 {
 	local entity f_right, f_left;
@@ -632,7 +717,11 @@ void TryUpdateVehicle(){
 	}
 	if (!self.driving)
 		return;
+
 	entity car = self.driving;
+	if (car.autolevel_maxangle_x)
+		Car_AutoLevel(frametime);
+	
 	car.physobj_flags -= (car.physobj_flags & PHFLAGS_RESTING);
 	setorigin(self, Car_SpringyOrigin());
 	makevectors(self.v_angle);
@@ -690,13 +779,14 @@ void TryUpdateVehicle(){
 		if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontleft);
 		if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontright);
 	}
-	makevectors(self.v_angle);
-	float roll = v_right * self.velocity;
-	if (roll > 100){
-		Car_Roll(-car.max_roll_speed, car.accelerate_roll);
-	}
-	else if (roll < -100){
-		Car_Roll(car.max_roll_speed, car.accelerate_roll);
+	if (!car.autolevel_maxangle_x)
+	{
+		makevectors(self.v_angle);
+		float roll = v_right * self.velocity;
+		if (roll > 100)
+			Car_Roll(-car.max_roll_speed, car.accelerate_roll);
+		else if (roll < -100)
+			Car_Roll(car.max_roll_speed, car.accelerate_roll);
 	}
 	makevectors(car.angles);
 	v_forward_z = 0;

@@ -217,3 +217,30 @@ vector vectoangles2 (vector forward, vector up) {
 	return result;
 }
 #endif
+
+float(vector a, vector b, vector axis) AngleBetweenVectors =
+{
+	float d, m;
+
+	a = normalize(a); // TODO: mby simply require normalized?
+	b = normalize(b); // TODO: mby simply require normalized?
+
+	d = a * b;
+	m = vlen(axis);
+
+	return atan2_smooth(m, d);
+};
+
+vector(vector v, vector axis, float angle) RotateVectorAxisAngle =
+{
+	float c, s;
+	vector sc;
+
+	axis = normalize(axis); // TODO: mby simply require normalized?
+
+	sc = SinCos_Trick(angle);
+	s = sc.x;
+	c = sc.y;
+
+	return v * c + crossproduct(axis, v) * s + axis * (axis * v) * (1 - c);
+};
