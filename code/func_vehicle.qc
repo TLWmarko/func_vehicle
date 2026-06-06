@@ -431,13 +431,16 @@ void(entity attacker, float damage) Car_Pain = {
 void(entity tire, float doMatrix) Spin_A_Tire =
 {
 	entity vistire = tire.enemy;
-	if (tire.flags & FL_ONGROUND){
-		vistire.yaw_speed = (tire.velocity * tire.lmat_forward) / (PI * tire.relative_size * 0.5);
+	if (!(tire.physobj_flags & PHFLAGS_POWERED))
+	{
+		if (tire.flags & FL_ONGROUND){
+			vistire.yaw_speed = ((tire.velocity * tire.lmat_forward) * 180) / (PI * tire.relative_size);
+		}
+		else {
+			vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 5 * frametime);
+		}
+		vistire.ideal_yaw = vistire.ideal_yaw - vistire.yaw_speed * frametime;
 	}
-	else {
-		vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 5 * frametime);
-	}
-	vistire.ideal_yaw = mod(vistire.ideal_yaw - vistire.yaw_speed, 360);
 	if (doMatrix){
 		makevectors(tire.base_pose);
 		matrix_forward = v_forward;
@@ -494,7 +497,7 @@ void(entity tire, float frame_acc) Accelerate_A_Tire =
 {
 	entity vistire = tire.enemy;
 	if (tire.flags & FL_ONGROUND){
-		vistire.yaw_speed = (tire.velocity * tire.lmat_forward) / (PI * tire.relative_size * 0.5);
+		vistire.yaw_speed = ((tire.velocity * tire.lmat_forward) * 180) / (PI * tire.relative_size);
 	}
 	else {
 		vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 10 * frametime);
@@ -503,7 +506,7 @@ void(entity tire, float frame_acc) Accelerate_A_Tire =
 		vistire.yaw_speed = min(vistire.yaw_speed, frame_acc * 0.25);
 	else if (frame_acc > 0)
 		vistire.yaw_speed = max(vistire.yaw_speed, frame_acc * 0.25);
-	vistire.ideal_yaw = mod(vistire.ideal_yaw - vistire.yaw_speed, 360);
+	vistire.ideal_yaw = vistire.ideal_yaw - vistire.yaw_speed * frametime;
 	makevectors(tire.base_pose);
 	matrix_forward = v_forward;
 	matrix_left = -v_right;
