@@ -224,8 +224,6 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 {
 	local entity part;
 
-	const float ANTIROLL_MULT = 1.25;
-
 	part = self.physobj_particlelist;
 	while(part)
 	{
@@ -241,13 +239,6 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		{
 			if (part.physobj_flags & PHFLAGS_SPRING_TOUCH)
 			{
-				// EXPERIMENTS
-				//float offsetDistance = part.physobj_spring_length;
-				//float currentDistance = part.physobj_spring_length * part.physobj_floor_frac;
-				//float sf = 0.4;
-				//float f = (offsetDistance-currentDistance)*sf * part.physobj_spring_mult;
-				//spring = springdir * max(0, (sf.y * p * ftime - damping * ftime));
-
 				float springdist = max(0, part.physobj_floor_dist - part.relative_size);
 				float spring_frac = 1 - springdist / part.physobj_spring_length;
 				
@@ -264,9 +255,6 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 				vector spring = springdir * part.frags;
 
 				part.velocity += spring*ftime;
-
-				// basically the old damping
-				//part.velocity -= part.lmat_up*vlen(part.velocity)*(normalize(part.velocity)*part.lmat_up)*damping*4*ftime;
 			}
 			else
 			{
@@ -275,7 +263,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		}
 		// Build future positions for particles
 		part.destorigin = part.origin + part.velocity * ftime * 2;
-		Particle_Friction(part, ftime);
+		Particle_Friction(part, ftime); // TODO: this should logically be before building future positions, but this feels better
 		part = part.physobj_next;
 	}
 };
