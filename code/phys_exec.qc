@@ -842,7 +842,7 @@ void() Phys_ObjectThink =
 			hitmodel = hitmodel.physobj_next;
 		}
 		*/
-		setorigin (self, self.physobj_p1.origin + self.lmat_forward*self.relative_org_x + self.lmat_left*self.relative_org_y + self.lmat_up*self.relative_org_z);
+		setorigin (self, self.physobj_p1.origin + self.lmat_forward*self.base_pose_x + self.lmat_left*self.base_pose_y + self.lmat_up*self.base_pose_z);
 		self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
 		self.angles_x = -self.angles_x;
 		self.velocity = self.physobj_p1.velocity; // FIXME: count average velocity
@@ -1541,6 +1541,11 @@ entity(entity obj, vector org, vector forward, vector left, vector up) Phys_Init
 	obj.relative_org_z = up*v;
 	obj.relative_org_y = left*v;
 	obj.relative_org_x = forward*v;
+	// self pos relative to first particle
+	v = org-obj.physobj_p1.origin;
+	obj.base_pose_z = up*v;
+	obj.base_pose_y = left*v;
+	obj.base_pose_x = forward*v;
 
 	// LadyHavoc: Calculate the matrix of the first three particles
 	// this matrix is what the 3 particles produced in the editor, and we need
