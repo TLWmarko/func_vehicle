@@ -89,6 +89,8 @@ void() PhysCrush =
 void Car_TirePlace(entity car, entity tire){
 	vector base_position;
 
+	if (!tire) return;
+
 	entity tireparticle = tire.enemy;
 
 	traceline(tireparticle.origin, tireparticle.origin - tireparticle.lmat_up * tire.frags, TRUE, tire);
@@ -450,6 +452,8 @@ void(entity attacker, float damage) Car_Pain = {
 void(entity tire, float doMatrix) Spin_A_Tire =
 {
 	entity vistire = tire.enemy;
+	if (!vistire) return;
+
 	if (!(tire.physobj_flags & PHFLAGS_POWERED))
 	{
 		if (tire.flags & FL_ONGROUND){
@@ -515,6 +519,8 @@ void(float turn) Car_Turn =
 void(entity tire, float frame_acc) Accelerate_A_Tire =
 {
 	entity vistire = tire.enemy;
+	if (!vistire) return;
+
 	if (tire.flags & FL_ONGROUND){
 		vistire.yaw_speed = ((tire.velocity * tire.lmat_forward) * 180) / (PI * tire.relative_size);
 	}
@@ -981,9 +987,13 @@ vector() Car_SpringyOrigin =
 {
 	entity car = self.driving;
 	entity tbleft = car.backleft.enemy;
+	if (!tbleft) tbleft = car.backleft;
 	entity tbright = car.backright.enemy;
+	if (!tbright) tbright = car.backright;
 	entity tfleft = car.frontleft.enemy;
+	if (!tfleft) tfleft = car.frontleft;
 	entity tfright = car.frontright.enemy;
+	if (!tfright) tfright = car.frontright;
 
 	vector org = tbleft.origin + tbright.origin + tfleft.origin + tfright.origin;
 	org = (org / 4) + car.lmat_up * car.lip;
