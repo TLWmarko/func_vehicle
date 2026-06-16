@@ -17,6 +17,9 @@
 
 float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
+float VEHICLE_TRACKED = 4;
+
+// TODO: ackerman based steering? with different distances depending on max speed?
 
 entity() hotrod;
 entity() atv;
@@ -701,9 +704,219 @@ void(float accel, float maxspeed) Car_Roll =
 	}
 }
 
-void TryUpdateVehicle(){
+void BrakingAndAccelerating(entity car){
 	float forward_vel;
 
+	makevectors(self.v_angle);
+	float forw = v_forward * self.velocity;
+	float turn = v_right * self.velocity;
+
+	if (forw > 100){
+		forward_vel = car.velocity * car.lmat_forward;
+		if (forward_vel < -100) // braking
+		{
+			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.backright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			if (car.spawnflags & VEHICLE_TRACKED)
+			{
+				if (turn > 100)
+				{
+					if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.backright);
+					if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.frontright);
+				}
+				else if (turn < -100)
+				{
+					if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.backleft);
+					if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.frontleft);
+				}
+			}
+		}
+		else
+		{
+			car.backleft.physobj_friction_logic_mult = '1 1 1';
+			car.backright.physobj_friction_logic_mult = '1 1 1';
+			car.frontleft.physobj_friction_logic_mult = '1 1 1';
+			car.frontright.physobj_friction_logic_mult = '1 1 1';
+			if (car.backleft.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn < -100)
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.backleft);
+				}
+				else
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft);
+				}
+			}
+			if (car.backright.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn > 100)
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.backright);
+				}
+				else
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backright);
+				}
+			}
+			if (car.frontleft.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn < -100)
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.frontleft);
+				}
+				else
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft);
+				}
+			}
+			if (car.frontright.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn > 100)
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.frontright);
+				}
+				else
+				{
+					Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontright);
+				}
+			}
+		}
+	}
+	else if (forw < -100){
+		forward_vel = car.velocity * car.lmat_forward;
+
+		if (forward_vel > 100) // braking
+		{
+			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.backright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			car.frontright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
+			if (car.spawnflags & VEHICLE_TRACKED)
+			{
+				if (turn > 100)
+				{
+					if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.backleft);
+					if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.frontleft);
+				}
+				else if (turn < -100)
+				{
+					if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.backright);
+					if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed * car.max_turn, car.frontright);
+				}
+			}
+		}
+		else
+		{
+			car.backleft.physobj_friction_logic_mult = '1 1 1';
+			car.backright.physobj_friction_logic_mult = '1 1 1';
+			car.frontleft.physobj_friction_logic_mult = '1 1 1';
+			car.frontright.physobj_friction_logic_mult = '1 1 1';
+			if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft);
+			if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backright);
+			if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft);
+			if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontright);
+			if (car.backleft.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn > 100)
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.backleft);
+				}
+				else
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft);
+				}
+			}
+			if (car.backright.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn < -100)
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.backright);
+				}
+				else
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backright);
+				}
+			}
+			if (car.frontleft.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn > 100)
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.frontleft);
+				}
+				else
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft);
+				}
+			}
+			if (car.frontright.physobj_flags & PHFLAGS_POWERED)
+			{
+				if (car.spawnflags & VEHICLE_TRACKED && turn < -100)
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed * car.max_turn, car.frontright);
+				}
+				else
+				{
+					Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontright);
+				}
+			}
+		}
+	}
+	else {
+		float isTurning = FALSE;
+		if (car.spawnflags & VEHICLE_TRACKED)
+		{
+			if (turn > 100)
+			{
+				isTurning = TRUE;
+				if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontright);
+				if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backright);
+				if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft);
+				if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft);
+			}
+			else if (turn < -100)
+			{
+				isTurning = TRUE;
+				if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontright);
+				if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backright);
+				if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft);
+				if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft);
+			}
+		}
+		if (!isTurning)
+		{
+			car.backleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+			car.backright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+			car.frontright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
+			if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.backleft);
+			if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.backright);
+			if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontleft);
+			if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontright);
+		}
+	}
+	if (!(car.spawnflags & VEHICLE_TRACKED))
+	{
+		makevectors(car.angles);
+		v_forward_z = 0;
+		v_forward = normalize(v_forward);
+		float f = (car.velocity * v_forward > -2) * 2 - 1;
+
+		turn = (mod(car.angles_y - self.v_angle_y + 180, 360) - 180) * f;
+
+		if (f < 0){ // driving backwards, check if we are also aiming backwards, in which case don't flip car around
+			if (turn > 100)
+				turn -= 180;
+			if (turn < -100)
+				turn += 180;
+		}
+		Car_Turn(turn);
+	}
+}
+
+void TryUpdateVehicle(){
 	if (!check_camera_state){
 		check_camera_state = TRUE;
 		if (self.driving){
@@ -724,61 +937,10 @@ void TryUpdateVehicle(){
 	
 	car.physobj_flags -= (car.physobj_flags & PHFLAGS_RESTING);
 	setorigin(self, Car_SpringyOrigin());
-	makevectors(self.v_angle);
-	float forw = v_forward * self.velocity;
-	if (forw > 100){
-		forward_vel = car.velocity * car.lmat_forward;
-		if (forward_vel < -100) // braking
-		{
-			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-			car.backright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-			car.frontright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-		}
-		else
-		{
-			car.backleft.physobj_friction_logic_mult = '1 1 1';
-			car.backright.physobj_friction_logic_mult = '1 1 1';
-			car.frontleft.physobj_friction_logic_mult = '1 1 1';
-			car.frontright.physobj_friction_logic_mult = '1 1 1';
-			if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backleft);
-			if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.backright);
-			if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontleft);
-			if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(car.accelerate_forward, car.max_forward_speed, car.frontright);
-		}
-	}
-	else if (forw < -100){
-		forward_vel = car.velocity * car.lmat_forward;
 
-		if (forward_vel > 100) // braking
-		{
-			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-			car.backright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-			car.frontleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-			car.frontright.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
-		}
-		else
-		{
-			car.backleft.physobj_friction_logic_mult = '1 1 1';
-			car.backright.physobj_friction_logic_mult = '1 1 1';
-			car.frontleft.physobj_friction_logic_mult = '1 1 1';
-			car.frontright.physobj_friction_logic_mult = '1 1 1';
-			if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backleft);
-			if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.backright);
-			if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontleft);
-			if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(-car.accelerate_reverse, car.max_reverse_speed, car.frontright);
-		}
-	}
-	else {
-		car.backleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
-		car.backright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
-		car.frontleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
-		car.frontright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
-		if (car.backleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.backleft);
-		if (car.backright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.backright);
-		if (car.frontleft.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontleft);
-		if (car.frontright.physobj_flags & PHFLAGS_POWERED) Car_Accelerate(0, 0, car.frontright);
-	}
+	BrakingAndAccelerating(car);
+	
+	Gun_Turn(car.angles_y - self.v_angle_y, mod(car.angles_x - self.v_angle_x + 180 + 25, 360) - 180);
 	if (!car.autolevel_maxangle_x)
 	{
 		makevectors(self.v_angle);
@@ -788,21 +950,6 @@ void TryUpdateVehicle(){
 		else if (roll < -100)
 			Car_Roll(car.max_roll_speed, car.accelerate_roll);
 	}
-	makevectors(car.angles);
-	v_forward_z = 0;
-	v_forward = normalize(v_forward);
-	float f = (car.velocity * v_forward > -2) * 2 - 1;
-
-	float turn = (mod(car.angles_y - self.v_angle_y + 180, 360) - 180) * f;
-
-	if (f < 0){ // driving backwards, check if we are also aiming backwards, in which case don't flip car around
-		if (turn > 100)
-			turn -= 180;
-		if (turn < -100)
-			turn += 180;
-	}
-	Car_Turn(turn);
-	Gun_Turn(car.angles_y - self.v_angle_y, mod(car.angles_x - self.v_angle_x + 180 + 25, 360) - 180);
 	self.velocity = '0 0 0';
 	self.modelindex = modelindex_null;
 	self.frame = 0;
