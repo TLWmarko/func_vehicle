@@ -268,7 +268,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 	}
 };
 
-const float STABILITY_MULTIPLIER = 0.9;
+const float STABILITY_MULTIPLIER = 0.75;
 
 vector(entity p1, entity p2, entity p3) GetGradient =
 {
