@@ -15,6 +15,8 @@
 .vector autolevel_force;
 .vector autolevel_maxangle;
 
+.vector chase_settings;
+
 float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 float VEHICLE_TRACKED = 4;
@@ -248,6 +250,8 @@ void(entity car) Car_InitVehicle =
 	local entity e;
 	local float hasStabilizer;
 
+	if (car.chase_settings == '0 0 0') car.chase_settings = '150 0 50';
+
 	e = car.physobj_particlelist;
 	while (e)
 	{
@@ -403,6 +407,15 @@ void(entity ply, entity car) Car_AttachToVehicle =
 		//ply.flags |= FL_FLY;
 		ply.modelindex = modelindex_null;
 		stuffcmd(ply, "chase_active 1\n");
+		stuffcmd(ply, "chase_back ");
+		stuffcmd(ply, ftos(car.chase_settings.x));
+		stuffcmd(ply, "\n");
+		stuffcmd(ply, "chase_right ");
+		stuffcmd(ply, ftos(car.chase_settings.y));
+		stuffcmd(ply, "\n");
+		stuffcmd(ply, "chase_up ");
+		stuffcmd(ply, ftos(car.chase_settings.z));
+		stuffcmd(ply, "\n");
 		stuffcmd(ply, "crosshair 0\n");
 		setorigin(ply, car.origin);
 		car.driving = ply;
@@ -917,10 +930,20 @@ void BrakingAndAccelerating(entity car){
 }
 
 void TryUpdateVehicle(){
+	entity car = self.driving;
 	if (!check_camera_state){
 		check_camera_state = TRUE;
-		if (self.driving){
+		if (car){
 			stuffcmd(self, "chase_active 1\n");
+			stuffcmd(self, "chase_back ");
+			stuffcmd(self, ftos(car.chase_settings.x));
+			stuffcmd(self, "\n");
+			stuffcmd(self, "chase_right ");
+			stuffcmd(self, ftos(car.chase_settings.y));
+			stuffcmd(self, "\n");
+			stuffcmd(self, "chase_up ");
+			stuffcmd(self, ftos(car.chase_settings.z));
+			stuffcmd(self, "\n");
 			stuffcmd(self, "crosshair 0\n");
 		}
 		else {
@@ -928,10 +951,9 @@ void TryUpdateVehicle(){
 			stuffcmd(self, "crosshair 1\n");
 		}
 	}
-	if (!self.driving)
+	if (!car)
 		return;
 
-	entity car = self.driving;
 	if (car.autolevel_maxangle_x)
 		Car_AutoLevel(frametime);
 	
