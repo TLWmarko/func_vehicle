@@ -26,6 +26,7 @@ float VEHICLE_TANK = 4;
 entity() hotrod;
 entity() atv;
 entity() triton;
+entity() bulldozer;
 
 void() Spin_Tires;
 float() crandom;
@@ -1342,6 +1343,10 @@ void() func_vehicle_builtins =
 		precache_model("progs/atv.mdl");
 		precache_model("progs/atvtire.mdl");
 		car = atv();
+	}
+	else if (self.netname == "bulldozer"){
+		precache_model("progs/bulldozer.mdl");
+		car = bulldozer();
 	}
 	
 	car.physobj_flags |= PHFLAGS_VEHICLE;
