@@ -151,6 +151,15 @@ void() Car_ChassiThink =
 	self.nextthink = time;
 };
 
+void() Tracer_Think =
+{
+	traceline (self.origin, self.origin + normalize(self.velocity) * (self.frame + 1) * 32, FALSE, self);
+	if (trace_fraction < 1.0) self.think = SUB_Remove;
+	if (time > self.attack_finished) self.think = SUB_Remove;
+
+	self.nextthink = time;
+}
+
 void(float turn, float pitch) Gun_Turn =
 {
 	local float f;
@@ -202,6 +211,38 @@ void(float turn, float pitch) Gun_Turn =
 			vector direction = v_forward + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 			traceline (src, src + direction*4096, FALSE, self);
+
+			if (car.frags % 3 == 0)
+			{
+				const float barrel_len = 29;
+				float len = vlen(trace_endpos - src) - barrel_len;
+				if (len >= 32) // we have space to spawn a tracer
+				{
+					src += direction * barrel_len;
+					float fram = min(15, len / 32);
+					entity tracer = spawn();
+					setmodel(tracer, "progs/tracer.mdl");
+					setsize(tracer, '0 0 0', '0 0 0');
+					tracer.frame = fram - 1;
+					tracer.attack_finished = time + 3;
+
+					// random pos style
+					//vector endpos = trace_endpos - direction * fram * 32;
+					//vector pos = lerpVector(src, endpos, random());
+					//setorigin(tracer, pos);
+					//tracer.think = SUB_Remove;
+					//tracer.nextthink = time + 0.1;
+
+					// fly style
+					setorigin(tracer, src);
+					tracer.movetype = MOVETYPE_FLY;
+					tracer.velocity = normalize(direction) * 10000;
+					tracer.angles = body.angles;
+					tracer.think = Tracer_Think;
+					tracer.nextthink = time;
+				}
+			}
+			car.frags++;
 			if (trace_fraction != 1.0){
 				vector vel = normalize(direction + v_up*crandom() + v_right*crandom());
 				vel = vel + 2*trace_plane_normal;
@@ -1348,6 +1389,7 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_turret_swivel.mdl");
 		precache_model("progs/HotRod_turret_body.mdl");
 		precache_model("progs/HotRod_turret_barrel.mdl");
+		precache_model("progs/tracer.mdl");
 		car = hotrod();
 	}
 	else if (self.netname == "atv"){
@@ -1420,6 +1462,7 @@ void() vehicle_hotrod =
 	precache_model("progs/HotRod_turret_swivel.mdl");
 	precache_model("progs/HotRod_turret_body.mdl");
 	precache_model("progs/HotRod_turret_barrel.mdl");
+	precache_model("progs/tracer.mdl");
 	entity car = hotrod();
 	
 	car.physobj_flags |= PHFLAGS_VEHICLE;
