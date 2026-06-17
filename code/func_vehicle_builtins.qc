@@ -2320,6 +2320,71 @@ entity() forklift =
 	part.relative_left = '0 1 0';
 	part.relative_up = '0 0 1';
 
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-83.25 64 50';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "leftdoor";
+	part.solid = SOLID_TRIGGER;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-83.25 -64 50';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "rightdoor";
+	part.solid = SOLID_TRIGGER;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-56 0 180';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "topexit";
+	part.solid = SOLID_TRIGGER;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '36 0 50';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "frontexit";
+	part.solid = SOLID_TRIGGER;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-180 0 50';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "backexit";
+	part.solid = SOLID_TRIGGER;
+
 	// wheels
 
 	// frontleft
