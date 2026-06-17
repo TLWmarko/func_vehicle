@@ -440,6 +440,17 @@ void Car_CheckAttach(){
 				break;
 			}
 		}
+		else if (
+			e.netname == "leftdoor" ||
+			e.netname == "rightdoor" ||
+			e.netname == "topexit" ||
+			e.netname == "frontexit" ||
+			e.netname == "backexit") {
+			if (!e.owner.driving){
+				Car_AttachToVehicle(self, e.owner);
+				break;
+			}
+		}
 		e = e.chain;
 	}
 }
