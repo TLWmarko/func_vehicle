@@ -30,6 +30,7 @@ entity p_damage_thinker;
 .vector base_pose;
 .vector lmat_forward, lmat_left, lmat_up; // current pose, do not modify, read for logic
 .vector relative_org;
+.vector base_org;
 .float relative_size;
 
 .float phys_volume, phys_radius;

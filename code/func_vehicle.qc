@@ -168,10 +168,12 @@ void(float turn, float pitch) Gun_Turn =
 	f = 125;
 	entity car = self.driving;
 	entity base = car.gun;
-	if (!base.modelindex)
+	if (!base)
 		return;
 	entity swivel = base.gun;
 	if (!swivel)
+		return;
+	if (!swivel.modelindex)
 		return;
 	entity body = swivel.gun;
 	entity barrel = body.gun;
@@ -186,12 +188,17 @@ void(float turn, float pitch) Gun_Turn =
 	swivel.relative_left = matrix_left;
 	swivel.relative_up = matrix_up;
 
+	body.relative_org = RotateVectorAxisAngle(body.base_org - swivel.base_org, '0 0 1', -swivel.ideal_yaw) + swivel.base_org;
+	barrel.relative_org = RotateVectorAxisAngle(barrel.base_org - swivel.base_org, '0 0 1', -swivel.ideal_yaw) + swivel.base_org;
+
 	want_yaw = clamp(pitch, -25, 90) - body.base_pose_x;
 	body.ideal_yaw = MoveTowardsAngle(body.ideal_yaw, want_yaw, f*frametime);
 	Matrix_RotateByAxisAngle(matrix_left, body.ideal_yaw);
 	body.relative_forward = matrix_forward;
 	body.relative_left = matrix_left;
 	body.relative_up = matrix_up;
+
+	barrel.relative_org = RotateVectorAxisAngle(barrel.relative_org - body.relative_org, matrix_left, -body.ideal_yaw) + body.relative_org;
 
 	if (self.button0){
 		barrel.yaw_speed = -1500*frametime;

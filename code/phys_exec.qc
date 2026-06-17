@@ -904,7 +904,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnStatic =
 		e.relative_forward = basepart.relative_forward;
 		e.relative_left = basepart.relative_left;
 		e.relative_up = basepart.relative_up;
-		e.relative_org = basepart.relative_org;
+		e.base_org = e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
 		e.model = basepart.model;
 	}
@@ -915,7 +915,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnStatic =
 		e.relative_forward = '1 0 0';
 		e.relative_left = '0 1 0';
 		e.relative_up = '0 0 1';
-		e.relative_org = org;
+		e.base_org = e.relative_org = org;
 		e.relative_size = 0;
 	}
 	return Phys_InitStatic(org, e, obj);
@@ -997,7 +997,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.relative_forward = basepart.relative_forward;
 		e.relative_left = basepart.relative_left;
 		e.relative_up = basepart.relative_up;
-		e.relative_org = basepart.relative_org;
+		e.base_org = e.relative_org = basepart.relative_org;
 		e.relative_size = basepart.relative_size;
 		e.model = basepart.model;
 	}
@@ -1015,7 +1015,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.relative_forward = '1 0 0';
 		e.relative_left = '0 1 0';
 		e.relative_up = '0 0 1';
-		e.relative_org = org;
+		e.base_org = e.relative_org = org;
 		e.relative_size = 0;
 	}
 	return Phys_InitParticle(org, e, obj);
@@ -1063,7 +1063,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 	if (basepart)
 	{
 		e.netname = basepart.netname;
-		e.relative_org = basepart.relative_org;
+		e.base_org = e.relative_org = basepart.relative_org;
 		e.base_pose = basepart.base_pose;
 		e.relative_forward = basepart.relative_forward;
 		e.relative_left = basepart.relative_left;
@@ -1080,7 +1080,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnHitmodel =
 		e.relative_forward = '1 0 0';
 		e.relative_left = '0 1 0';
 		e.relative_up = '0 0 1';
-		e.relative_org = org;
+		e.base_org = e.relative_org = org;
 		e.th_pain = SUB_NullPain;
 	}
 	return Phys_InitHitmodel(org, e, obj);
@@ -1495,6 +1495,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up) Phys_Init
 		e.relative_org_z = up*v;
 		e.relative_org_y = left*v;
 		e.relative_org_x = forward*v;
+		e.base_org = e.relative_org;
 		e = e.physobj_next;
 	}
 	e = obj.physobj_staticlist;
@@ -1506,6 +1507,7 @@ entity(entity obj, vector org, vector forward, vector left, vector up) Phys_Init
 		e.relative_org_z = up*v;
 		e.relative_org_y = left*v;
 		e.relative_org_x = forward*v;
+		e.base_org = e.relative_org;
 		e = e.physobj_next;
 	}
 	e = obj.physobj_particlelist;
