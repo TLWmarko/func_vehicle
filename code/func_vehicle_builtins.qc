@@ -976,6 +976,7 @@ entity() atv =
 	obj.autolevel_maxangle = '35 20 0';
 	obj.physobj_friction_logic_mult = '2 1 1';
 	obj.physobj_friction_braking_mult = '22.25 1 1';
+	obj.chase_settings = '130 0 40';
 
 	part = spawn();
 	part.physobj_next = obj.physobj_staticlist;
