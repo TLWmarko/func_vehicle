@@ -27,6 +27,7 @@ entity() hotrod;
 entity() atv;
 entity() triton;
 entity() bulldozer;
+entity() forklift;
 
 void() Spin_Tires;
 float() crandom;
@@ -548,7 +549,9 @@ void(float turn) Car_Turn =
 	tleft = car.frontleft;
 	tright = car.frontright;
 	f = car.turn_speed;
-	want_yaw = clamp(turn, -car.max_turn, car.max_turn) - tleft.base_pose_y;
+	float turn_sign = sign(car.max_turn);
+	float max_turn_fabs = fabs(car.max_turn);
+	want_yaw = clamp(turn, -max_turn_fabs, max_turn_fabs) * turn_sign - tleft.base_pose_y;
 	car.ideal_yaw = MoveTowardsAngle(car.ideal_yaw, want_yaw, f*frametime);
 
 	// left tire
@@ -1407,6 +1410,11 @@ void() func_vehicle_builtins =
 	else if (self.netname == "bulldozer"){
 		precache_model("progs/bulldozer.mdl");
 		car = bulldozer();
+	}
+	else if (self.netname == "forklift"){
+		precache_model("progs/forklift.mdl");
+		precache_model("progs/atvtire.mdl");
+		car = forklift();
 	}
 	
 	car.physobj_flags |= PHFLAGS_VEHICLE;

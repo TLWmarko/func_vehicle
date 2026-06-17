@@ -2282,3 +2282,545 @@ entity() bulldozer =
 
 	return obj;
 }
+
+entity() forklift =
+{
+	local entity obj, part;
+
+	obj = spawn();
+	obj.netname = "forklift";
+	obj.physobj_mass = 1000;
+	obj.physobj_impactevent = PushAndDamageTarget;
+	setorigin(obj, self.origin);
+
+	obj.lip = 16;
+	obj.max_forward_speed = 280;
+	obj.max_reverse_speed = 280;
+	obj.max_roll_speed = 2000;
+	obj.accelerate_forward = 2000;
+	obj.accelerate_reverse = 2000;
+	obj.accelerate_roll = 350;
+	obj.max_turn = -45;
+	obj.turn_speed = 150;
+	obj.autolevel_force = '1 5 0';
+	obj.autolevel_maxangle = '35 20 0';
+	obj.physobj_friction_logic_mult = '2 1 1';
+	obj.physobj_friction_braking_mult = '10 1 1';
+	obj.chase_settings = '175 0 100';
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	part.model = "progs/forklift.mdl";
+	part.netname = "chassis";
+	part.relative_org = '0 0 48'; // lower by 48 to get original
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	// wheels
+
+	// frontleft
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	part.netname = "frontleft";
+	part.relative_org = '-104 35.89 21';
+	part.physobj_spring_length = 4;
+	part.physobj_spring_force = '0 3 0.1';
+	part.relative_size = 15;
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.part_mass = 1.25;
+	part.physobj_friction_ground = '500 1500 4.4';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.025;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	part.netname = "frontleft";
+	part.model = "progs/atvtire.mdl";
+	//part.relative_org = '-104 29.89 21';
+	part.relative_org = '-104 25 21';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	// frontright
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	part.netname = "frontright";
+	part.relative_org = '-104 -35.89 21';
+	part.physobj_spring_length = 4;
+	part.physobj_spring_force = '0 3 0.1';
+	part.relative_size = 15;
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.part_mass = 1.25;
+	part.physobj_friction_ground = '500 1500 4.4';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.025;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	part.netname = "frontright";
+	part.model = "progs/atvtire.mdl";
+	//part.relative_org = '-104 -29.89 21';
+	part.relative_org = '-104 -25 21';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	// backleft
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	part.netname = "backleft";
+	part.relative_org = '-11.15 35.89 21';
+	part.physobj_spring_length = 4;
+	part.physobj_spring_force = '0 3 0.1';
+	part.relative_size = 15;
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.part_mass = 1.25;
+	part.physobj_friction_ground = '500 1500 4.4';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.025;
+	part.physobj_buoyancy = -0.75;
+	part.physobj_flags |= PHFLAGS_POWERED;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	part.netname = "backleft";
+	part.model = "progs/atvtire.mdl";
+	part.relative_org = '-11.15 29.89 21';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	// backright
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	part.netname = "backright";
+	part.relative_org = '-11.15 -35.89 21';
+	part.physobj_spring_length = 4;
+	part.physobj_spring_force = '0 3 0.1';
+	part.relative_size = 15;
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.part_mass = 1.25;
+	part.physobj_friction_ground = '500 1500 4.4';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.025;
+	part.physobj_buoyancy = -0.75;
+	part.physobj_flags |= PHFLAGS_POWERED;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_staticlist;
+	obj.physobj_staticlist = part;
+	part.owner = obj;
+	part.classname = "phys_static";
+	part.netname = "backright";
+	part.model = "progs/atvtire.mdl";
+	part.relative_org = '-11.15 -29.89 21';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+
+	// roof
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-114.51 33.63 162.15';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-114.51 -33.63 162.15';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-40.9 33.63 162.15';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-40.9 -33.63 162.15';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	// fork
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '96.24 33.4 27.03';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.8;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '96.24 -33.4 27.03';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '15.07 34.34 181.35';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '15.07 -34.34 181.35';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '15.07 34.34 21.34';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '15.07 -34.34 21.34';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '17.59 0 55.475';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	// sides
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-34.85 39.32 82.5';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-34.85 -39.32 82.5';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.5;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-159.89 31.84 85.34';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.9;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-159.89 -31.84 85.34';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.9;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-140.73 40.18 70.41';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.9;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-140.73 -40.18 70.41';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.9;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	// bottom
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-122.58 0 23.47';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.8;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-57.575 40.18 23.47';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.8;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_particlelist;
+	obj.physobj_particlelist = part;
+	part.owner = obj;
+	part.classname = "phys_particle";
+	//part.model = "progs/debug/point.spr";
+	part.relative_org = '-57.575 -40.18 23.47';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.netname = "point";
+	part.physobj_stepup = 1;
+	part.part_mass = 0.8;
+	part.physobj_friction_ground = '400 400 0';
+	part.physobj_friction_water = '2 2 2';
+	part.physobj_bounce = 1.0;
+	part.physobj_buoyancy = -0.75;
+
+	return obj;
+}
