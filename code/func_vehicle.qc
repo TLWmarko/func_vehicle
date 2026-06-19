@@ -28,6 +28,7 @@ entity() atv;
 entity() triton;
 entity() bulldozer;
 entity() forklift;
+entity() apc;
 
 void() Spin_Tires;
 float() crandom;
@@ -1415,6 +1416,15 @@ void() func_vehicle_builtins =
 		precache_model("progs/forklift.mdl");
 		precache_model("progs/atvtire.mdl");
 		car = forklift();
+	}
+	else if (self.netname == "apc"){
+		precache_model("progs/apc_body.mdl");
+		precache_model("progs/apc_turret_body.mdl");
+		precache_model("progs/apc_turret_swivel.mdl");
+		precache_model("progs/apc_wheel_L.mdl");
+		precache_model("progs/apc_wheel_R.mdl");
+		precache_model("progs/tracer.mdl");
+		car = apc();
 	}
 	
 	car.physobj_flags |= PHFLAGS_VEHICLE;
