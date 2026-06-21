@@ -221,7 +221,7 @@ void(float turn, float pitch) Gun_Turn =
 
 			traceline (src, src + direction*4096, FALSE, self);
 
-			if (car.frags % 3 == 0)
+			//if (car.frags % 3 == 0)
 			{
 				const float barrel_len = 29;
 				float len = vlen(trace_endpos - src) - barrel_len;
