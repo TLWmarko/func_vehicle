@@ -1415,6 +1415,7 @@ void() func_vehicle_builtins =
 	else if (self.netname == "forklift"){
 		precache_model("progs/forklift.mdl");
 		precache_model("progs/atvtire.mdl");
+		precache_model("progs/forklift_tire_back.mdl");
 		car = forklift();
 	}
 	else if (self.netname == "apc"){
