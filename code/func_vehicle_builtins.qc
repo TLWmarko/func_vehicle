@@ -1559,10 +1559,10 @@ entity() bulldozer =
 
 	obj.lip = 16;
 	obj.chase_settings = '250 0 100';
-	obj.max_forward_speed = 400;
-	obj.max_reverse_speed = 400;
-	obj.accelerate_forward = 1800;
-	obj.accelerate_reverse = 1800;
+	obj.max_forward_speed = 350;
+	obj.max_reverse_speed = 350;
+	obj.accelerate_forward = 2500;
+	obj.accelerate_reverse = 2500;
 	obj.max_turn = 0.75;
 	obj.turn_speed = 0.4;
 	obj.autolevel_force = '1 5 0';
