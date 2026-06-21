@@ -3526,6 +3526,369 @@ entity() apc =
 	part.physobj_bounce = 1.0;
 	part.physobj_buoyancy = -0.75;
 
+	// hitmodels
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '74 16 -3';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '74 -16 -3';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '46 -16 8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '46 16 8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '20 16 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '20 -16 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '18 22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '18 -22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-8 12 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-8 -12 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-8 22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-8 -22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-36 12 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-36 -12 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-36 22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-36 -22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-62 12 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-62 -12 -8';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-62 22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-62 -22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-76 22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-76 -22 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-78 0 10';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-46 0 10';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-16 0 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '18 0 6';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	//wheel hitmodels
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-48.08 -25 -27';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '-48.08 25 -26';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '44.91 -25 -26';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
+	part = spawn();
+	part.physobj_next = obj.physobj_hitmodel;
+	obj.physobj_hitmodel = part;
+	part.owner = obj;
+	part.classname = "phys_hitmodel";
+	part.model = "maps/round32.bsp";
+	part.relative_org = '44.91 25 -26';
+	part.relative_forward = '1 0 0';
+	part.relative_left = '0 1 0';
+	part.relative_up = '0 0 1';
+	part.th_pain = Car_Pain;
+
 	return obj;
 }
 

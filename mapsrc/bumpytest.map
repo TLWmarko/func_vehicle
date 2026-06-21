@@ -5109,3 +5109,11 @@
 ( -1344 432 112 ) ( -1344 304 112 ) ( -1344 304 240 ) 128_green_3 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
 }
+// entity 25
+{
+"classname" "func_vehicle_builtins"
+"origin" "208 -688 184"
+"angle" "90"
+"netname" "apc"
+"spawnflags" "2"
+}
