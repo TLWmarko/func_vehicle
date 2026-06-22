@@ -6,6 +6,8 @@ void() Debug_Precache =
 	precache_model("progs/debug/orgbig.mdl");
 }
 
+float(float a, float b) max;
+
 void(vector start, vector end, float lifetime) Debug_DrawLine =
 {
 	entity e;
@@ -27,5 +29,5 @@ void(vector start, vector end, float lifetime) Debug_DrawLine =
 		e.nextthink = time + lifetime;
 		f++;
 	}
-	if (e) e.frame = 100 * remainder;
+	if (e) e.frame = max(0, 100 * remainder - 1);
 }
