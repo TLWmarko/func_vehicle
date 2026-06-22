@@ -463,9 +463,6 @@ void(entity ply, entity car) Car_AttachToVehicle =
 		stuffcmd(ply, "chase_back ");
 		stuffcmd(ply, ftos(car.chase_settings.x));
 		stuffcmd(ply, "\n");
-		stuffcmd(ply, "chase_right ");
-		stuffcmd(ply, ftos(car.chase_settings.y));
-		stuffcmd(ply, "\n");
 		stuffcmd(ply, "chase_up ");
 		stuffcmd(ply, ftos(car.chase_settings.z));
 		stuffcmd(ply, "\n");
@@ -1060,9 +1057,6 @@ void TryUpdateVehicle(){
 			stuffcmd(self, "chase_active 1\n");
 			stuffcmd(self, "chase_back ");
 			stuffcmd(self, ftos(car.chase_settings.x));
-			stuffcmd(self, "\n");
-			stuffcmd(self, "chase_right ");
-			stuffcmd(self, ftos(car.chase_settings.y));
 			stuffcmd(self, "\n");
 			stuffcmd(self, "chase_up ");
 			stuffcmd(self, ftos(car.chase_settings.z));
