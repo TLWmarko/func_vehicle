@@ -785,14 +785,13 @@ void(float accel, float maxspeed) Car_Roll =
 }
 
 void BrakingAndAccelerating(entity car){
-	float forward_vel;
+	float forward_vel = car.velocity * car.lmat_forward;
 
 	makevectors(self.v_angle);
 	float forw = v_forward * self.velocity;
 	float turn = v_right * self.velocity;
 
 	if (forw > 100){
-		forward_vel = car.velocity * car.lmat_forward;
 		if (forward_vel < -100) // braking
 		{
 			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
@@ -890,8 +889,6 @@ void BrakingAndAccelerating(entity car){
 		}
 	}
 	else if (forw < -100){
-		forward_vel = car.velocity * car.lmat_forward;
-
 		if (forward_vel > 100) // braking
 		{
 			car.backleft.physobj_friction_logic_mult = car.physobj_friction_braking_mult;
@@ -1032,12 +1029,16 @@ void BrakingAndAccelerating(entity car){
 	}
 	if (!(car.spawnflags & VEHICLE_TANK))
 	{
-		makevectors(car.angles);
-		v_forward_z = 0;
-		v_forward = normalize(v_forward);
-		float f = (car.velocity * v_forward > -2) * 2 - 1;
+		float going_forward = forward_vel > -2;
+		float f = going_forward * 2 - 1;
+		float turnmod;
 
-		turn = (mod(car.angles_y - self.v_angle_y + 180, 360) - 180) * f;
+		if (going_forward)
+			turnmod = 1 - min(0.5, forward_vel / car.max_forward_speed);
+		else
+			turnmod = 1 - min(0.5, fabs(forward_vel) / car.max_reverse_speed);
+
+		turn = (mod((car.angles_y - self.v_angle_y) + 180, 360) - 180) * f * turnmod;
 
 		if (f < 0){ // driving backwards, check if we are also aiming backwards, in which case don't flip car around
 			if (turn > 100)
