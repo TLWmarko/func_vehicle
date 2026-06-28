@@ -770,24 +770,22 @@ void() Phys_ObjectThink =
 		part = self.physobj_particlelist;
 		while(part)
 		{
-			/*
-			WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-			WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
-			WriteEntity (MSG_BROADCAST, part);
-			WriteCoord (MSG_BROADCAST, part.origin_x);
-			WriteCoord (MSG_BROADCAST, part.origin_y);
-			WriteCoord (MSG_BROADCAST, part.origin_z);
-			WriteCoord (MSG_BROADCAST, part.origin_x);
-			WriteCoord (MSG_BROADCAST, part.origin_y);
-			WriteCoord (MSG_BROADCAST, part.origin_z + 10);
-			*/
-			Matrix_Multiply(part.relative_forward, part.relative_left, part.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
-			part.lmat_forward = matrix_forward;
-			part.lmat_left = matrix_left;
-			part.lmat_up = matrix_up;
+			if (part.relative_forward == '0 0 0')
+			{
+				part.lmat_forward = self.lmat_forward;
+				part.lmat_left = self.lmat_left;
+				part.lmat_up = self.lmat_up;
+			}
+			else
+			{
+				Matrix_Multiply(part.relative_forward, part.relative_left, part.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
+				part.lmat_forward = matrix_forward;
+				part.lmat_left = matrix_left;
+				part.lmat_up = matrix_up;
+			}
 			// Update euler angles for viewing ingame
 			if (part.modelindex){
-				part.angles = vectoangles2(matrix_forward, matrix_up);
+				part.angles = vectoangles2(part.lmat_forward, part.lmat_up);
 				if (part.physobj_flags & PHFLAGS_BSPMODEL)
 					part.angles_x = part.angles_x*-1;
 			}
@@ -797,14 +795,23 @@ void() Phys_ObjectThink =
 		stat = self.physobj_staticlist;
 		while (stat)
 		{
-			Matrix_Multiply(stat.relative_forward, stat.relative_left, stat.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
-			stat.lmat_forward = matrix_forward;
-			stat.lmat_left = matrix_left;
-			stat.lmat_up = matrix_up;
+			if (stat.relative_forward == '0 0 0')
+			{
+				stat.lmat_forward = self.lmat_forward;
+				stat.lmat_left = self.lmat_left;
+				stat.lmat_up = self.lmat_up;
+			}
+			else
+			{
+				Matrix_Multiply(stat.relative_forward, stat.relative_left, stat.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
+				stat.lmat_forward = matrix_forward;
+				stat.lmat_left = matrix_left;
+				stat.lmat_up = matrix_up;
+			}
 			// Update euler angles for viewing ingame
 			// Static objects aren't affected by physics
 			if (stat.modelindex){
-				stat.angles = vectoangles2(matrix_forward, matrix_up);
+				stat.angles = vectoangles2(stat.lmat_forward, stat.lmat_up);
 				if (stat.physobj_flags & PHFLAGS_BSPMODEL)
 					stat.angles_x = stat.angles_x*-1;
 			}
@@ -819,11 +826,20 @@ void() Phys_ObjectThink =
 		hitmodel = self.physobj_hitmodel;
 		while (hitmodel)
 		{
-			Matrix_Multiply(hitmodel.relative_forward, hitmodel.relative_left, hitmodel.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
-			hitmodel.lmat_forward = matrix_forward;
-			hitmodel.lmat_left = matrix_left;
-			hitmodel.lmat_up = matrix_up;
-			hitmodel.angles = vectoangles2(matrix_forward, matrix_up);
+			if (hitmodel.relative_forward == '0 0 0')
+			{
+				hitmodel.lmat_forward = self.lmat_forward;
+				hitmodel.lmat_left = self.lmat_left;
+				hitmodel.lmat_up = self.lmat_up;
+			}
+			else
+			{
+				Matrix_Multiply(hitmodel.relative_forward, hitmodel.relative_left, hitmodel.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
+				hitmodel.lmat_forward = matrix_forward;
+				hitmodel.lmat_left = matrix_left;
+				hitmodel.lmat_up = matrix_up;
+			}
+			hitmodel.angles = vectoangles2(hitmodel.lmat_forward, hitmodel.lmat_up);
 			if (hitmodel.physobj_flags & PHFLAGS_BSPMODEL)
 				hitmodel.angles_x = hitmodel.angles_x*-1;
 			setorigin (hitmodel, self.physobj_p1.origin + self.lmat_forward*hitmodel.relative_org_x + self.lmat_left*hitmodel.relative_org_y + self.lmat_up*hitmodel.relative_org_z);
@@ -838,17 +854,18 @@ void() Phys_ObjectThink =
 			self.physobj_extra_think();
 	}
 	// Update BSP collision model rotation and velocity
+	f = 1 / frametime;
 	hitmodel = self.physobj_hitmodel;
 	while (hitmodel)
 	{
 		hitmodel.solid = SOLID_BSP;
 		setorigin(hitmodel, hitmodel.origin); // relink
 
-		Matrix_Multiply(hitmodel.relative_forward, hitmodel.relative_left, hitmodel.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
-		f = 1 / frametime;
 		vector offset = self.physobj_p1.origin + self.lmat_forward*hitmodel.relative_org_x + self.lmat_left*hitmodel.relative_org_y + self.lmat_up*hitmodel.relative_org_z;
 		hitmodel.velocity = (offset - hitmodel.origin)*f;
-		/*vector ang = vectoangles2(matrix_forward, matrix_up);
+		
+		/*Matrix_Multiply(hitmodel.relative_forward, hitmodel.relative_left, hitmodel.relative_up, self.lmat_forward, self.lmat_left, self.lmat_up);
+		vector ang = vectoangles2(matrix_forward, matrix_up);
 		if (hitmodel.physobj_flags & PHFLAGS_BSPMODEL)
 			ang_x = ang_x*-1;
 		vector anglediff = ang - hitmodel.angles;
