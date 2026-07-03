@@ -1,0 +1,90 @@
+I don't know how much time I've spent on trying to make wheels not flop around
+when spinning. It is tied to interpolation, because if I enable cl_nolerp,
+the wheels look normal. There's likely multiple issues going on.
+
+Most Quake engines like FitzQuake based ones (QuakeSpasm, Ironwail) use naive
+euler angle interpolation per component (with some wrapping to eliminate the
+worst problems), which leads to insane interpolation paths taken at certain
+extremes.
+
+Considering that I'm only rotating the wheel slightly at each step, these extremes
+should be possible to avoid in theory.
+
+func_vehicle uses a rotation matrix for its internal representation of orientations,
+but needs to convert to euler angles to send it off to the engine for rendering.
+This conversion step is one of the problems, because euler angles have multiple
+equivalent angles. Even if restricting to having only half ranges for two axis, and
+full range on the remaining one, there's still 4 equivalent rotations. Fore example,
+'53 0 0 ' is equivalent to '127 180 180'.
+
+func_vehicle has a function called vectoangles2 which takes a forward and an up
+vector, and gives you euler angles back. This conversion doesn't take into account
+the fact that there are multiple representations, so for a spinning wheel, one
+frame it can give you '270 0 0' and the next you get '275 180 -180' even if it only
+rotated slightly.
+
+"So what?" you might think. Well, the issue rises when you involve interpolation.
+If you enable cl_nolerp, everything looks fine, but with interpolation, you need to
+take this equivalence into account. If you have an object which thinks every 0.1
+seconds, and swaps between rotations from the above example:
+'53 0 0 ' <-> '127 180 180'
+every think, with cl_nolerp it looks like its standing still, but with interpolation
+it does a quick flip each think because from the perspective of interpolation it's
+not the same values, so it smoothly rotates the object to the new orientation.
+
+This aspect causes wheels, especially ones which spin fast, to wobble wildly. Fitz-
+based engines do have wrapping of angle values, so it's not entirely naive, but as
+it only works on a the component level it can't recognize a lot of cases where it
+should wrap. This works fine for Quake and more "normal" mods because they only tend
+to rotate along the yaw axis, sometimes also pitch but almost never roll. A physics
+engine like func_vehicle doesn't discriminate, and rotates stuff quite a lot in all
+axis.
+
+"So fix vectoangles2" you might say. Yeah, that'd be great! Please tell me how!
+Together with a friend we managed to do this which works for a lot of cases, but
+doesn't solve the entire problem:
+
+self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
+self.angles_x = mod(self.angles_x, 360);
+self.angles_y = mod(self.angles_y, 360);
+self.angles_z = mod(self.angles_z, 360);
+	
+if (self.angles_y >= 180 && self.angles_z >= 180)
+{
+	self.angles_x *= -1;
+	self.angles_x += 180;
+	self.angles_y += 180;
+	self.angles_z += 180;
+}
+self.angles_x = mod(self.angles_x, 360);
+self.angles_y = mod(self.angles_y, 360);
+self.angles_z = mod(self.angles_z, 360);
+
+This does boil down a lot of "equivalent" cases to a canonical representation, but
+not all! When I apply it to real vehicles there are cases when it looks even worse
+than without it, things flip out in weird ways.
+
+Another approach which has an even higher success rate in test scenarios is this:
+
+vector nextangles = vectoangles2(self.lmat_forward, self.lmat_up);
+nextangles_x = mod(nextangles_x, 360);
+nextangles_y = mod(nextangles_y, 360);
+nextangles_z = mod(nextangles_z, 360);
+
+vector diff = self.angles - nextangles;
+float comp = fabs(diff.x) + fabs(diff.y) + fabs(diff.z);
+if (comp > 360)
+{
+	nextangles_x *= -1;
+	nextangles_x += 180;
+	nextangles_y += 180;
+	nextangles_z += 180;
+}
+
+nextangles_x = mod(nextangles_x, 360);
+nextangles_y = mod(nextangles_y, 360);
+nextangles_z = mod(nextangles_z, 360);
+self.angles = nextangles;
+
+But it does have the same issue that on a real vehicle it becomes clear it doesn't
+cover all cases.
