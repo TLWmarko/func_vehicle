@@ -56,6 +56,7 @@ entity p_damage_thinker;
 .vector physobj_spring_force;
 .vector physobj_floor_plane_normal;
 .float physobj_floor_dist;
+.float physobj_inwater;
 .vector physobj_friction_ground, physobj_friction_water, physobj_friction_air;
 .vector physobj_friction_logic_mult;
 .float physobj_friction_ground_mult;

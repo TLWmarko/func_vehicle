@@ -220,16 +220,20 @@ void(entity targ) Phys_CheckStatus =
 };
 
 // Particle acceleration, such as gravity, buoyancy
-void(float ftime, float sv_gravity) Phys_Acceleration =
+void(float ftime, float sv_gravity, float checkground) Phys_Acceleration =
 {
 	local entity part;
 
 	part = self.physobj_particlelist;
 	while(part)
 	{
-		Particle_CheckOnGround(part);
-		traceline(part.origin, part.origin, FALSE, part);
-		//tracebox(part.origin, part.mins, part.maxs, part.origin, FALSE, part);
+		if (checkground)
+		{
+			Particle_CheckOnGround(part);
+			traceline(part.origin, part.origin, FALSE, part);
+			//tracebox(part.origin, part.mins, part.maxs, part.origin, FALSE, part);
+			part.physobj_inwater = trace_inwater;
+		}
 		if (!part.physobj_inversemass)
 		{
 			part.velocity = '0 0 0';
@@ -237,7 +241,7 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 			part = part.physobj_next;
 			continue;
 		}
-		if (trace_inwater)
+		if (part.physobj_inwater)
 			part.velocity_z = part.velocity_z + sv_gravity*part.physobj_buoyancy*ftime; // Buoyancy
 		else
 			part.velocity_z = part.velocity_z - sv_gravity*ftime; // Gravity
@@ -761,15 +765,16 @@ void() Phys_ObjectThink =
 
 		resting_allowed = TRUE;
 		// Let's run some physics
+		f = TRUE;
 		while(steps)
 		{
 			steps--;
-			Phys_Acceleration(ftime*0.5, sv_gravity);
+			Phys_Acceleration(ftime*0.5, sv_gravity, f);
 			Phys_Constraints_Floor(ftime);
 			Phys_Constraints_Volume(ftime);
 			Phys_Constraints_Linear(ftime);
 			Phys_Move(ftime);
-			Phys_Acceleration(ftime*0.5, sv_gravity);
+			Phys_Acceleration(ftime*0.5, sv_gravity, TRUE);
 		}
 
 		self.physobj_flags = self.physobj_flags - (self.physobj_flags & PHFLAGS_FORCE);
