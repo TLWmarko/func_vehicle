@@ -1631,10 +1631,8 @@ void() vehicle_hotrod =
 	precache_model("progs/HotRod_body.mdl");
 	precache_model("progs/HotRod_roof.mdl");
 	precache_model("progs/HotRod_player_driver.mdl");
-	precache_model("progs/HotRod_wheel_front_L.mdl");
-	precache_model("progs/HotRod_wheel_rear_L.mdl");
-	precache_model("progs/HotRod_wheel_front_R.mdl");
-	precache_model("progs/HotRod_wheel_rear_R.mdl");
+	precache_model("progs/HotRod_wheel_front.mdl");
+	precache_model("progs/HotRod_wheel_rear.mdl");
 	precache_model("progs/HotRod_turret_base.mdl");
 	precache_model("progs/HotRod_turret_swivel.mdl");
 	precache_model("progs/HotRod_turret_body.mdl");
