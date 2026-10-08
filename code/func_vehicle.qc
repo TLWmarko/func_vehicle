@@ -1202,6 +1202,22 @@ void(entity wheel, entity car) AddWheelStatic =
 	car.physobj_staticlist = stat;
 }
 
+void(entity part) BorrowModel =
+{
+	if (!part.target)
+		return;
+	entity e = find(world, targetname, part.target);
+	if (!e || e.classname != "func_vehicle_model")
+	{
+		dprint("func_vehicle: can't find func_vehicle_model ");
+		dprint(part.target);
+		dprint("\n");
+		return;
+	}
+	part.model = e.model;
+	part.physobj_flags |= PHFLAGS_BSPMODEL;
+};
+
 void() StartFuncVehicle =
 {
 	entity e;
@@ -1222,6 +1238,7 @@ void() StartFuncVehicle =
 			e.relative_forward = v_forward;
 			e.relative_left = -v_right;
 			e.relative_up = v_up;
+			BorrowModel(e);
 			if (e.classname == "func_vehicle_wheel" || e.classname == "phys_wheel")
 				AddWheelStatic(e, self);
 			e = find(e, targetname, self.phys_particle_target);
@@ -1254,6 +1271,7 @@ void() StartFuncVehicle =
 			e.relative_forward = v_forward;
 			e.relative_left = -v_right;
 			e.relative_up = v_up;
+			BorrowModel(e);
 			e = find(e, targetname, self.phys_static_target);
 		}
 	}
@@ -1398,11 +1416,24 @@ void() phys_particle =
 		setmodel (self, self.model);
 	}
 }
+/*QUAKED func_vehicle_model (1 0 0) ?
+A bmodel template for vehicle parts. phys_wheel, phys_static and phys_particle can use its brushes as their model by setting their "target" to its targetname. Any number of parts can use the same template.
+
+If used for wheels, it is strongly recommended to be built with X axis being the axle of the wheel, for wobble-free spinning!
+
+"targetname" must be defined, used by the parts to find the model
+*/
+void() func_vehicle_model =
+{
+	self.solid = SOLID_NOT;
+	self.modelindex = 0;
+};
 /*QUAKED phys_static (1 0 0) (-8 -8 -8) (8 8 8)
 Statics are objects which follow the physics-object around but don't affect the physics themselves. Useful for models visually representing the physics-object, and for entrances/exits in a vehicle.
 
 "targetname" must be defined, used by the physics-object to find the static
 "model" the model to be loaded for visualization
+"target" optional, targetname of a func_vehicle_model to use as the model instead
 "netname" in vehicle-contexts useful names are chassis, roof, driver, but also rightdoor, leftdoor, topexit, botexit, backexit, frontexit
 "angle" base-pose angle for this static in the physics-object
 */
@@ -1434,6 +1465,7 @@ Wheels are useful for vehicles! They're a combo of a particle and a static. Make
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
 "model" the model to be loaded for visualization
+"target" optional, targetname of a func_vehicle_model to use as the model instead
 "angle" how the wheel model is turned, relative to the func_vehicle's angle
 "physobj_spring_length" length of spring for this wheel, default 12
 "physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, default '0 7.5 0.07'
