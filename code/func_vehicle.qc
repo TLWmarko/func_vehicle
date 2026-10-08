@@ -398,10 +398,32 @@ void(entity car) Car_InitVehicle =
 		}
 		else if (e.netname == "turretbase")
 		{
+			// the turret code expects all four parts
+			entity swivel = FindStaticOfName("turretswivel", car);
+			entity body = FindStaticOfName("turretbody", car);
+			entity barrel = FindStaticOfName("turretbarrel", car);
+			if (!swivel)
+			{
+				dprint("func_vehicle: turret missing turretswivel\n");
+				e = e.physobj_next;
+				continue;
+			}
+			if (!body)
+			{
+				dprint("func_vehicle: turret missing turretbody\n");
+				e = e.physobj_next;
+				continue;
+			}
+			if (!barrel)
+			{
+				dprint("func_vehicle: turret missing turretbarrel\n");
+				e = e.physobj_next;
+				continue;
+			}
 			car.gun = e;
-			car.gun.gun = FindStaticOfName("turretswivel", car);
-			car.gun.gun.gun = FindStaticOfName("turretbody", car);
-			car.gun.gun.gun.gun = FindStaticOfName("turretbarrel", car);
+			car.gun.gun = swivel;
+			car.gun.gun.gun = body;
+			car.gun.gun.gun.gun = barrel;
 			if (!(car.spawnflags & VEHICLE_PERMANENT_GUN)){ // hide
 				car.gun.modelindex = 0;
 				car.gun.gun.modelindex = 0;
