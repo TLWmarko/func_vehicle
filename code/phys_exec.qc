@@ -1222,6 +1222,13 @@ void(entity obj) Phys_ObjectRemove =
 		remove(e);
 		e = next;
 	}
+	e = obj.physobj_tetralist;
+	while (e)
+	{
+		next = e.physobj_next;
+		remove(e);
+		e = next;
+	}
 	remove(obj);
 };
 
@@ -1247,16 +1254,47 @@ void(entity stick, entity object) Phys_ObjectRemoveStick =
 	remove(stick);
 };
 
-void(entity part, entity object) Phys_ObjectRemoveParticle =
+void(entity tetra, entity object) Phys_ObjectRemoveTetra =
 {
 	local entity e;
+
+	e = object.physobj_tetralist;
+	if (e == tetra)
+		object.physobj_tetralist = tetra.physobj_next;
+	else
+	{
+		while (e)
+		{
+			if (e.physobj_next == tetra)
+			{
+				e.physobj_next = tetra.physobj_next;
+				break;
+			}
+			e = e.physobj_next;
+		}
+	}
+	remove(tetra);
+};
+
+void(entity part, entity object) Phys_ObjectRemoveParticle =
+{
+	local entity e, next;
 
 	e = object.physobj_sticklist;
 	while (e)
 	{
+		next = e.physobj_next;
 		if (e.physobj_p1 == part || e.physobj_p2 == part)
 			Phys_ObjectRemoveStick(e, object);
-		e = e.physobj_next;
+		e = next;
+	}
+	e = object.physobj_tetralist;
+	while (e)
+	{
+		next = e.physobj_next;
+		if (e.physobj_p1 == part || e.physobj_p2 == part || e.physobj_p3 == part || e.physobj_p4 == part)
+			Phys_ObjectRemoveTetra(e, object);
+		e = next;
 	}
 	e = object.physobj_particlelist;
 	if (e == part)
