@@ -508,6 +508,24 @@ void(entity attacker, float damage) Car_Pain = {
 	T_Damage(self.realowner.driving, attacker, attacker, damage * 0.5); // driving provides protection
 };
 
+// clamp rotation speed to not spin backwards visually
+float(float speed) Tire_Spin_Step =
+{
+	// 30 degrees of headroom for non-spinning motion (turning, tilting, etc)
+	const float TIRE_MAX_SPIN_STEP = 150;
+	return clamp(speed * frametime, -TIRE_MAX_SPIN_STEP, TIRE_MAX_SPIN_STEP);
+};
+
+// apply the vistires rotation offset, must call after Matrix_RotateByAxisAngle
+void(entity vistire) Tire_Apply_Rotation_Offset =
+{
+	if (vistire.base_pose == '0 0 0')
+		return;
+
+	makevectors(vistire.base_pose);
+	Matrix_Multiply(v_forward, -v_right, v_up, matrix_forward, matrix_left, matrix_up);
+};
+
 void(entity tire, float doMatrix) Spin_A_Tire =
 {
 	entity vistire = tire.enemy;
@@ -521,7 +539,7 @@ void(entity tire, float doMatrix) Spin_A_Tire =
 		else {
 			vistire.yaw_speed = MoveTowards(vistire.yaw_speed, 0, 5 * frametime);
 		}
-		vistire.ideal_yaw = vistire.ideal_yaw - vistire.yaw_speed * frametime;
+		vistire.ideal_yaw = vistire.ideal_yaw - Tire_Spin_Step(vistire.yaw_speed);
 	}
 	if (doMatrix){
 		makevectors(tire.base_pose);
@@ -530,6 +548,7 @@ void(entity tire, float doMatrix) Spin_A_Tire =
 		matrix_up = v_up;
 	}
 	Matrix_RotateByAxisAngle(matrix_left, vistire.ideal_yaw);
+	Tire_Apply_Rotation_Offset(vistire);
 	vistire.relative_forward = matrix_forward;
 	vistire.relative_left = matrix_left;
 	vistire.relative_up = matrix_up;
@@ -592,12 +611,13 @@ void(entity tire, float frame_acc) Accelerate_A_Tire =
 		vistire.yaw_speed = min(vistire.yaw_speed, frame_acc * 0.25);
 	else if (frame_acc > 0)
 		vistire.yaw_speed = max(vistire.yaw_speed, frame_acc * 0.25);
-	vistire.ideal_yaw = vistire.ideal_yaw - vistire.yaw_speed * frametime;
+	vistire.ideal_yaw = vistire.ideal_yaw - Tire_Spin_Step(vistire.yaw_speed);
 	makevectors(tire.base_pose);
 	matrix_forward = v_forward;
 	matrix_left = -v_right;
 	matrix_up = v_up;
 	Matrix_RotateByAxisAngle(matrix_left, vistire.ideal_yaw);
+	Tire_Apply_Rotation_Offset(vistire);
 	vistire.relative_forward = matrix_forward;
 	vistire.relative_left = matrix_left;
 	vistire.relative_up = matrix_up;
@@ -1131,6 +1151,12 @@ void(entity wheel, entity car) AddWheelStatic =
 	stat.relative_up = wheel.relative_forward;
 	stat.relative_size = wheel.relative_size;
 
+	// reset particle to identity
+	wheel.base_pose = '0 0 0';
+	wheel.relative_forward = '1 0 0';
+	wheel.relative_left = '0 1 0';
+	wheel.relative_up = '0 0 1';
+
 	stat.physobj_next = car.physobj_staticlist;
 	car.physobj_staticlist = stat;
 }
@@ -1387,10 +1413,8 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_body.mdl");
 		precache_model("progs/HotRod_roof.mdl");
 		precache_model("progs/HotRod_player_driver.mdl");
-		precache_model("progs/HotRod_wheel_front_L.mdl");
-		precache_model("progs/HotRod_wheel_rear_L.mdl");
-		precache_model("progs/HotRod_wheel_front_R.mdl");
-		precache_model("progs/HotRod_wheel_rear_R.mdl");
+		precache_model("progs/HotRod_wheel_front.mdl");
+		precache_model("progs/HotRod_wheel_rear.mdl");
 		precache_model("progs/HotRod_turret_base.mdl");
 		precache_model("progs/HotRod_turret_swivel.mdl");
 		precache_model("progs/HotRod_turret_body.mdl");
@@ -1417,8 +1441,7 @@ void() func_vehicle_builtins =
 		precache_model("progs/apc_body.mdl");
 		precache_model("progs/apc_turret_body.mdl");
 		precache_model("progs/apc_turret_swivel.mdl");
-		precache_model("progs/apc_wheel_L.mdl");
-		precache_model("progs/apc_wheel_R.mdl");
+		precache_model("progs/apc_wheel.mdl");
 		precache_model("progs/tracer.mdl");
 		car = apc();
 	}
