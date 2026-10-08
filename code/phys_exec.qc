@@ -261,7 +261,7 @@ void(float ftime, float sv_gravity, float checkground) Phys_Acceleration =
 				float damping = part.physobj_spring_force_z;
 				vector springdir = part.lmat_up;
 
-				float dampingForce = (normalize(part.velocity) * springdir) * vlen(part.velocity) * damping;
+				float dampingForce = (part.velocity * springdir) * damping;
 				part.frags = sv_gravity * max(0, (f - dampingForce));
 				vector spring = springdir * part.frags;
 
@@ -475,8 +475,8 @@ void(entity part) Particle_CheckOnGround =
 
 void(entity part, float ftime) Particle_Friction =
 {
-	local float speed, side_speed, no_side_speed, dot, friction, drop;
-	vector axis, dir, vel_dir, tangent_vel, side_axis, normal, side_vel, no_side_vel;
+	float side_speed, no_side_speed, dot, friction, drop;
+	vector axis, tangent_vel, side_axis, normal, no_side_vel;
 
 	if (part.flags & FL_ONGROUND)
 	{
@@ -526,12 +526,9 @@ void(entity part, float ftime) Particle_Friction =
 
 		if (part.physobj_friction_ground_z) // oldschool func_vehicle weird sideways friction for nicer handling at high speeds
 		{
-			speed = vlen(part.velocity);
-			vel_dir = part.velocity / speed;
-			side_vel = part.lmat_left * (part.velocity * part.lmat_left);
-			dir = normalize(side_vel);
-			dot = 1-fabs(dir * normal);
-			part.velocity -= part.lmat_left*speed*(vel_dir*part.lmat_left)*part.physobj_friction_ground_z*4*ftime*dot*part.physobj_friction_logic_mult_z*part.physobj_friction_ground_mult;
+			side_speed = part.velocity * part.lmat_left;
+			dot = 1-fabs(part.lmat_left * normal);
+			part.velocity -= part.lmat_left*side_speed*part.physobj_friction_ground_z*4*ftime*dot*part.physobj_friction_logic_mult_z*part.physobj_friction_ground_mult;
 		}
 	}
 	//traceline(part.origin, part.origin, TRUE, part);
@@ -541,11 +538,11 @@ void(entity part, float ftime) Particle_Friction =
 	if (pointcontents(part.origin) < CONTENT_SOLID)
 	{
 		if (part.physobj_friction_water_x)
-			part.velocity = part.velocity - part.lmat_forward*vlen(part.velocity)*normalize(part.velocity)*part.lmat_forward*part.physobj_friction_water_x*ftime;
+			part.velocity = part.velocity - part.lmat_forward*(part.velocity*part.lmat_forward)*part.physobj_friction_water_x*ftime;
 		if (part.physobj_friction_water_y)
-			part.velocity = part.velocity - part.lmat_left*vlen(part.velocity)*normalize(part.velocity)*part.lmat_left*part.physobj_friction_water_y*ftime;
+			part.velocity = part.velocity - part.lmat_left*(part.velocity*part.lmat_left)*part.physobj_friction_water_y*ftime;
 		if (part.physobj_friction_water_z)
-			part.velocity = part.velocity - part.lmat_up*vlen(part.velocity)*normalize(part.velocity)*part.lmat_up*part.physobj_friction_water_z*ftime;
+			part.velocity = part.velocity - part.lmat_up*(part.velocity*part.lmat_up)*part.physobj_friction_water_z*ftime;
 	}
 	/*
 	// Marko 2023: disabled air friction because it's a bunch of calcs for probably unused feature, remove the comments if you need it
