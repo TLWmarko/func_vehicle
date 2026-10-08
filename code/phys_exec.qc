@@ -230,6 +230,13 @@ void(float ftime, float sv_gravity) Phys_Acceleration =
 		Particle_CheckOnGround(part);
 		traceline(part.origin, part.origin, FALSE, part);
 		//tracebox(part.origin, part.mins, part.maxs, part.origin, FALSE, part);
+		if (!part.physobj_inversemass)
+		{
+			part.velocity = '0 0 0';
+			part.destorigin = part.origin;
+			part = part.physobj_next;
+			continue;
+		}
 		if (trace_inwater)
 			part.velocity_z = part.velocity_z + sv_gravity*part.physobj_buoyancy*ftime; // Buoyancy
 		else
@@ -371,7 +378,13 @@ void(float ftime) Phys_Constraints_Linear =
 		if (resting_allowed)
 		if (fabs(lendiff) > stick.stick_preferredlength * 0.05)
 			resting_allowed = FALSE;
-		diff = lendiff/(offsetlength*(p1.physobj_inversemass+p2.physobj_inversemass));
+		diff = offsetlength*(p1.physobj_inversemass+p2.physobj_inversemass);
+		if (!diff) // both particles pinned, or both in the same spot
+		{
+			stick = stick.physobj_next;
+			continue;
+		}
+		diff = lendiff/diff;
 		p1.destorigin = p1.destorigin - p1.physobj_inversemass*offset*diff*STABILITY_MULTIPLIER;
 		p2.destorigin = p2.destorigin + p2.physobj_inversemass*offset*diff*STABILITY_MULTIPLIER;
 		stick = stick.physobj_next;
@@ -386,7 +399,7 @@ void(float ftime) Phys_Constraints_Floor =
 	entity part = self.physobj_particlelist;
 	while(part)
 	{
-		if (part.relative_size){
+		if (part.relative_size && part.physobj_inversemass) {
 			traceline(part.origin, part.destorigin, part.physobj_movetype, part);
 			vector testpos = trace_endpos;
 			traceline(testpos, testpos - [0, 0, part.relative_size], part.physobj_movetype, part);
