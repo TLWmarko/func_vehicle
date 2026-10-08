@@ -61,7 +61,7 @@ void PushAndDamageTarget(entity instigator, entity targ){
 	if (targ.flags & FL_MONSTER || targ.flags & FL_CLIENT){
 		float len = vlen(vel);
 		if (len > 100) {
-			targ.flags -= (other.flags & FL_ONGROUND);
+			targ.flags -= (targ.flags & FL_ONGROUND);
 			targ.velocity += vel * 0.035;
 			targ.velocity += [0, 0, len * 0.02];
 
