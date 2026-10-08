@@ -1190,6 +1190,7 @@ void(entity wheel, entity car) AddWheelStatic =
 	stat.relative_left = wheel.relative_left;
 	stat.relative_up = wheel.relative_up;
 	stat.relative_size = wheel.relative_size;
+	stat.physobj_flags = wheel.physobj_flags;
 
 	// reset particle to identity
 	wheel.base_pose = '0 0 0';
