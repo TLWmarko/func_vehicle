@@ -1229,7 +1229,8 @@ void() StartFuncVehicle =
 
 // keeping the titular name for the memes, but this is a point entity
 /*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8)
-This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle
+This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle.
+When building a vehicle out of brushes, it is recommended to build vehicles facing north or south (angle 90 or 270) so their wheels spin smoothly, see func_vehicle_wheel.
 
 "targetname" must be defined, used by the physics object to find the particle
 "model" must be defined, loads a .bsp model to use for pushing objects around
@@ -1283,14 +1284,12 @@ Particles are what define the simulation-shape of a physics-object. These collid
 "targetname" must be defined, used by the physics object to find the particle
 "angle" base-pose angle for this particle in the physics object
 "physobj_spring_length" length of spring for this particle, primarily meant for wheels (see phys_wheel instead)
-"physobj_spring_force" x and y are spring forces based on distance to surface, z is unused, primarily meant for wheels (see phys_wheel instead)
+"physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, primarily meant for wheels (see phys_wheel instead)
 "relative_size" extra-height for particles as an offset from the floor, good default 1
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
 "part_mass" mass multiplier of this particle, affects center of mass of entire object, mass of 0 makes particle stick in mid-air, good default 1
-"physobj_stiction" half-assed attempt at making physics objects not slide infinitely on slopes, good default 10
 "physobj_friction_ground" directional ground friction, good default '8 8 8'
 "physobj_friction_water" directional water friction, good default '2 2 2'
-"physobj_friction_air" directional air friction
 "physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
 "physobj_buoyancy" gravity multiplier when under-water, good default -0.75
 */
@@ -1338,16 +1337,14 @@ Wheels are useful for vehicles! They're a combo of a particle and a static. Make
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
 "model" the model to be loaded for visualization
-"angle" base-pose angle for this wheel in the physics object
+"angle" how the wheel model is turned, relative to the func_vehicle's angle
 "physobj_spring_length" length of spring for this wheel, good default 12
-"physobj_spring_force" x and y are spring forces based on distance to surface, z is unused, good default '2 4 0'
+"physobj_spring_force" x and y are spring forces based on distance to surface, z damping, good default '0 7.5 0.07'
 "relative_size" radius of wheel, good default 14
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
 "part_mass" mass multiplier of this wheel, affects center of mass of entire object, mass of 0 makes wheel stick in mid-air, good default 1
-"physobj_stiction" half-assed attempt at making physics objects not slide infinitely on slopes, good default 10
-"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. z is used for damping the spring! good default '0.225 3.3 5'
+"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. x and y are coulomb friction, z is additional "goopy" sideways friction which makes handling at high speeds nicer. good default '200 1000 4.4'
 "physobj_friction_water" directional water friction, good default '2 2 2'
-"physobj_friction_air" directional air friction
 "physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
 "physobj_buoyancy" gravity multiplier when under-water, good default -0.75
 */
@@ -1362,18 +1359,18 @@ void() phys_wheel =
 Brush version of phys_wheel.
 
 Wheels are useful for vehicles! They're a combo of a particle and a static. Make four of these, with correct netnames and targetnames.
+Bmodel wheels are strongly recommended to have their axle along X axis, with angle set to the func_vehicle's angle +-90, for wobble-free spinning!
 
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
+"angle" how the wheel model is turned, relative to the func_vehicle's angle
 "physobj_spring_length" length of spring for this wheel, good default 12
-"physobj_spring_force" x and y are spring forces based on distance to surface, z is unused, good default '2 4 0'
+"physobj_spring_force" x and y are spring forces based on distance to surface, z damping, good default '0 7.5 0.07'
 "relative_size" radius of wheel, good default 14
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
 "part_mass" mass multiplier of this wheel, affects center of mass of entire object, mass of 0 makes wheel stick in mid-air, good default 1
-"physobj_stiction" half-assed attempt at making physics objects not slide infinitely on slopes, good default 10
-"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. z is used for damping the spring! good default '0.225 3.3 5'
+"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. x and y are coulomb friction, z is additional "goopy" sideways friction which makes handling at high speeds nicer. good default '200 1000 4.4'
 "physobj_friction_water" directional water friction, good default '2 2 2'
-"physobj_friction_air" directional air friction
 "physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
 "physobj_buoyancy" gravity multiplier when under-water, good default -0.75
 */
