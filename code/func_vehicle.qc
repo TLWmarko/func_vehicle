@@ -1217,7 +1217,24 @@ void() StartFuncVehicle =
 		}
 	}
 
-	Phys_MakeIntoPhysicsObject(self, self.origin, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
+	// everything above is relative to how the vehicle was built by the mapper
+	// allow optionally teleporting it somewhere else, so it can be built
+	// facing north for smooth wheels, but still start facing as intended
+	vector startorg = self.origin;
+	if (self.target) {
+		e = find(world, targetname, self.target);
+		if (e) {
+			startorg = e.origin;
+			self.angles = e.angles;
+			setorigin(self, startorg);
+			makevectors(self.angles);
+			matrix_forward = v_forward;
+			matrix_left = -v_right;
+			matrix_up = v_up;
+		}
+	}
+
+	Phys_MakeIntoPhysicsObject(self, startorg, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
 	if (self.physobj_flags & PHFLAGS_VEHICLE){
 		self.physobj_impactevent = PushAndDamageTarget;
 		Car_InitVehicle(self);
@@ -1237,6 +1254,7 @@ When building a vehicle out of brushes, it is recommended to build vehicles faci
 "phys_particle_target" must be defined, the targetname of all the particles and/or wheels in this object
 "phys_static_target" the targetname of all the statics in this object
 "phys_hitmodel_target" the targetname of all the hitmodels in this object
+"target" optional, targetname of a point entity (info_notnull) to teleport the vehicle to at start
 "physobj_mass" the mass of the entire object
 "lip" the offset above the wheels where the player resides, good default 16
 */
