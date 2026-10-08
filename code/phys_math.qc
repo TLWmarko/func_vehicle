@@ -10,6 +10,11 @@ float(float f) sign =
 	return (0 < f) - (f < 0);
 }
 
+float(float a) anglemod180 =
+{
+	return a - 360*floor((a + 180) / 360);
+};
+
 float(float current, float target, float maxDelta) MoveTowards =
 {
 	if (fabs(target - current) <= maxDelta)

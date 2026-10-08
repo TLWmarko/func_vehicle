@@ -218,6 +218,40 @@ vector vectoangles2 (vector forward, vector up) {
 }
 #endif
 
+// every orientation has two euler representations (ignoring multiples of 360)
+// 'x y z' == '(180-x) (y+180) (z+180)', for example '53 0 0' == '127 180 180'
+// vectoangles2 always returns the one with pitch in -90 <-> 90, so a spinning
+// wheel jumps between the two forms whenever its pitch passes +-90 degrees
+// the engine interpolates each component separately, so a jump shows up as a
+// flip between ticks
+// this picks the representation that is closest to the previous angles (with
+// per-component wrapping, like the engine does), so interpolation always
+// takes the shortest path
+vector(vector ang, vector prev) AnglesNearestPrev =
+{
+	vector alt, d1, d2;
+
+	alt_x = 180 - ang_x;
+	alt_y = ang_y + 180;
+	alt_z = ang_z + 180;
+
+	d1_x = anglemod180(ang_x - prev_x);
+	d1_y = anglemod180(ang_y - prev_y);
+	d1_z = anglemod180(ang_z - prev_z);
+
+	d2_x = anglemod180(alt_x - prev_x);
+	d2_y = anglemod180(alt_y - prev_y);
+	d2_z = anglemod180(alt_z - prev_z);
+
+	if (fabs(d2_x) + fabs(d2_y) + fabs(d2_z) < fabs(d1_x) + fabs(d1_y) + fabs(d1_z))
+		ang = alt;
+
+	ang_x = anglemod180(ang_x);
+	ang_y = anglemod180(ang_y);
+	ang_z = anglemod180(ang_z);
+	return ang;
+};
+
 float(vector a, vector b, vector axis) AngleBetweenVectors =
 {
 	float d, m;

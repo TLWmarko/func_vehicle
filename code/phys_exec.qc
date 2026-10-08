@@ -720,6 +720,7 @@ void() Phys_ObjectThink =
 	local float f, ftime, steps;//, iterations, coldot;
 	//local float best_vel, best_len, vel_limit, vel;
 	local entity part, hitmodel, stat;
+	vector nextangles;
 
 	// Run every frame
 	self.nextthink = time;
@@ -785,9 +786,10 @@ void() Phys_ObjectThink =
 			}
 			// Update euler angles for viewing ingame
 			if (part.modelindex){
-				part.angles = vectoangles2(part.lmat_forward, part.lmat_up);
+				nextangles = vectoangles2(part.lmat_forward, part.lmat_up);
 				if (part.physobj_flags & PHFLAGS_BSPMODEL)
-					part.angles_x = part.angles_x*-1;
+					nextangles_x = nextangles_x*-1;
+				part.angles = AnglesNearestPrev(nextangles, part.angles);
 			}
 			part = part.physobj_next;
 		}
@@ -811,9 +813,10 @@ void() Phys_ObjectThink =
 			// Update euler angles for viewing ingame
 			// Static objects aren't affected by physics
 			if (stat.modelindex){
-				stat.angles = vectoangles2(stat.lmat_forward, stat.lmat_up);
+				nextangles = vectoangles2(stat.lmat_forward, stat.lmat_up);
 				if (stat.physobj_flags & PHFLAGS_BSPMODEL)
-					stat.angles_x = stat.angles_x*-1;
+					nextangles_x = nextangles_x*-1;
+				stat.angles = AnglesNearestPrev(nextangles, stat.angles);
 			}
 			stat.oldorigin = stat.origin;
 			setorigin (stat, self.physobj_p1.origin + self.lmat_forward*stat.relative_org_x + self.lmat_left*stat.relative_org_y + self.lmat_up*stat.relative_org_z);
