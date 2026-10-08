@@ -1130,9 +1130,9 @@ void TryUpdateVehicle(){
 		makevectors(self.v_angle);
 		float roll = v_right * self.velocity;
 		if (roll > 100)
-			Car_Roll(-car.max_roll_speed, car.accelerate_roll);
+			Car_Roll(-car.accelerate_roll, car.max_roll_speed);
 		else if (roll < -100)
-			Car_Roll(car.max_roll_speed, car.accelerate_roll);
+			Car_Roll(car.accelerate_roll, car.max_roll_speed);
 	}
 	self.velocity = '0 0 0';
 	self.modelindex = modelindex_null;
