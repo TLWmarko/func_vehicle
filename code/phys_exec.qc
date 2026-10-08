@@ -1009,7 +1009,6 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 		e.physobj_friction_water = basepart.physobj_friction_water;
 		e.physobj_friction_air = basepart.physobj_friction_air;
 		e.physobj_buoyancy = basepart.physobj_buoyancy;
-		e.physobj_stiction = basepart.physobj_stiction;
 		e.physobj_stepup = basepart.physobj_stepup;
 		e.physobj_p1 = basepart.physobj_p1;
 		e.physobj_p2 = basepart.physobj_p2;
@@ -1024,7 +1023,6 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 	else
 	{
 		e.part_mass = 1;
-		e.physobj_stiction = 50;
 		e.physobj_friction_ground = '7.5 7.5 7.5';
 		e.physobj_friction_water = '1 1 1';
 		e.physobj_friction_air = '0 0 0';

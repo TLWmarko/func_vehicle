@@ -59,7 +59,6 @@ entity p_damage_thinker;
 .vector physobj_friction_logic_mult;
 .float physobj_friction_ground_mult;
 .vector physobj_friction_braking_mult;
-.float physobj_stiction;
 .float physobj_buoyancy;
 .void(entity part, entity targ) physobj_impactevent;
 .void() physobj_extra_think;
