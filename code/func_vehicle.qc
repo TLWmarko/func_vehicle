@@ -415,6 +415,8 @@ void(entity car) Car_InitVehicle =
 };
 
 float TryPlacePlayer(entity exit){
+	if (!exit)
+		return FALSE;
 	setorigin(self, exit.origin);
 	if (!droptofloor(0,0))
 		return FALSE;
