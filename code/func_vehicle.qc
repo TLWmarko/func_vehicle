@@ -1327,7 +1327,6 @@ void() Phys_ParticleDefaults =
 {
 	if (!self.part_mass) self.part_mass = 1;
 	if (self.part_mass < 0) self.part_mass = 0;
-	if (!self.relative_size) self.relative_size = 1;
 	if (self.physobj_friction_ground == '0 0 0') self.physobj_friction_ground = '8 8 8';
 	if (self.physobj_friction_water == '0 0 0') self.physobj_friction_water = '2 2 2';
 	if (!self.physobj_bounce) self.physobj_bounce = 1.025;
@@ -1341,7 +1340,7 @@ Particles are what define the simulation-shape of a physics-object. These collid
 "angle" base-pose angle for this particle in the physics object
 "physobj_spring_length" length of spring for this particle, primarily meant for wheels (see phys_wheel instead)
 "physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, primarily meant for wheels (see phys_wheel instead)
-"relative_size" extra-height for particles as an offset from the floor, default 1
+"relative_size" extra-height for particles as an offset from the floor
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
 "part_mass" mass multiplier of this particle, affects center of mass of entire object, default 1, a negative mass pins a particle in place
 "physobj_friction_ground" directional ground friction, default '8 8 8'
