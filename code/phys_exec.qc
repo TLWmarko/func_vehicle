@@ -322,7 +322,10 @@ void(float ftime) Phys_Constraints_Volume =
 		wTotal += w4 * vlensqr(grad4);
 
 		if (wTotal == 0)
+		{
+			tetra = tetra.physobj_next;
 			continue;
+		}
 
 		current_volume = GetTetraVolumeSextupled(tetra, FALSE);
 		rest_volume = tetra.phys_volume;
