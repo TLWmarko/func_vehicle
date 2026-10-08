@@ -1266,6 +1266,32 @@ void() func_vehicle =
 	precache_model("progs/null.spr");
 
 	self.physobj_flags |= PHFLAGS_VEHICLE;
+
+	// defaults for unset keys taken from the builtin hotrod, or the bulldozer for tanks
+	if (!self.physobj_mass) self.physobj_mass = 1000;
+	if (!self.lip) self.lip = 16;
+	if (!self.accelerate_roll) self.accelerate_roll = 2000;
+	if (!self.max_roll_speed) self.max_roll_speed = 350;
+	if (self.physobj_friction_logic_mult == '0 0 0') self.physobj_friction_logic_mult = '2 1 1';
+	if (self.spawnflags & VEHICLE_TANK) {
+		if (!self.max_forward_speed) self.max_forward_speed = 350;
+		if (!self.max_reverse_speed) self.max_reverse_speed = 350;
+		if (!self.accelerate_forward) self.accelerate_forward = 2500;
+		if (!self.accelerate_reverse) self.accelerate_reverse = 2500;
+		if (!self.max_turn) self.max_turn = 0.75;
+		if (!self.turn_speed) self.turn_speed = 0.4;
+		if (self.physobj_friction_braking_mult == '0 0 0') self.physobj_friction_braking_mult = '10 1 1';
+	}
+	else {
+		if (!self.max_forward_speed) self.max_forward_speed = 950;
+		if (!self.max_reverse_speed) self.max_reverse_speed = 800;
+		if (!self.accelerate_forward) self.accelerate_forward = 3000;
+		if (!self.accelerate_reverse) self.accelerate_reverse = 2500;
+		if (!self.max_turn) self.max_turn = 35;
+		if (!self.turn_speed) self.turn_speed = 125;
+		if (self.physobj_friction_braking_mult == '0 0 0') self.physobj_friction_braking_mult = '22.25 1 1';
+	}
+
 	self.think = StartFuncVehicle;
 	self.nextthink = time;
 };
@@ -1296,6 +1322,18 @@ void() func_vehicle_hitmodel =
 {
 	phys_hitmodel();
 }
+
+void() Phys_ParticleDefaults =
+{
+	if (!self.part_mass) self.part_mass = 1;
+	if (self.part_mass < 0) self.part_mass = 0;
+	if (!self.relative_size) self.relative_size = 1;
+	if (self.physobj_friction_ground == '0 0 0') self.physobj_friction_ground = '8 8 8';
+	if (self.physobj_friction_water == '0 0 0') self.physobj_friction_water = '2 2 2';
+	if (!self.physobj_bounce) self.physobj_bounce = 1.025;
+	if (!self.physobj_buoyancy) self.physobj_buoyancy = -0.75;
+};
+
 /*QUAKED phys_particle (1 0 0) (-8 -8 -8) (8 8 8)
 Particles are what define the simulation-shape of a physics-object. These collide with the world and other entities.
 
@@ -1303,16 +1341,17 @@ Particles are what define the simulation-shape of a physics-object. These collid
 "angle" base-pose angle for this particle in the physics object
 "physobj_spring_length" length of spring for this particle, primarily meant for wheels (see phys_wheel instead)
 "physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, primarily meant for wheels (see phys_wheel instead)
-"relative_size" extra-height for particles as an offset from the floor, good default 1
+"relative_size" extra-height for particles as an offset from the floor, default 1
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
-"part_mass" mass multiplier of this particle, affects center of mass of entire object, mass of 0 makes particle stick in mid-air, good default 1
-"physobj_friction_ground" directional ground friction, good default '8 8 8'
-"physobj_friction_water" directional water friction, good default '2 2 2'
-"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
-"physobj_buoyancy" gravity multiplier when under-water, good default -0.75
+"part_mass" mass multiplier of this particle, affects center of mass of entire object, default 1, a negative mass pins a particle in place
+"physobj_friction_ground" directional ground friction, default '8 8 8'
+"physobj_friction_water" directional water friction, default '2 2 2'
+"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, default 1.025
+"physobj_buoyancy" gravity multiplier when under-water, default -0.75
 */
 void() phys_particle =
 {
+	Phys_ParticleDefaults();
 	setorigin (self, self.origin);
 	if (self.model){
 		precache_model(self.model);
@@ -1356,18 +1395,25 @@ Wheels are useful for vehicles! They're a combo of a particle and a static. Make
 "netname" useful names are frontleft, frontright, backleft, backright
 "model" the model to be loaded for visualization
 "angle" how the wheel model is turned, relative to the func_vehicle's angle
-"physobj_spring_length" length of spring for this wheel, good default 12
-"physobj_spring_force" x and y are spring forces based on distance to surface, z damping, good default '0 7.5 0.07'
-"relative_size" radius of wheel, good default 14
+"physobj_spring_length" length of spring for this wheel, default 12
+"physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, default '0 7.5 0.07'
+"relative_size" radius of wheel, default 14
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
-"part_mass" mass multiplier of this wheel, affects center of mass of entire object, mass of 0 makes wheel stick in mid-air, good default 1
-"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. x and y are coulomb friction, z is additional "goopy" sideways friction which makes handling at high speeds nicer. good default '200 1000 4.4'
-"physobj_friction_water" directional water friction, good default '2 2 2'
-"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
-"physobj_buoyancy" gravity multiplier when under-water, good default -0.75
+"part_mass" mass multiplier of this wheel, affects center of mass of entire object, default 1, a negative mass pins a wheel in place
+"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. x and y are coulomb friction, z is additional "goopy" sideways friction which makes handling at high speeds nicer. default '200 1000 4.4'
+"physobj_friction_water" directional water friction, default '2 2 2'
+"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, default 1.025
+"physobj_buoyancy" gravity multiplier when under-water, default -0.75
 */
 void() phys_wheel =
 {
+	// wheel defaults from the builtin hotrod
+	if (!self.relative_size) self.relative_size = 14;
+	if (!self.physobj_spring_length) self.physobj_spring_length = 12;
+	if (self.physobj_spring_force == '0 0 0') self.physobj_spring_force = '0 7.5 0.07';
+	if (self.physobj_friction_ground == '0 0 0') self.physobj_friction_ground = '200 1000 4.4';
+	Phys_ParticleDefaults();
+
 	setorigin (self, self.origin);
 	if (self.model){
 		precache_model(self.model);
@@ -1382,15 +1428,15 @@ Bmodel wheels are strongly recommended to have their axle along X axis, with ang
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
 "angle" how the wheel model is turned, relative to the func_vehicle's angle
-"physobj_spring_length" length of spring for this wheel, good default 12
-"physobj_spring_force" x and y are spring forces based on distance to surface, z damping, good default '0 7.5 0.07'
-"relative_size" radius of wheel, good default 14
+"physobj_spring_length" length of spring for this wheel, default 12
+"physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, default '0 7.5 0.07'
+"relative_size" radius of wheel, default 14
 "physobj_stepup" quake-style step-up in stairs. relative_size already gives some step-up inherently, but if relative_size is 0 the quake default would be 18
-"part_mass" mass multiplier of this wheel, affects center of mass of entire object, mass of 0 makes wheel stick in mid-air, good default 1
-"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. x and y are coulomb friction, z is additional "goopy" sideways friction which makes handling at high speeds nicer. good default '200 1000 4.4'
-"physobj_friction_water" directional water friction, good default '2 2 2'
-"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, good default 1.025
-"physobj_buoyancy" gravity multiplier when under-water, good default -0.75
+"part_mass" mass multiplier of this wheel, affects center of mass of entire object, default 1, a negative mass pins a wheel in place
+"physobj_friction_ground" directional ground friction, higher value on y than x is what allows steering of vehicles. x and y are coulomb friction, z is additional "goopy" sideways friction which makes handling at high speeds nicer. default '200 1000 4.4'
+"physobj_friction_water" directional water friction, default '2 2 2'
+"physobj_bounce" 1 means no bounce, 2 means perfect reflection-bounce, default 1.025
+"physobj_buoyancy" gravity multiplier when under-water, default -0.75
 */
 void() func_vehicle_wheel =
 {

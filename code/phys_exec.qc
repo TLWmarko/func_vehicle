@@ -951,7 +951,10 @@ entity(vector org, entity e, entity obj) Phys_InitParticle =
 
 	if (e.owner)
 		e.physobj_mass = e.owner.physobj_mass; // used as a shortcut in force calculations
-	e.physobj_inversemass = 1 / e.part_mass;
+	if (e.part_mass > 0)
+		e.physobj_inversemass = 1 / e.part_mass;
+	else
+		e.physobj_inversemass = 0;
 	//e.effects = EF_NOMODELFLAGS;
 	e.takedamage = DAMAGE_YES;
 	e.solid = SOLID_NOT;
