@@ -452,6 +452,19 @@ float TryPlacePlayer(entity exit){
 }
 
 float modelindex_null;
+void() PrecacheNull =
+{
+	local entity e;
+
+	precache_model("progs/null.spr");
+	if (!modelindex_null)
+	{
+		e = spawn();
+		setmodel(e, "progs/null.spr");
+		modelindex_null = e.modelindex;
+		remove(e);
+	}
+};
 
 void(entity ply, entity car) Car_AttachToVehicle =
 {
@@ -1290,7 +1303,7 @@ void() func_vehicle =
 	if (cvar("developer") != 0)
 		Debug_Precache();
 	
-	precache_model("progs/null.spr");
+	PrecacheNull();
 
 	self.physobj_flags |= PHFLAGS_VEHICLE;
 
@@ -1488,7 +1501,7 @@ void() func_vehicle_builtins =
 	if (cvar("developer") != 0)
 		Debug_Precache();
 
-	precache_model("progs/null.spr");
+	PrecacheNull();
 
 	entity car;
 	if (self.netname == "triton"){
@@ -1550,7 +1563,7 @@ void() func_vehicle_triton =
 	if (cvar("developer") != 0)
 		Debug_Precache();
 
-	precache_model("progs/null.spr");
+	PrecacheNull();
 
 	precache_model("progs/test/whl.mdl");
 	precache_model("progs/test/triton.mdl");
@@ -1580,7 +1593,7 @@ void() vehicle_hotrod =
 	if (cvar("developer") != 0)
 		Debug_Precache();
 
-	precache_model("progs/null.spr");
+	PrecacheNull();
 
 	precache_model("progs/HotRod_body.mdl");
 	precache_model("progs/HotRod_roof.mdl");
