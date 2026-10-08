@@ -7,7 +7,8 @@ float MOVE_MISSILE = 2; // save as movement with .movetype == MOVETYPE_FLYMISSIL
 .entity realowner;
 .entity driving;
 
-nosave float check_camera_state;
+nosave float camera_generation;
+.float camera_generation_seen;
 
 entity physobj_spawning; // the current object in spawning
 .entity physobj_next; // next part in list

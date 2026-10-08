@@ -1096,8 +1096,11 @@ void BrakingAndAccelerating(entity car){
 
 void TryUpdateVehicle(){
 	entity car = self.driving;
-	if (!check_camera_state){
-		check_camera_state = TRUE;
+	// multiplayer compatible camera state check
+	if (!camera_generation)
+		camera_generation = time + random() + 1;
+	if (self.camera_generation_seen != camera_generation){
+		self.camera_generation_seen = camera_generation;
 		if (car){
 			stuffcmd(self, "chase_active 1\n");
 			stuffcmd(self, "chase_back ");
