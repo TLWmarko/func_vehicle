@@ -1439,6 +1439,10 @@ Statics are objects which follow the physics-object around but don't affect the 
 */
 void() phys_static =
 {
+	if (e.netname == "turretbase") precache_model("progs/tracer.mdl");
+	else if (e.netname == "turretswivel") precache_model("progs/tracer.mdl");
+	else if (e.netname == "turretbody") precache_model("progs/tracer.mdl");
+	else if (e.netname == "turretbarrel") precache_model("progs/tracer.mdl");
 	setorigin (self, self.origin);
 	if (self.model){
 		precache_model(self.model);
