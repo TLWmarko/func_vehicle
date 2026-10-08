@@ -1082,7 +1082,7 @@ void BrakingAndAccelerating(entity car){
 		else
 			turnmod = 1 - min(0.5, fabs(forward_vel) / car.max_reverse_speed);
 
-		turn = (mod((car.angles_y - self.v_angle_y) + 180, 360) - 180) * f * turnmod;
+		turn = anglemod180(car.angles_y - self.v_angle_y) * f * turnmod;
 
 		if (f < 0){ // driving backwards, check if we are also aiming backwards, in which case don't flip car around
 			if (turn > 100)
@@ -1127,7 +1127,7 @@ void TryUpdateVehicle(){
 
 	BrakingAndAccelerating(car);
 	
-	Gun_Turn(car.angles_y - self.v_angle_y, mod(car.angles_x - self.v_angle_x + 180 + 25, 360) - 180);
+	Gun_Turn(car.angles_y - self.v_angle_y, anglemod180(car.angles_x - self.v_angle_x + 25));
 	if (!car.autolevel_maxangle_x)
 	{
 		makevectors(self.v_angle);

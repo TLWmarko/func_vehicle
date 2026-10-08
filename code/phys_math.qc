@@ -24,9 +24,7 @@ float(float current, float target, float maxDelta) MoveTowards =
 
 float(float current, float target, float maxDelta) MoveTowardsAngle =
 {
-	float deltaAngle = mod((target - current), 360);
-	if (deltaAngle > 180)
-		deltaAngle -= 360;
+	float deltaAngle = anglemod180(target - current);
 	if (-maxDelta < deltaAngle && deltaAngle < maxDelta)
 		return target;
 	target = current + deltaAngle;
