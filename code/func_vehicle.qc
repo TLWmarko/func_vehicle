@@ -1207,9 +1207,9 @@ void(entity part) BorrowModel =
 	if (!part.target)
 		return;
 	entity e = find(world, targetname, part.target);
-	if (!e || e.classname != "func_vehicle_model")
+	if (!e || e.classname != "func_template_model")
 	{
-		dprint("func_vehicle: can't find func_vehicle_model ");
+		dprint("func_vehicle: can't find func_template_model ");
 		dprint(part.target);
 		dprint("\n");
 		return;
@@ -1416,14 +1416,14 @@ void() phys_particle =
 		setmodel (self, self.model);
 	}
 }
-/*QUAKED func_vehicle_model (1 0 0) ?
+/*QUAKED func_template_model (1 0 0) ?
 A bmodel template for vehicle parts. phys_wheel, phys_static and phys_particle can use its brushes as their model by setting their "target" to its targetname. Any number of parts can use the same template.
 
 If used for wheels, it is strongly recommended to be built with X axis being the axle of the wheel, for wobble-free spinning!
 
 "targetname" must be defined, used by the parts to find the model
 */
-void() func_vehicle_model =
+void() func_template_model =
 {
 	self.solid = SOLID_NOT;
 	self.modelindex = 0;
@@ -1433,16 +1433,16 @@ Statics are objects which follow the physics-object around but don't affect the 
 
 "targetname" must be defined, used by the physics-object to find the static
 "model" the model to be loaded for visualization
-"target" optional, targetname of a func_vehicle_model to use as the model instead
+"target" optional, targetname of a func_template_model to use as the model instead
 "netname" in vehicle-contexts useful names are chassis, roof, driver, but also rightdoor, leftdoor, topexit, botexit, backexit, frontexit
 "angle" base-pose angle for this static in the physics-object
 */
 void() phys_static =
 {
-	if (e.netname == "turretbase") precache_model("progs/tracer.mdl");
-	else if (e.netname == "turretswivel") precache_model("progs/tracer.mdl");
-	else if (e.netname == "turretbody") precache_model("progs/tracer.mdl");
-	else if (e.netname == "turretbarrel") precache_model("progs/tracer.mdl");
+	if (self.netname == "turretbase") precache_model("progs/tracer.mdl");
+	else if (self.netname == "turretswivel") precache_model("progs/tracer.mdl");
+	else if (self.netname == "turretbody") precache_model("progs/tracer.mdl");
+	else if (self.netname == "turretbarrel") precache_model("progs/tracer.mdl");
 	setorigin (self, self.origin);
 	if (self.model){
 		precache_model(self.model);
@@ -1469,7 +1469,7 @@ Wheels are useful for vehicles! They're a combo of a particle and a static. Make
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
 "model" the model to be loaded for visualization
-"target" optional, targetname of a func_vehicle_model to use as the model instead
+"target" optional, targetname of a func_template_model to use as the model instead
 "angle" how the wheel model is turned, relative to the func_vehicle's angle
 "physobj_spring_length" length of spring for this wheel, default 12
 "physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, default '0 7.5 0.07'
