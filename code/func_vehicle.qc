@@ -33,10 +33,11 @@ entity() forklift;
 entity() apc;
 
 void() Spin_Tires;
+#ifndef COPPER
 float() crandom;
 void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
 void(vector org, vector vel, float damage) SpawnBlood;
-
+#endif
 void PushAndDamageThink(){
 	entity e = self.p_damage_next;
 	while(e){
