@@ -767,6 +767,7 @@ void() Phys_ObjectThink =
 		{
 			steps--;
 			Phys_Acceleration(ftime*0.5, sv_gravity, f);
+			f = FALSE;
 			Phys_Constraints_Floor(ftime);
 			Phys_Constraints_Volume(ftime);
 			Phys_Constraints_Linear(ftime);
