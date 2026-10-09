@@ -12,6 +12,8 @@
 .float max_turn;
 .float turn_speed;
 
+.float wheel_offset;
+
 .vector autolevel_force;
 .vector autolevel_maxangle;
 
@@ -1186,6 +1188,10 @@ void(entity wheel, entity car) AddWheelStatic =
 	wheel.classname = "phys_particle";
 	stat.base_pose = wheel.base_pose;
 	stat.relative_org = wheel.relative_org;
+	if (wheel.relative_org_y < 0)
+		stat.relative_org_y -= wheel.wheel_offset;
+	else
+		stat.relative_org_y += wheel.wheel_offset;
 	stat.relative_forward = wheel.relative_forward;
 	stat.relative_left = wheel.relative_left;
 	stat.relative_up = wheel.relative_up;
@@ -1468,6 +1474,7 @@ Wheels are useful for vehicles! They're a combo of a particle and a static. Make
 
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
+"wheel_offset" moves the visible wheel along its axle, away from the vehicle with positive values or towards it with negative values, without moving where the wheel touches the ground
 "model" the model to be loaded for visualization
 "target" optional, targetname of a func_template_model to use as the model instead
 "angle" how the wheel model is turned, relative to the func_vehicle's angle
@@ -1503,6 +1510,7 @@ Bmodel wheels are strongly recommended to have their axle along X axis, with ang
 
 "targetname" must be defined, used by the physics object to find the wheel
 "netname" useful names are frontleft, frontright, backleft, backright
+"wheel_offset" moves the visible wheel along its axle, away from the vehicle with positive values or towards it with negative values, without moving where the wheel touches the ground
 "angle" how the wheel model is turned, relative to the func_vehicle's angle
 "physobj_spring_length" length of spring for this wheel, default 12
 "physobj_spring_force" x and y are spring forces based on distance to surface, z is damping, default '0 7.5 0.07'
