@@ -5498,6 +5498,7 @@
 "physobj_bounce" "1.025"
 "physobj_buoyancy" "-0.75"
 "physobj_flags" "1024"
+"wheel_offset" "-4.5"
 "_tb_layer" "2"
 }
 // entity 54
@@ -5516,7 +5517,7 @@
 "physobj_friction_water" "2 2 2"
 "physobj_bounce" "1.025"
 "physobj_buoyancy" "-0.75"
-"wheel_offset" "4"
+"wheel_offset" "-4.5"
 "_tb_layer" "2"
 }
 // entity 55
@@ -5536,6 +5537,7 @@
 "physobj_bounce" "1.025"
 "physobj_buoyancy" "-0.75"
 "physobj_flags" "1024"
+"wheel_offset" "-4.5"
 "_tb_layer" "2"
 }
 // entity 56
@@ -5554,6 +5556,7 @@
 "physobj_friction_water" "2 2 2"
 "physobj_bounce" "1.025"
 "physobj_buoyancy" "-0.75"
+"wheel_offset" "-4.5"
 "_tb_layer" "2"
 }
 // entity 57
