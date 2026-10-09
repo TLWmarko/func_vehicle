@@ -5115,7 +5115,6 @@
 "classname" "func_vehicle_wheel"
 "targetname" "brushcar_parts"
 "netname" "frontleft"
-"part_mass" "2"
 // brush 0
 {
 ( 287 -98 206 ) ( 287 -126 206 ) ( 287 -112 186 ) 128_grey_2 [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 1 1
@@ -5144,7 +5143,6 @@
 "classname" "func_vehicle_wheel"
 "targetname" "brushcar_parts"
 "netname" "frontright"
-"part_mass" "2"
 // brush 0
 {
 ( 359 -98 206 ) ( 359 -126 206 ) ( 359 -112 186 ) 128_grey_2 [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 1 1
@@ -5174,7 +5172,6 @@
 "targetname" "brushcar_parts"
 "netname" "backleft"
 "physobj_flags" "1024"
-"part_mass" "2"
 // brush 0
 {
 ( 287 -194 206 ) ( 287 -222 206 ) ( 287 -208 186 ) 128_grey_2 [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 1 1
@@ -5204,7 +5201,6 @@
 "targetname" "brushcar_parts"
 "netname" "backright"
 "physobj_flags" "1024"
-"part_mass" "2"
 // brush 0
 {
 ( 359 -194 206 ) ( 359 -222 206 ) ( 359 -208 186 ) 128_grey_2 [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 1 1
@@ -5266,6 +5262,7 @@
 "classname" "phys_particle"
 "origin" "328 -168 250"
 "targetname" "brushcar_parts"
+"part_mass" "2"
 }
 // entity 31
 {
