@@ -57,6 +57,14 @@ a lot of design choices, but it is perfectly possible to extend func_vehicle
 with more modern features, like improved multiplayer support using CSQC
 camera and input handling.
 
+The primary feature in this version is finalized support for building
+custom vehicles in a level editor, either from brushes or custom MDL models.
+Along the way, a bunch of other stuff got improved and finalized, like more
+correct future-proof springs, and my arch nemesis... spinning wheels. It was
+a long journey of figuring out how to get rid of wheel wobble at high speeds
+in custom Quake engines which feature rotation interpolation. In the end it
+turned out to be very simple, just change the wheel axle to X instead of Y!
+
 ============================================================================
     MAPPING & MODDING
 ============================================================================
@@ -72,7 +80,12 @@ Mapping:
 Tutorials are still pending, as those are a lot of work. I still wanted to
 make a new release though, because you can technically make map-defined
 vehicles now! There's a func_vehicle.fgd included and hopefully the example
-.map files will get you started.
+.map files will get you started. The main thing to keep in mind when
+building level geometry is that the vehicle basically uses a bunch of
+tracelines to collide with the world, meaning it can drive through and get
+stuck on geometry that is too thin. So make sure to only use big chunky
+brushes in areas where the car is. Anything above 16 units should be ok, 32
+to be safe! Sharp wedges have a similar problem.
 
 brush_vehicle.map is kind of a minimal vehicle, with bad physics etc.
 brush_template_vehicle.map has a mediocre level setup, slightly nicer.
