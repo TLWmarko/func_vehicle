@@ -5170,7 +5170,6 @@
 "classname" "func_vehicle_wheel"
 "targetname" "brushcar_parts"
 "netname" "backleft"
-"physobj_flags" "1024"
 // brush 0
 {
 ( 287 -194 206 ) ( 287 -222 206 ) ( 287 -208 186 ) 128_grey_2 [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 1 1
@@ -5199,7 +5198,6 @@
 "classname" "func_vehicle_wheel"
 "targetname" "brushcar_parts"
 "netname" "backright"
-"physobj_flags" "1024"
 // brush 0
 {
 ( 359 -194 206 ) ( 359 -222 206 ) ( 359 -208 186 ) 128_grey_2 [ 0 1 0 32 ] [ 0 0 -1 0 ] 0 1 1

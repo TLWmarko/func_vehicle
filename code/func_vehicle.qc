@@ -304,10 +304,11 @@ entity FindStaticOfName(string name, entity obj){
 void(entity car) Car_InitVehicle =
 {
 	local entity e;
-	local float hasStabilizer;
+	local float hasStabilizer, hasPoweredWheel;
 
 	if (car.chase_settings == '0 0 0') car.chase_settings = '150 0 50';
 
+	hasPoweredWheel = FALSE;
 	e = car.physobj_particlelist;
 	while (e)
 	{
@@ -319,6 +320,8 @@ void(entity car) Car_InitVehicle =
 			car.backright = e;
 		else if (e.netname == "backleft")
 			car.backleft = e;
+		if (e.physobj_flags & PHFLAGS_POWERED)
+			hasPoweredWheel = TRUE;
 		e = e.physobj_next;
 	}
 	hasStabilizer = FALSE;
@@ -357,6 +360,10 @@ void(entity car) Car_InitVehicle =
 		if (!hasStabilizer){ // we better make one then
 			e = Phys_ObjectAddStick(car.backright, car.backleft, car);
 			e.physobj_flags |= PHFLAGS_STABILIZERBAR;
+		}
+		if (!hasPoweredWheel){ // make back wheels powered if none were defined
+			car.backright.physobj_flags |= PHFLAGS_POWERED;
+			car.backleft.physobj_flags |= PHFLAGS_POWERED;
 		}
 	}
 	e = car.physobj_staticlist;
