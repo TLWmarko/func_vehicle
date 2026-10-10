@@ -55,8 +55,7 @@ float(entity targ, entity inflictor) CanDamage;
 ++++
 float    modelindex_eyes, modelindex_player;
 
-Now we have the vehicle stuff included in the game, next we need to add
-interactions between the vehicle(s) and the rest.
+Next we need to add interactions between the vehicle(s) and the rest.
 
 ============================================================================
 
@@ -75,8 +74,9 @@ stuff, add this:
 ...
 
 This resets the chasecam if a player stops playing while seated in a
-vehicle. Still in client.qc, move down to PlayerPreThink, and add the
-following:
+vehicle.
+
+Still in client.qc, move down to PlayerPreThink, and add the following:
 
 ...
 	CheckRules ();

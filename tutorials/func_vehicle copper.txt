@@ -141,8 +141,7 @@ following:
 ...
 
 You've successfully added the basic functionality for entering, exiting and
-driving vehicles! Keep going if you also want to add the ability for monsters
-to detect you inside a vehicle and shoot at you.
+driving vehicles!
 
 ============================================================================
 
