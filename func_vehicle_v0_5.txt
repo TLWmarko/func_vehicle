@@ -226,15 +226,19 @@ A: Yes, but it's funnier this way.
 
 You are permitted to use the contents of this mod the way you see fit, WITH
 THE FOLLOWING EXCEPTIONS:
-- maths.qc (which is from Copper) - copyright of Lunaran, used with
-permission
+
+- maths.qc (from Copper) - copyright of Lunaran, used with permission
 - the example bsp's bumpytest.bsp, apc_mdl_vehicle.bsp, brush_vehicle.bsp,
-brush_template_vehicle.bsp, as they contain textures from prototype.wad -
-copyright of Khreator
+brush_template_vehicle.bsp (the .map files are still fine), as they contain
+textures from prototype.wad - copyright of Khreator
 - the included progs.dat as it includes code from progs106 - copyright of
 id Software
+- HotRod_player_driver.mdl contains the player model from Quake - copyright
+of id Software
 
-Crediting me, LadyHavoc, Electro and Kebby is greatly appreciated. Happy
-driving!
+No guarantees on the above list being comprehensive! Use your own judgement.
+Crediting me, LadyHavoc, Electro and Kebby is greatly appreciated.
+
+Happy driving!
 
 / Marko "Polo" Permanto
