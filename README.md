@@ -1,75 +1,127 @@
-![func_vehicle](https://user-images.githubusercontent.com/3429506/227857251-4de81fcd-b441-45ba-9282-a176b20a5a2e.png)
+![func_vehicle](funcvehicle05.png)
 # func_vehicle
 A drop-in vehicle-physics mod for Quake
 
-    Version     : 0.11
-    Date        : March 31st, 2023
+    Version     : 0.5
+    Date        : Oct 10th, 2026
     Author      : Marko "Polo" Permanto
     Email       : marko.permanto@gmail.com
     Website     : https://github.com/TLWmarko/func_vehicle
-    
+
     Credits     :
         - Electro for the sick hotrod model
         - Lunaran for Copper, maths.qc in particular which includes clever
           tricks which sparked the idea for this port in the first place
         - LadyHavoc for the math-heavy parts of the original implementation
-          of the physics in Twig
+          of the physics
+        - Matthias Müller for his excellent tutorials on XPBD and related
+          topics
+        - bmfBr for high-precision atan2
+        - Kebby for the sick APC model
+        - Paril for porting func_vehicle to SiN Reloaded and bug-hunting in
+          the process
+        - Freya Holmér for her help with swearing at euler-angles
+          component-wise interpolation
+        - hemebond for testing
+        - Khreator for prototype.wad
 
 ## About
-This Quake mod is primarily meant for other modders, to function as a drop-in "put vehicles in my mod" add-on, rather than a standalone mod. There is a small test map called "bumpytest" that you can run to just check out the currently included car. Drive forward and backward using the movement keys, turn by aiming around with your mouse, Halo-style. Enter and exit vehicles with "impulse 50".
+func_vehicle is primarily meant for other modders and mappers, the included gameplay is sparse to say the least. For modders, it functions as a drop-in "put vehicles in my mod" add-on, and for mappers, the included progs.dat and func_vehicle.fgd allows for treating it as a mod to create Quake levels with vehicles!
 
-It is currently quite obviously unfinished, but I decided to package things up and release it as is anyway, because it's been just sitting on my harddrive collecting dust for a year, and the risk of it simply getting lost to time was only increasing.
+There are a couple small test/example maps included. The one called "bumpytest" has two built-in vehicles, the Hotrod and an APC. "brush_vehicle" has a basic brush-based vehicle. "brush_template_vehicle" features a more recommended brush-based vehicle setup, which is more flexible. "apc_mdl_vehicle" has an advanced MDL vehicle example, in practice a copy of the built-in APC.
+
+Drive forward and backward using the movement keys, turn by aiming around with the mouse, Halo-style. Also akin to Halo, when you ride a vehicle you're the one taking damage from getting shot at, the vehicle is unharmed. Use the strafe keys to do barrel rolls midair, or to turn back upright when you accidentally land upside-down. Vehicles with turrets shoot using the attack button. "impulse 50" enters and exits nearby vehicles.
+
+func_vehicle is designed to work within vanilla Quake engine limitations. It runs correctly and successfully in WinQuake and up! This restriction defines a lot of design choices, but it is perfectly possible to extend func_vehicle with more modern features, like improved multiplayer support using CSQC camera and input handling.
+
+The primary feature in this version is finalized support for building custom vehicles in a level editor, either from brushes or custom MDL models. Along the way, a bunch of other stuff got improved and finalized, like more correct future-proof springs, and my arch nemesis... spinning wheels. It was a long journey of figuring out how to get rid of wheel wobble at high speeds in custom Quake engines which feature rotation interpolation. In the end it turned out to be very simple, just change the wheel axle to X instead of Y!
 
 ## Requirements
-Works in any Quake engine since 1997. A word of warning though, each physics object eats entities for breakfast so engines without increased limits will quickly run out. For example the currently included hotrod vehicle uses 371 entities (assuming I counted them correctly). You probably also require a heftier computer than the original requirements were for Quake. Some engines might need tweaking some console settings if the chasecam is choppy.
+Works in any Quake engine since 1997. A word of warning though, each physics object (read vehicle) eats entities for breakfast so engines without increased limits will quickly run out. For example the currently included hotrod vehicle uses 177 entities. You probably also require a heftier computer than what was originally required by Quake. Some engines might need tweaking some console settings if the chasecam is choppy.
 
-The mod uses chase_active for the 3rd person view when driving, which has a bug in some Quake engines where if the sightline is too far in front of you, the angle will get completely messed up, so keep that in mind if making large open maps. Ironwail has this fixed for example.
+The mod uses chase_active for the 3rd person view when driving, which has a bug in some Quake engines where if the sightline is too far in front of you, the angle will get completely messed up, so keep that in mind if making large open maps. Most modern engines have this fixed though!
 
 ## Mapping & Modding
 ### Modding:
-If you want to go ahead and put this stuff into your mod, make sure to check out the tutorials folder included in this release, it has .pdf and .html versions of two example-implementations, using either stock progs106 or Copper by Lunaran as a base (neither of which are included). Hopefully those are enough to help you in figuring out how to put it in your own mod too!
+If you want to go ahead and put this stuff into your mod, make sure to check out the tutorials folder included in this release, it has .pdf and .txt versions of two example-implementations, using either stock progs106 or Copper 1.30 by Lunaran as a base (neither of which are included). Hopefully those are enough to help you in figuring out how to put it in your own mod!
 
 ### Mapping:
-Currently the only new thing you can do is add a func_vehicle_hotrod to your map (it respects angles for spawning). I don't have a mapping tutorial yet, but the main thing to keep in mind is that the vehicle basically uses a bunch of tracelines to collide with the world, meaning it can drive through and get stuck on geometry that is too thin. So make sure to only use big chunky brushes in areas where the car is. Anything above 16 units should be ok, 32 to be safe!
+Tutorials are still pending, as those are a lot of work. I still wanted to make a new release though, because you can technically make map-defined vehicles now! There's a func_vehicle.fgd included and hopefully the example .map files will get you started. The main thing to keep in mind when building level geometry is that the vehicle basically uses a bunch of tracelines to collide with the world, meaning it can drive through and get stuck on geometry that is too thin. So make sure to only use big chunky brushes in areas where the car is. Anything above 16 units should be ok, 32 to be safe! Sharp wedges have a similar problem.
+
+brush_vehicle.map is kind of a minimal vehicle, with bad physics etc. brush_template_vehicle.map has a mediocre level setup, slightly nicer. apc_mdl_vehicle.map has an advanced setup, with MDL models instead of brushes (although the techniques work fine with brushes too), replicating the built-in APC vehicle exactly.
 
 ## TODO
 Missing features:
 
-    - Ability to build your own vehicles using brushes
-    - Ability to add own models for vehicles without coding
     - Visual effects like tyre-smoke and such
+    - Nitro
     - Sounds
-    - Finished skin for the hotrod
     - More examples for using the physics engine in other ways
     - Technical description for the curious
+    - A couple mapping features like vehicle triggers and more
+    - Mapping tutorials
 
 ## CHANGELOG
+- v0.5 October 10th, 2026
+    - Volume preserving constraints. Allows for fewer linear constraints,
+      and an overall more stable simulation. A physics rig can no longer
+      collapse in on itself. High velocities are now safe. Performance is
+      greatly improved.
+    - Mapper defined vehicles! Both MDL- and brush-based vehicles are
+      supported, see included example maps and the FGD file.
+    - Hotrod example-vehicle updated with textures, and a turret!
+    - APC example-vehicle!
+    - XPBD style particle updates, for better stability.
+    - Spinning wheels! This one took forever, and caused a long stall in
+      development.
+    - Bugfixed stairs launching vehicles violently by making stair stepping
+      soft instead of immediate.
+    - Turning polish.
+    - Optional auto-leveling instead of manual rolling (can be defined for
+      custom vehicles).
+    - Tracked (read tank) type vehicle support.
+    - Reworked friction: now with directional coulomb friction, and some
+      extra sideways "goopy" classic func_vehicle friction which helps with
+      handling at high speeds. More realistic handling at low speeds, and
+      fixes sliding on slopes. Gets rid of old fake stiction feature.
+    - Springs bugfixed. Springs are linear, and should not have force at the
+      extreme, to get rid of unwanted bouncyness.
+    - Braking when accelerating the opposite way.
+    - Front-wheel and All-wheel drive support.
+    - Steering with Back-wheels support.
+    - More example vehicles, from SiN Reloaded, ATV, Bulldozer and Forklift
+      (unfortunately no meshes included due to copyright).
+    - Various minor tweaks and bugfixes.
+    - Various performance improvements and code cleanup.
 - v0.11 March 31st, 2023
-    - Added ability to use strafe-keys to roll the vehicle at will, useful for tricks midair or to turn the car back over when you accidentally land upside down. Only requirement is atleast one wheel needs to be off the ground.
+    - Added ability to use strafe-keys to roll the vehicle at will, useful
+      for tricks midair or to turn the car back over when you accidentally
+      land upside down. Only requirement is atleast one wheel needs to be
+      off the ground.
 - v0.1 March 27th, 2023
     - Initial release.
 
 ## HQA (Hypothetical Questions and Answers)
-Q: Is this like Quake Rally?  
-A: Not really, but you could use it to make something like that! See the about section.  
+Q: Is this like Quake Rally?
+A: Not really, but you could use it to make something like that! See the about section.
 
-Q: Can I make it turn using the keyboard rather than mouse?  
-A: For sure! But then you'd need to live with a choppy camera. The car  attempts to turn towards where you're aiming rather than turn the camera towards where you're going because I wanted to work within the limits of Quake. Continuously setting the player's view angles from QuakeC is very choppy because of aggressive float quantization for smoother online play, which also affects singleplayer mods due to how the engine is set up.  
+Q: Can I make it turn using the keyboard rather than mouse?
+A: For sure! But then you'd need to live with a choppy camera. The car  attempts to turn towards where you're aiming rather than turn the camera towards where you're going because I wanted to work within the limits of Quake. Continuously setting the player's view angles from QuakeC is very choppy because of aggressive float quantization for smoother online play, which also affects singleplayer mods due to how the engine is set up. You can however get rid of this limitation with CSQC and other modern engine features!
 
-Q: I found a bug.  
-A: Not exactly a question, but I'll let it slide. Feel free to either poke me about it in the Quake Mapping discord (Polo#2792) or even better submit a fix and I'll look at implementing it!  
+Q: I found a bug.
+A: Not exactly a question, but I'll let it slide. Feel free to either poke me about it in the Quake Mapping discord (Polo#2792) or even better submit a fix and I'll look at implementing it!
 
-Q: Can you help me implement the vehicles into my mod?  
-A: No promises but I can probably give it a look. Just make sure you have tried following the tutorials I've included for doing just that first.  
+Q: Can you help me implement the vehicles into my mod?
+A: No promises but I can probably give it a look. Just make sure you have tried following the tutorials I've included for doing just that first.
 
-Q: This looks like Twig. I thought that was DarkPlaces only?  
-A: Yes! This mod was originally released in January 2009 as a DarkPlaces only type deal, while the main feature of this "port" is that it now works in essentially all Quake engines. This is basically Twig but with vehicle support, and all the features which required DarkPlaces removed. When I saw maths.qc in Copper had neat tricks for some math functions which Twig was relying on engine-features for I just knew I had to try and make this mod happen.  
+Q: This looks like Twig. I thought that was DarkPlaces only?
+A: Yes! This mod was originally released in January 2009 as a DarkPlaces only type deal, while the main feature of this "port" is that it now works in essentially all Quake engines. This is basically Twig but with vehicle support, and all the features which required DarkPlaces removed. When I saw maths.qc in Copper had neat tricks for some math functions which Twig was relying on engine-features for I just knew I had to try and make this mod happen.
 
-Q: But how does it even work?  
-A: I intend to write a technical description sometime, but in short it's a particle physics engine. Those are generally what's used for softbody physics, but because Quake has no way to represent soft-bodies like cloth, water, jello or what have you, I've just made the constraints between the particles (almost) completely rigid. This results in something that feels a bit like a rickety rigidbody. Try typing "developer 2" into the console and restart the level to see the particles on the vehicle, these are the things which actually collide with the world. It also has a bunch of bmodels for pushing monsters around.  
+Q: But how does it even work?
+A: I intend to write a technical description sometime, but in short it's a particle physics engine. Those are generally what's used for softbody physics, but because Quake has no way to represent soft-bodies like cloth, water, jello or what have you, I've just made the constraints between the particles (almost) completely rigid. This results in something that feels a bit like a rickety rigidbody. Try typing "developer 2" into the console and restart the level to see the particles on the vehicle, these are the things which actually collide with the world. It also has a bunch of bmodels for pushing monsters around, visible with "developer 3"
 
-Q: Can I help you finish this mod?  
-A: I'd be delighted! Let me know in the Quake Mapping discord (Polo#2792) and let's make it happen.  
+Q: Can I help you finish this mod?
+A: I'd be delighted! Let me know in the Quake Mapping discord (Polo#2792) and let's make it happen.
 
-Q: Hey isn't func_* a brush based entity, this looks like it should be called info_vehicle >:|  
-A: Yes, but it's funnier this way. Also, it's supposed to have brush based vehicles eventually!
+Q: Hey isn't func_* a brush based entity, this looks like it should be called info_vehicle >:|
+A: Yes, but it's funnier this way.
