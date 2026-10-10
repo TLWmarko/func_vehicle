@@ -1,0 +1,225 @@
+============================================================================
+
+    -- func_vehicle --
+    How to implement func_vehicle in progs106 (will also work fine in 101)
+
+============================================================================
+
+FTEQCC compiler is recommended (to some extent required, due to sloppyness).
+
+Lines marked above and below with ++++ are the ones to add, lines marked
+above and below with ---- are the ones to remove.
+
+============================================================================
+
+Add the 10 new files into progs.src between subs.qc and fight.qc, looking
+like this:
+
+...
+defs.qc
+subs.qc
+++++
+debug.qc
+
+maths.qc
+
+phys_defs.qc
+phys_math.qc
+phys_matrix.qc
+phys_tetra.qc
+phys_exec.qc
+
+phys_object.qc
+
+func_vehicle.qc
+func_vehicle_builtins.qc
+++++
+fight.qc
+...
+
+Currently the code won’t compile without a small change, so start by opening
+client.qc and near the top, remove this line:
+
+...
+void (vector org, entity death_owner) spawn_tdeath;
+----
+float    modelindex_eyes, modelindex_player;
+----
+/*
+...
+
+We need to add the same line to the bottom of defs.qc instead:
+
+...
+float(entity targ, entity inflictor) CanDamage;
+++++
+float    modelindex_eyes, modelindex_player;
+
+Now we have the vehicle stuff included in the game, next we need to add
+interactions between the vehicle(s) and the rest.
+
+============================================================================
+
+First we want to add some functionality to client.qc for driving and
+entering/exiting the vehicle. In PutClientInServer, right below the setmodel
+stuff, add this:
+
+...
+	setmodel (self, "progs/player.mdl");
+	modelindex_player = self.modelindex;
+++++
+	stuffcmd(self, "chase_active 0\n");
+	stuffcmd(self, "crosshair 1\n");
+++++
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+...
+
+This resets the chasecam if a player stops playing while seated in a
+vehicle. Still in client.qc, move down to PlayerPreThink, and add the
+following:
+
+...
+	CheckRules ();
+++++
+	if (self.driving)
+		return;
+++++
+	WaterMove ();
+...
+
+Next, move down to PlayerPostThink. First we need to add this:
+
+...
+// do weapon stuff
+++++
+	if (self.driving)
+		ImpulseCommands();
+	else
+++++
+		W_WeaponFrame ();
+...
+
+And add this at the bottom:
+
+...
+	CheckPowerups ();
+++++
+	TryUpdateVehicle();
+++++
+};
+...
+
+This handles the driving when seated in a vehicle.
+
+============================================================================
+
+When the player dies, they need to get tossed out from the vehicle. Open up
+player.qc and navigate to PlayerDie to add this:
+
+...
+void() PlayerDie =
+{
+	local	float	i;
+++++
+	if (self.driving)
+		Car_AttachToVehicle(self, self.driving);
+++++
+	self.items = self.items - (self.items & IT_INVISIBILITY);
+...
+
+Next up we need to add a new impulse so players can enter and exit nearby
+vehicles. Open up weapons.qc and navigate to ImpulseCommands to add the
+following:
+
+...
+	if (self.impulse == 255)
+		QuadCheat ();
+++++
+	if (self.impulse == 50)
+		Car_CheckAttach ();
+++++
+	self.impulse = 0;
+...
+
+You’ve successfully added the basic functionality for entering, exiting and
+driving vehicles!
+
+============================================================================
+
+Next, in ai.qc, put this into visible:
+
+...
+	if (trace_inopen && trace_inwater)
+		return FALSE;       // sight line crossed contents
+++++
+	if (trace_fraction < 1 && trace_ent.owner.driving == targ)
+		return TRUE;
+++++
+	if (trace_fraction == 1)
+...
+
+This way monsters can detect players in cars.
+
+In combat.qc, add this to T_RadiusDamage:
+
+...
+	if (points > 0)
+	{
+++++
+		vector dir = normalize(org - inflictor.origin);
+		Phys_Force(head, 1000, dir * points, org, dir);
+++++
+		if (CanDamage (head, inflictor))
+		{	// shambler takes half damage from all explosions
+...
+
+Cars can now get pushed around by explosions.
+
+============================================================================
+
+We need to change each *CheckAttack function to support monsters fighting
+vehicles. This means that each case of:
+
+...
+	if (trace_ent != targ)
+		return FALSE;   // don't have a clear shot
+...
+
+Needs to change into:
+
+...
+----
+	if (trace_ent != targ)
+----
+++++
+	if (trace_ent != targ && trace_ent.owner.driving != targ)
+++++
+		return FALSE;		// don't have a clear shot
+...
+
+There’s 4 different cases in fight.qc, and one in wizard.qc.
+
+============================================================================
+
+If you want shambler lightning to do damage, open up shambler.qc and find
+the CastLightning function and change the following:
+
+...
+	WriteCoord (MSG_BROADCAST, trace_endpos_y);
+	WriteCoord (MSG_BROADCAST, trace_endpos_z);
+----
+	LightningDamage (org, trace_endpos, self, 10);
+----
+++++
+	LightningDamage (org, trace_endpos + dir*4, self, 10);
+++++
+};
+...
+
+And you're done!
+
+One extra detail: if you want vehicles to spawn faster, and don't mind
+breaking compatibility with older engines, you can remove the quote slashes
+on the #define QUICKSPAWN line in phys_defs.qc
+
+/ Marko "Polo" Permanto
