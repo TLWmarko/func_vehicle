@@ -1191,7 +1191,7 @@ void(entity wheel, entity car) AddWheelStatic =
 	stat.classname = "phys_static";
 	stat.netname = wheel.netname;
 	setorigin(stat, wheel.origin);
-	stat.model = wheel.model;
+	setmodel(stat, wheel.model);
 	wheel.model = 0;
 	wheel.classname = "phys_particle";
 	stat.base_pose = wheel.base_pose;
@@ -1203,6 +1203,14 @@ void(entity wheel, entity car) AddWheelStatic =
 	stat.relative_forward = wheel.relative_forward;
 	stat.relative_left = wheel.relative_left;
 	stat.relative_up = wheel.relative_up;
+	if (!wheel.relative_size) {
+		if (wheel.physobj_flags & PHFLAGS_BSPMODEL) {
+			wheel.relative_size = max(stat.maxs_y - stat.mins_y, stat.maxs_z - stat.mins_z) * 0.5;
+		}
+		else {
+			wheel.relative_size = 14;
+		}
+	}
 	stat.relative_size = wheel.relative_size;
 	stat.physobj_flags = wheel.physobj_flags;
 
@@ -1499,7 +1507,6 @@ Wheels are useful for vehicles! They're a combo of a particle and a static. Make
 void() phys_wheel =
 {
 	// wheel defaults from the builtin hotrod
-	if (!self.relative_size) self.relative_size = 14;
 	if (!self.physobj_spring_length) self.physobj_spring_length = 12;
 	if (self.physobj_spring_force == '0 0 0') self.physobj_spring_force = '0 7.5 0.07';
 	if (self.physobj_friction_ground == '0 0 0') self.physobj_friction_ground = '200 1000 4.4';
