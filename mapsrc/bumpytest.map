@@ -2,7 +2,6 @@
 // Format: Valve
 // entity 0
 {
-"mapversion" "220"
 "classname" "worldspawn"
 "wad" "prototype_1_2.wad"
 "_tb_mod" "func_vehicle"
@@ -5109,12 +5108,4 @@
 ( -2672 -1664 48 ) ( -2160 -1664 48 ) ( -2160 -1664 176 ) 128_green_3 [ -1 0 0 0 ] [ 0 0 -1 0 ] 0 1 1
 ( -1344 432 112 ) ( -1344 304 112 ) ( -1344 304 240 ) 128_green_3 [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 1 1
 }
-}
-// entity 25
-{
-"classname" "func_vehicle_builtins"
-"origin" "208 -688 184"
-"angle" "90"
-"netname" "apc"
-"spawnflags" "2"
 }

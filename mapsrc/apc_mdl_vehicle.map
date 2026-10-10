@@ -2,7 +2,6 @@
 // Format: Valve
 // entity 0
 {
-"mapversion" "220"
 "classname" "worldspawn"
 "wad" "prototype_1_2.wad"
 "_tb_mod" "func_vehicle"
