@@ -18,14 +18,14 @@
           of the physics
         - Matthias Müller for his excellent tutorials on XPBD and related
           topics
-	- bmfBr for high-precision atan2
-	- Kebby for the sick APC model
-	- Paril for porting func_vehicle to SiN Reloaded and bug-hunting in
-	  the process
-	- Freya Holmér for her help with swearing at euler-angles
-	  component-wise interpolation
-	- hemebond for testing
-	- Khreator for prototype.wad
+        - bmfBr for high-precision atan2
+        - Kebby for the sick APC model
+        - Paril for porting func_vehicle to SiN Reloaded and bug-hunting in
+          the process
+        - Freya Holmér for her help with swearing at euler-angles
+          component-wise interpolation
+        - hemebond for testing
+        - Khreator for prototype.wad
 
 ============================================================================
     ABOUT
