@@ -1063,6 +1063,7 @@ entity(vector org, entity basepart, entity obj) Phys_SpawnParticle =
 
 entity(vector org, entity e, entity obj) Phys_InitHitmodel =
 {
+	e.classname = "hitmodel";
 	if (e.model)
 		setmodel(e, e.model);
 	e.physobj_flags = e.physobj_flags | PHFLAGS_BSPMODEL; // always assume bmodel for hitmodels
