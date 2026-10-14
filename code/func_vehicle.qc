@@ -1313,6 +1313,11 @@ void() StartFuncVehicle =
 			matrix_left = -v_right;
 			matrix_up = v_up;
 		}
+		else {
+			dprint("func_vehicle: can't find start position target ");
+			dprint(self.target);
+			dprint("\n");
+		}
 	}
 
 	Phys_MakeIntoPhysicsObject(self, startorg, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
