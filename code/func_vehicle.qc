@@ -755,10 +755,10 @@ void(float ftime) Car_AutoLevel =
 	car = self.driving;
 
 	float count = 0;
-	count += car.frontright.flags & FL_ONGROUND;
-	count += car.frontleft.flags & FL_ONGROUND;
-	count += car.backright.flags & FL_ONGROUND;
-	count += car.backleft.flags & FL_ONGROUND;
+	count += (car.frontright.flags & FL_ONGROUND) != 0;
+	count += (car.frontleft.flags & FL_ONGROUND) != 0;
+	count += (car.backright.flags & FL_ONGROUND) != 0;
+	count += (car.backleft.flags & FL_ONGROUND) != 0;
 	if (count > 2) return;
 
 	vector com = car.physobj_p1.origin + car.lmat_forward*car.relative_org_x + car.lmat_left*car.relative_org_y + car.lmat_up*car.relative_org_z;
