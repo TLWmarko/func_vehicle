@@ -1684,5 +1684,5 @@ void() Vehicle_SpawnHotrodImpulse =
 	spot = trace_endpos + '0 0 40';
 
 	across = '0 1 0' * (self.v_angle_y + 90);
-	Vehicle_SpawnBuiltin("hotrod", spot, across, 0);
+	Vehicle_SpawnBuiltin("hotrod", spot, across, VEHICLE_PERMANENT_GUN);
 };
