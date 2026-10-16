@@ -1653,4 +1653,36 @@ void() vehicle_hotrod =
 {
 	Vehicle_PrecacheBuiltin("hotrod");
 	Vehicle_SpawnBuiltin("hotrod", self.origin, self.angles, self.spawnflags);
-}
+};
+
+void() Vehicle_SpawnHotrodImpulse =
+{
+	local vector spot, across;
+
+	if (deathmatch || self.driving || self.health <= 0)
+		return;
+
+	makevectors('0 1 0' * self.v_angle_y);
+	// the hotrod is about 130 long and 60 wide, check for room around where it goes
+	traceline(self.origin, self.origin + v_forward * 140, TRUE, self);
+	if (trace_fraction < 1)
+	{
+		sprint(self, "no room for a hotrod here\n");
+		return;
+	}
+	spot = self.origin + v_forward * 88;
+	traceline(spot, spot + v_right * 72, TRUE, self);
+	if (trace_fraction == 1)
+		traceline(spot, spot - v_right * 72, TRUE, self);
+	if (trace_fraction < 1)
+	{
+		sprint(self, "no room for a hotrod here\n");
+		return;
+	}
+	// drop it from a bit above the floor
+	traceline(spot, spot - '0 0 128', TRUE, self);
+	spot = trace_endpos + '0 0 40';
+
+	across = '0 1 0' * (self.v_angle_y + 90);
+	Vehicle_SpawnBuiltin("hotrod", spot, across, 0);
+};
