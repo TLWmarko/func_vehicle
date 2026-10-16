@@ -117,3 +117,5 @@ float resting_allowed;
 float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 float VEHICLE_TANK = 4;
+
+float(entity e) Phys_KillTarget;
