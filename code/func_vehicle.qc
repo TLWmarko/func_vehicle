@@ -115,22 +115,17 @@ void Car_TirePlace(entity car, entity tire){
 	}
 }
 
+void(entity car) Car_PlaceTires =
+{
+	Car_TirePlace(car, car.backleft.enemy);
+	Car_TirePlace(car, car.backright.enemy);
+	Car_TirePlace(car, car.frontleft.enemy);
+	Car_TirePlace(car, car.frontright.enemy);
+};
+
 void() Car_ChassiThink =
 {
 	entity car = self.realowner;
-
-	entity tbleft = car.backleft.enemy;
-	entity tbright = car.backright.enemy;
-	entity tfleft = car.frontleft.enemy;
-	entity tfright = car.frontright.enemy;
-
-	entity hitmodel = self.realowner.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_TRIGGER;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
-	}
 
 	if (!car.driving)
 	{
@@ -138,19 +133,6 @@ void() Car_ChassiThink =
 		car.backright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
 		car.frontleft.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
 		car.frontright.physobj_friction_logic_mult = car.physobj_friction_logic_mult;
-	}
-
-	Car_TirePlace(car, tbleft);
-	Car_TirePlace(car, tbright);
-	Car_TirePlace(car, tfleft);
-	Car_TirePlace(car, tfright);
-
-	hitmodel = self.realowner.physobj_hitmodel;
-	while (hitmodel)
-	{
-		hitmodel.solid = SOLID_BSP;
-		setorigin(hitmodel, hitmodel.origin);
-		hitmodel = hitmodel.physobj_next;
 	}
 
 	self.nextthink = time;
@@ -703,6 +685,7 @@ void(float accel, float maxspeed, entity tire) Car_Accelerate =
 
 void() Spin_Tires =
 {
+	Car_PlaceTires(self);
 	if (self.driving)
 		return;
 	

@@ -872,9 +872,9 @@ void() Phys_ObjectThink =
 		self.angles = vectoangles2(self.lmat_forward, self.lmat_up);
 		self.angles_x = -self.angles_x;
 		self.velocity = self.physobj_p1.velocity; // FIXME: count average velocity
-		if (self.physobj_extra_think)
-			self.physobj_extra_think();
 	}
+	if (self.physobj_extra_think)
+		self.physobj_extra_think();
 	// Update BSP collision model rotation and velocity
 	f = 1 / frametime;
 	hitmodel = self.physobj_hitmodel;
