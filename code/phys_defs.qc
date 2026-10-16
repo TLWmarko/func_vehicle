@@ -78,6 +78,7 @@ float PHFLAGS_KILLME = 128;
 float PHFLAGS_STABILIZERBAR = 256;
 float PHFLAGS_VEHICLE = 512;
 float PHFLAGS_POWERED = 1024;
+float PHFLAGS_TEMPLATE = 4096;
 
 .float force_calcdist, force_calcscale;
 
@@ -89,3 +90,30 @@ float PHFLAGS_POWERED = 1024;
 vector matrix_forward, matrix_left, matrix_up;
 
 float resting_allowed;
+
+// vehicle stuff
+
+.entity frontright, frontleft, backright, backleft;
+.entity gun, driver;
+
+.float max_forward_speed;
+.float max_reverse_speed;
+.float max_roll_speed;
+
+.float accelerate_forward;
+.float accelerate_reverse;
+.float accelerate_roll;
+
+.float max_turn;
+.float turn_speed;
+
+.float wheel_offset;
+
+.vector autolevel_force;
+.vector autolevel_maxangle;
+
+.vector chase_settings;
+
+float VEHICLE_NO_ROOF = 1;
+float VEHICLE_PERMANENT_GUN = 2;
+float VEHICLE_TANK = 4;

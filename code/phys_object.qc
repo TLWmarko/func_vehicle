@@ -1,5 +1,9 @@
 void StartFuncVehicle();
 void PrecacheNull();
+void PushAndDamageTarget(entity instigator, entity targ);
+void Car_InitVehicle(entity car);
+
+float PHYS_TEMPLATE = 8;
 
 void(entity obj, vector org, vector rot, float keep_velocity) TeleportPhysObject =
 {
@@ -127,6 +131,112 @@ void() StartPhysObject =
 	self.physobj_impactevent = DoNothing;
 	Phys_InitPhysicsObject(self, self.origin, matrix_forward, matrix_left, matrix_up);
 }
+
+void(entity e) Phys_HideTemplateParts =
+{
+	while (e)
+	{
+		e.modelindex = 0;
+		e = e.physobj_next;
+	}
+};
+
+void(entity tmpl) Phys_MakeTemplate =
+{
+	Phys_HideTemplateParts(tmpl.physobj_particlelist);
+	Phys_HideTemplateParts(tmpl.physobj_hitmodel);
+	Phys_HideTemplateParts(tmpl.physobj_staticlist);
+	tmpl.solid = SOLID_NOT;
+	tmpl.physobj_flags |= PHFLAGS_TEMPLATE;
+};
+
+void(entity from, entity to) Phys_CopyPart =
+{
+	to.classname = from.classname;
+	to.netname = from.netname;
+	to.model = from.model;
+	to.skin = from.skin;
+	to.frame = from.frame;
+	to.effects = from.effects;
+	to.th_pain = from.th_pain;
+	to.relative_org = from.relative_org;
+	to.base_pose = from.base_pose;
+	to.relative_forward = from.relative_forward;
+	to.relative_left = from.relative_left;
+	to.relative_up = from.relative_up;
+	to.relative_size = from.relative_size;
+	to.physobj_flags = from.physobj_flags;
+	to.part_mass = from.part_mass;
+	to.physobj_stepup = from.physobj_stepup;
+	to.physobj_spring_length = from.physobj_spring_length;
+	to.physobj_spring_force = from.physobj_spring_force;
+	to.physobj_friction_ground = from.physobj_friction_ground;
+	to.physobj_friction_water = from.physobj_friction_water;
+	to.physobj_friction_air = from.physobj_friction_air;
+	to.physobj_bounce = from.physobj_bounce;
+	to.physobj_buoyancy = from.physobj_buoyancy;
+};
+
+entity(entity e, entity obj) Phys_CloneParts =
+{
+	local entity part, first, last;
+	while (e)
+	{
+		part = spawn();
+		Phys_CopyPart(e, part);
+		part.owner = obj;
+		if (last)
+			last.physobj_next = part;
+		else
+			first = part;
+		last = part;
+		e = e.physobj_next;
+	}
+	return first;
+};
+
+entity(entity tmpl, vector org, vector ang) Phys_SpawnFromTemplate =
+{
+	local entity obj;
+
+	obj = spawn();
+	obj.classname = tmpl.classname;
+	obj.netname = tmpl.netname;
+	obj.spawnflags = tmpl.spawnflags - (tmpl.spawnflags & PHYS_TEMPLATE);
+	obj.physobj_flags = tmpl.physobj_flags - (tmpl.physobj_flags & PHFLAGS_TEMPLATE);
+	obj.physobj_mass = tmpl.physobj_mass;
+	obj.lip = tmpl.lip;
+	obj.max_forward_speed = tmpl.max_forward_speed;
+	obj.max_reverse_speed = tmpl.max_reverse_speed;
+	obj.max_roll_speed = tmpl.max_roll_speed;
+	obj.accelerate_forward = tmpl.accelerate_forward;
+	obj.accelerate_reverse = tmpl.accelerate_reverse;
+	obj.accelerate_roll = tmpl.accelerate_roll;
+	obj.max_turn = tmpl.max_turn;
+	obj.turn_speed = tmpl.turn_speed;
+	obj.autolevel_force = tmpl.autolevel_force;
+	obj.autolevel_maxangle = tmpl.autolevel_maxangle;
+	obj.chase_settings = tmpl.chase_settings;
+	obj.physobj_friction_logic_mult = tmpl.physobj_friction_logic_mult;
+	obj.physobj_friction_braking_mult = tmpl.physobj_friction_braking_mult;
+
+	obj.physobj_particlelist = Phys_CloneParts(tmpl.physobj_particlelist, obj);
+	obj.physobj_hitmodel = Phys_CloneParts(tmpl.physobj_hitmodel, obj);
+	obj.physobj_staticlist = Phys_CloneParts(tmpl.physobj_staticlist, obj);
+
+	obj.angles = ang;
+	setorigin(obj, org);
+	makevectors(ang);
+	Phys_MakeIntoPhysicsObject(obj, org, v_forward, -v_right, v_up, '0 0 1', 0);
+	if (obj.physobj_flags & PHFLAGS_VEHICLE){
+		obj.physobj_impactevent = PushAndDamageTarget;
+		Car_InitVehicle(obj);
+	}
+	else {
+		obj.physobj_impactevent = DoNothing;
+	}
+	return obj;
+};
 
 void() phys_object =
 {

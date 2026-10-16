@@ -1198,6 +1198,11 @@ void(entity obj) Phys_ObjectRemove =
 	local entity e, next;
 	if (!obj)
 		return;
+
+	if (obj.think == ThinkGenerateTetras)
+		CleanUpOuterTetrasAndSupports(obj);
+	obj.physobj_flags = 0; // so a stale reference to it isn't mistaken for a vehicle
+
 	e = obj.physobj_particlelist;
 	while (e)
 	{
@@ -1234,6 +1239,24 @@ void(entity obj) Phys_ObjectRemove =
 		e = next;
 	}
 	remove(obj);
+};
+
+void(entity obj) Vehicle_Destroy;
+float(entity e) Phys_KillTarget =
+{
+	local entity obj;
+
+	if (e.classname == "physics_object")
+		obj = e;
+	else if (e.owner.classname == "physics_object")
+		obj = e.owner;
+	else
+		return FALSE;
+	if (e.physobj_flags & PHFLAGS_VEHICLE)
+		Vehicle_Destroy(obj);
+	else
+		Phys_ObjectRemove(obj);
+	return TRUE;
 };
 
 void(entity stick, entity object) Phys_ObjectRemoveStick =

@@ -1,28 +1,3 @@
-.entity frontright, frontleft, backright, backleft;
-.entity gun, driver;
-
-.float max_forward_speed;
-.float max_reverse_speed;
-.float max_roll_speed;
-
-.float accelerate_forward;
-.float accelerate_reverse;
-.float accelerate_roll;
-
-.float max_turn;
-.float turn_speed;
-
-.float wheel_offset;
-
-.vector autolevel_force;
-.vector autolevel_maxangle;
-
-.vector chase_settings;
-
-float VEHICLE_NO_ROOF = 1;
-float VEHICLE_PERMANENT_GUN = 2;
-float VEHICLE_TANK = 4;
-
 // TODO: ackerman based steering? with different distances depending on max speed?
 
 entity(vector org) hotrod;
@@ -1281,6 +1256,12 @@ void() StartFuncVehicle =
 		}
 	}
 
+	if (self.spawnflags & PHYS_TEMPLATE)
+	{
+		Phys_MakeTemplate(self);
+		return;
+	}
+
 	// everything above is relative to how the vehicle was built by the mapper
 	// allow optionally teleporting it somewhere else, so it can be built
 	// facing north for smooth wheels, but still start facing as intended
@@ -1304,21 +1285,16 @@ void() StartFuncVehicle =
 	}
 
 	Phys_MakeIntoPhysicsObject(self, startorg, matrix_forward, matrix_left, matrix_up, '0 0 1', 0);
-	if (self.physobj_flags & PHFLAGS_VEHICLE){
-		self.physobj_impactevent = PushAndDamageTarget;
-		Car_InitVehicle(self);
-	}
-	else {
-		self.physobj_impactevent = DoNothing;
-	}
+	self.physobj_impactevent = PushAndDamageTarget;
+	Car_InitVehicle(self);
 }
 
 // keeping the titular name for the memes, but this is a point entity
-/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8)
+/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN VEHICLE_TANK PHYS_TEMPLATE
 This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle.
 When building a vehicle out of brushes, it is recommended to build vehicles facing north or south (angle 90 or 270) so their wheels spin smoothly, see func_vehicle_wheel.
 
-"targetname" must be defined, used by the physics object to find the particle
+"targetname" used by func_vehicle_spawner to find a template
 "model" must be defined, loads a .bsp model to use for pushing objects around
 "phys_particle_target" must be defined, the targetname of all the particles and/or wheels in this object
 "phys_static_target" the targetname of all the statics in this object
@@ -1326,6 +1302,12 @@ When building a vehicle out of brushes, it is recommended to build vehicles faci
 "target" optional, targetname of a point entity (info_notnull) to teleport the vehicle to at start
 "physobj_mass" the mass of the entire object
 "lip" the offset above the wheels where the player resides, good default 16
+
+SPAWNFLAGS
+"VEHICLE_NO_ROOF" convertible style
+"VEHICLE_PERMANENT_GUN" turret always active
+"VEHICLE_TANK" steers by driving its sides differently
+"PHYS_TEMPLATE" doesn't start, but stays hidden as a template for func_vehicle_spawner to make copies of
 */
 void() func_vehicle =
 {
@@ -1531,6 +1513,13 @@ void() func_vehicle_wheel =
 	phys_wheel();
 }
 
+void(entity obj) Vehicle_Destroy =
+{
+	if (obj.driving)
+		Car_AttachToVehicle(obj.driving, obj);
+	Phys_ObjectRemove(obj);
+};
+
 void() StartBuiltinVehicle =
 {
 	makevectors(self.angles);
@@ -1629,8 +1618,8 @@ void() func_vehicle_builtins =
 The built-in Mad Max styled hotrod. 
 
 SPAWNFLAGS
-"vehicle_no_roof" convertible style
-"vehicle_permanent_gun" turret always active
+"VEHICLE_NO_ROOF" convertible style
+"VEHICLE_PERMANENT_GUN" turret always active
 */
 void() vehicle_hotrod =
 {
@@ -1668,4 +1657,81 @@ void() Vehicle_SpawnHotrodImpulse =
 
 	across = '0 1 0' * (self.v_angle_y + 90);
 	Vehicle_SpawnBuiltin("hotrod", spot, across, VEHICLE_PERMANENT_GUN);
+};
+
+float SPAWNER_REPLACE = 1;
+float SPAWNER_START_SPAWNED = 2;
+float SPAWNER_NO_ROOF = 4;
+float SPAWNER_PERMANENT_GUN = 8;
+
+void() Vehicle_SpawnerUse =
+{
+	local entity tmpl, car;
+	local float flags;
+
+	if (self.target)
+	{
+		tmpl = find(world, targetname, self.target);
+		while (tmpl && !(tmpl.spawnflags & PHYS_TEMPLATE))
+			tmpl = find(tmpl, targetname, self.target);
+		if (!tmpl)
+		{
+			dprint("func_vehicle_spawner: can't find template ");
+			dprint(self.target);
+			dprint("\n");
+			return;
+		}
+		if (!(tmpl.physobj_flags & PHFLAGS_TEMPLATE))
+		{
+			// the template sets itself up on its first frame, try again in a bit
+			self.think = Vehicle_SpawnerUse;
+			self.nextthink = time + 0.1;
+			return;
+		}
+	}
+
+	if ((self.spawnflags & SPAWNER_REPLACE) && self.enemy != world && self.enemy.owner == self)
+		Phys_KillTarget(self.enemy);
+	self.enemy = world;
+
+	if (self.target)
+		car = Phys_SpawnFromTemplate(tmpl, self.origin, self.angles);
+	else
+	{
+		flags = 0;
+		if (self.spawnflags & SPAWNER_NO_ROOF)
+			flags |= VEHICLE_NO_ROOF;
+		if (self.spawnflags & SPAWNER_PERMANENT_GUN)
+			flags |= VEHICLE_PERMANENT_GUN;
+		car = Vehicle_SpawnBuiltin(self.netname, self.origin, self.angles, flags);
+	}
+	if (!car)
+		return;
+	car.owner = self;
+	self.enemy = car;
+};
+
+/*QUAKED func_vehicle_spawner (1 0 0) (-8 -8 -8) (8 8 8) SPAWNER_REPLACE SPAWNER_START_SPAWNED SPAWNER_NO_ROOF SPAWNER_PERMANENT_GUN
+Makes a copy of a func_vehicle template, or a builtin vehicle when triggered.
+
+"targetname" fire this to make a vehicle
+"target" targetname of a func_vehicle with the template spawnflag, to make copies of
+"netname" a builtin vehicle to make instead: hotrod or apc
+"angle" which way the vehicle faces
+
+SPAWNFLAGS
+"SPAWNER_REPLACE" removes the vehicle it made last time when making a new one, so only one is around at a time
+"SPAWNER_START_SPAWNED" makes a vehicle at the start of the map too
+"SPAWNER_NO_ROOF", "SPAWNER_PERMANENT_GUN" like the builtin vehicles' spawnflags, for netname vehicles
+*/
+void() func_vehicle_spawner =
+{
+	if (!self.target)
+		Vehicle_PrecacheBuiltin(self.netname);
+	self.use = Vehicle_SpawnerUse;
+	if (self.spawnflags & SPAWNER_START_SPAWNED)
+	{
+		self.think = Vehicle_SpawnerUse;
+		self.nextthink = time + 0.1;
+	}
 };
