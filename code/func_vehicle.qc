@@ -1,3 +1,4 @@
+.string vehicle_targetname; // func_vehicle_spawner: targetname given to the vehicles it makes, so they can be killtargeted
 // TODO: ackerman based steering? with different distances depending on max speed?
 
 entity(vector org) hotrod;
@@ -1294,7 +1295,7 @@ void() StartFuncVehicle =
 This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle.
 When building a vehicle out of brushes, it is recommended to build vehicles facing north or south (angle 90 or 270) so their wheels spin smoothly, see func_vehicle_wheel.
 
-"targetname" used by func_vehicle_spawner to find a template
+"targetname" used by func_vehicle_spawner to find a template, or to killtarget the vehicle
 "model" must be defined, loads a .bsp model to use for pushing objects around
 "phys_particle_target" must be defined, the targetname of all the particles and/or wheels in this object
 "phys_static_target" the targetname of all the statics in this object
@@ -1713,6 +1714,7 @@ void() Vehicle_SpawnerUse =
 	if (!car)
 		return;
 	car.owner = self;
+	car.targetname = self.vehicle_targetname;
 	self.enemy = car;
 };
 
@@ -1723,6 +1725,7 @@ Makes a copy of a func_vehicle template, or a builtin vehicle when triggered.
 "target" targetname of a func_vehicle with the template spawnflag, to make copies of
 "netname" a builtin vehicle to make instead: hotrod or apc
 "angle" which way the vehicle faces
+"vehicle_targetname" targetname for the vehicles it makes, so they can be killtargeted
 
 SPAWNFLAGS
 "SPAWNER_REPLACE" removes the vehicle it made last time when making a new one, so only one is around at a time
