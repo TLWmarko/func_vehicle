@@ -25,12 +25,12 @@ float VEHICLE_TANK = 4;
 
 // TODO: ackerman based steering? with different distances depending on max speed?
 
-entity() hotrod;
-entity() atv;
-entity() triton;
-entity() bulldozer;
-entity() forklift;
-entity() apc;
+entity(vector org) hotrod;
+entity(vector org) atv;
+entity(vector org) triton;
+entity(vector org) bulldozer;
+entity(vector org) forklift;
+entity(vector org) apc;
 
 void() Spin_Tires;
 #ifndef COPPER
@@ -1555,8 +1555,7 @@ void() StartBuiltinVehicle =
 	Car_InitVehicle(car);
 }
 
-// legacy, hopefully can remove in next release
-void() func_vehicle_builtins =
+void(string name) Vehicle_PrecacheBuiltin =
 {
 	precache_model("maps/cube16.bsp");
 	precache_model("maps/cube32.bsp");
@@ -1568,13 +1567,11 @@ void() func_vehicle_builtins =
 
 	PrecacheNull();
 
-	entity car;
-	if (self.netname == "triton"){
+	if (name == "triton"){
 		precache_model("progs/test/whl.mdl");
 		precache_model("progs/test/triton.mdl");
-		car = triton();
 	}
-	else if (self.netname == "hotrod"){
+	else if (name == "hotrod"){
 		precache_model("progs/HotRod_body.mdl");
 		precache_model("progs/HotRod_roof.mdl");
 		precache_model("progs/HotRod_player_driver.mdl");
@@ -1585,61 +1582,66 @@ void() func_vehicle_builtins =
 		precache_model("progs/HotRod_turret_body.mdl");
 		precache_model("progs/HotRod_turret_barrel.mdl");
 		precache_model("progs/tracer.mdl");
-		car = hotrod();
 	}
-	else if (self.netname == "atv"){
+	else if (name == "atv"){
 		precache_model("progs/atv.mdl");
 		precache_model("progs/atvtire.mdl");
-		car = atv();
 	}
-	else if (self.netname == "bulldozer"){
+	else if (name == "bulldozer"){
 		precache_model("progs/bulldozer.mdl");
-		car = bulldozer();
 	}
-	else if (self.netname == "forklift"){
+	else if (name == "forklift"){
 		precache_model("progs/forklift.mdl");
 		precache_model("progs/atvtire.mdl");
 		precache_model("progs/forklift_tire_back.mdl");
-		car = forklift();
 	}
-	else if (self.netname == "apc"){
+	else if (name == "apc"){
 		precache_model("progs/apc_body.mdl");
 		precache_model("progs/apc_turret_body.mdl");
 		precache_model("progs/apc_turret_swivel.mdl");
 		precache_model("progs/apc_wheel.mdl");
 		precache_model("progs/tracer.mdl");
-		car = apc();
 	}
-	
-	car.physobj_flags |= PHFLAGS_VEHICLE;
-	car.angles = self.angles;
-	car.think = StartBuiltinVehicle;
-	car.nextthink = time;
-	car.spawnflags |= self.spawnflags;
 };
-// legacy, hopefully can remove in next release
-void() func_vehicle_triton =
+
+entity(string name, vector org, vector ang, float flags) Vehicle_SpawnBuiltin =
 {
-	precache_model("maps/cube16.bsp");
-	precache_model("maps/cube32.bsp");
-	precache_model("maps/round16.bsp");
-	precache_model("maps/round32.bsp");
+	local entity car;
 
-	if (cvar("developer") != 0)
-		Debug_Precache();
-
-	PrecacheNull();
-
-	precache_model("progs/test/whl.mdl");
-	precache_model("progs/test/triton.mdl");
-	entity car = triton();
+	if (name == "triton")
+		car = triton(org);
+	else if (name == "hotrod")
+		car = hotrod(org);
+	else if (name == "atv")
+		car = atv(org);
+	else if (name == "bulldozer")
+		car = bulldozer(org);
+	else if (name == "forklift")
+		car = forklift(org);
+	else if (name == "apc")
+		car = apc(org);
+	if (!car)
+	{
+		dprint("func_vehicle: unknown builtin vehicle ");
+		dprint(name);
+		dprint("\n");
+		return world;
+	}
 
 	car.physobj_flags |= PHFLAGS_VEHICLE;
-	car.angles = self.angles;
+	car.angles = ang;
 	car.think = StartBuiltinVehicle;
 	car.nextthink = time;
-	car.spawnflags |= self.spawnflags;
+	car.spawnflags |= flags;
+	return car;
 };
+
+void() func_vehicle_builtins =
+{
+	Vehicle_PrecacheBuiltin(self.netname);
+	Vehicle_SpawnBuiltin(self.netname, self.origin, self.angles, self.spawnflags);
+};
+
 /*QUAKED vehicle_hotrod (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN
 The built-in Mad Max styled hotrod. 
 
@@ -1649,37 +1651,6 @@ SPAWNFLAGS
 */
 void() vehicle_hotrod =
 {
-
-	precache_model("maps/cube16.bsp");
-	precache_model("maps/cube32.bsp");
-	precache_model("maps/round16.bsp");
-	precache_model("maps/round32.bsp");
-
-	if (cvar("developer") != 0)
-		Debug_Precache();
-
-	PrecacheNull();
-
-	precache_model("progs/HotRod_body.mdl");
-	precache_model("progs/HotRod_roof.mdl");
-	precache_model("progs/HotRod_player_driver.mdl");
-	precache_model("progs/HotRod_wheel_front.mdl");
-	precache_model("progs/HotRod_wheel_rear.mdl");
-	precache_model("progs/HotRod_turret_base.mdl");
-	precache_model("progs/HotRod_turret_swivel.mdl");
-	precache_model("progs/HotRod_turret_body.mdl");
-	precache_model("progs/HotRod_turret_barrel.mdl");
-	precache_model("progs/tracer.mdl");
-	entity car = hotrod();
-	
-	car.physobj_flags |= PHFLAGS_VEHICLE;
-	car.angles = self.angles;
-	car.think = StartBuiltinVehicle;
-	car.nextthink = time;
-	car.spawnflags |= self.spawnflags;
-};
-// legacy, hopefully can remove in next release
-void() func_vehicle_hotrod =
-{
-	vehicle_hotrod();
-};
+	Vehicle_PrecacheBuiltin("hotrod");
+	Vehicle_SpawnBuiltin("hotrod", self.origin, self.angles, self.spawnflags);
+}

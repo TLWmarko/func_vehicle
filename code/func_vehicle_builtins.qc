@@ -1,4 +1,4 @@
-entity() triton =
+entity(vector org) triton =
 {
 	local entity obj, part;
 
@@ -6,7 +6,7 @@ entity() triton =
 	obj.netname = "triton";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
-	setorigin(obj, self.origin);
+	setorigin(obj, org);
 
 	obj.lip = 16;
 	obj.max_forward_speed = 3000;
@@ -184,7 +184,7 @@ entity() triton =
 	return obj;
 }
 
-entity() hotrod =
+entity(vector org) hotrod =
 {
 	local entity obj, part;
 
@@ -192,7 +192,7 @@ entity() hotrod =
 	obj.netname = "hotrod";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
-	setorigin(obj, self.origin);
+	setorigin(obj, org);
 
 	obj.lip = 16;
 	obj.max_forward_speed = 950;
@@ -805,7 +805,7 @@ entity() hotrod =
 	return obj;
 }
 
-entity() atv =
+entity(vector org) atv =
 {
 	local entity obj, part;
 
@@ -813,7 +813,7 @@ entity() atv =
 	obj.netname = "atv";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
-	setorigin(obj, self.origin);
+	setorigin(obj, org);
 
 	obj.lip = 16;
 	obj.max_forward_speed = 750;
@@ -1379,7 +1379,7 @@ entity() atv =
 }
 
 
-entity() bulldozer =
+entity(vector org) bulldozer =
 {
 	local entity obj, part;
 
@@ -1388,7 +1388,7 @@ entity() bulldozer =
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
 	obj.spawnflags |= VEHICLE_TANK;
-	setorigin(obj, self.origin);
+	setorigin(obj, org);
 
 	obj.lip = 16;
 	obj.chase_settings = '250 0 100';
@@ -2119,7 +2119,7 @@ entity() bulldozer =
 	return obj;
 }
 
-entity() forklift =
+entity(vector org) forklift =
 {
 	local entity obj, part;
 
@@ -2127,7 +2127,7 @@ entity() forklift =
 	obj.netname = "forklift";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
-	setorigin(obj, self.origin);
+	setorigin(obj, org);
 
 	obj.lip = 16;
 	obj.max_forward_speed = 280;
@@ -2731,7 +2731,7 @@ entity() forklift =
 	return obj;
 }
 
-entity() apc =
+entity(vector org) apc =
 {
 	local entity obj, part;
 
@@ -2739,7 +2739,7 @@ entity() apc =
 	obj.netname = "apc";
 	obj.physobj_mass = 1000;
 	obj.physobj_impactevent = PushAndDamageTarget;
-	setorigin(obj, self.origin);
+	setorigin(obj, org);
 
 	obj.lip = 16;
 	obj.max_forward_speed = 700;
