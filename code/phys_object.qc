@@ -158,6 +158,7 @@ void(entity from, entity to) Phys_CopyPart =
 	to.skin = from.skin;
 	to.frame = from.frame;
 	to.effects = from.effects;
+	to.solid = from.solid;
 	to.th_pain = from.th_pain;
 	to.relative_org = from.relative_org;
 	to.base_pose = from.base_pose;

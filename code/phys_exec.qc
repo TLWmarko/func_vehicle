@@ -1252,7 +1252,7 @@ float(entity e) Phys_KillTarget =
 		obj = e.owner;
 	else
 		return FALSE;
-	if (e.physobj_flags & PHFLAGS_VEHICLE)
+	if (obj.physobj_flags & PHFLAGS_VEHICLE)
 		Vehicle_Destroy(obj);
 	else
 		Phys_ObjectRemove(obj);
