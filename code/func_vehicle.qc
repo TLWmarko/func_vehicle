@@ -9,6 +9,7 @@ entity(vector org) forklift;
 entity(vector org) apc;
 
 void() Spin_Tires;
+void() Car_ExtraThink;
 #ifndef COPPER
 float() crandom;
 void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
@@ -401,7 +402,9 @@ void(entity car) Car_InitVehicle =
 		}
 		e = e.physobj_next;
 	}
-	car.physobj_extra_think = Spin_Tires;
+	car.physobj_extra_think = Car_ExtraThink;
+	if (car.spawnflags & VEHICLE_SEAT_PLAYER)
+		car.physobj_flags |= PHFLAGS_SEAT;
 };
 
 float TryPlacePlayer(entity exit){
@@ -477,6 +480,37 @@ void(entity ply, entity car) Car_AttachToVehicle =
 		if (car.driver)
 			setmodel(car.driver, car.driver.weaponmodel);
 	}
+};
+
+void(entity ply, entity car) Car_SeatPlayer =
+{
+	if (car.driving || ply.health <= 0 || ply.deadflag)
+		return;
+	if (ply.driving)
+		Car_AttachToVehicle(ply, ply.driving);
+	Car_AttachToVehicle(ply, car);
+};
+
+void(entity car, entity ply) Car_SeatWhenReady =
+{
+	if (ply.classname != "player")
+		ply = world;
+	car.physobj_flags |= PHFLAGS_SEAT;
+	car.enemy = ply;
+};
+
+void(entity car) Car_SeatOnReady =
+{
+	local entity ply;
+
+	ply = car.enemy;
+	if (!ply)
+		ply = find(world, classname, "player");
+	if (!ply)
+		return;
+	car.physobj_flags -= PHFLAGS_SEAT;
+	car.enemy = world;
+	Car_SeatPlayer(ply, car);
 };
 
 void Car_CheckAttach(){
@@ -657,6 +691,13 @@ void(float accel, float maxspeed, entity tire) Car_Accelerate =
 	}
 
 	Accelerate_A_Tire(tire, frame_acc);
+};
+
+void() Car_ExtraThink =
+{
+	if (self.physobj_flags & PHFLAGS_SEAT)
+		Car_SeatOnReady(self);
+	Spin_Tires();
 };
 
 void() Spin_Tires =
@@ -1291,7 +1332,7 @@ void() StartFuncVehicle =
 }
 
 // keeping the titular name for the memes, but this is a point entity
-/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN VEHICLE_TANK PHYS_TEMPLATE
+/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN VEHICLE_TANK PHYS_TEMPLATE VEHICLE_SEAT_PLAYER
 This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle.
 When building a vehicle out of brushes, it is recommended to build vehicles facing north or south (angle 90 or 270) so their wheels spin smoothly, see func_vehicle_wheel.
 
@@ -1309,6 +1350,7 @@ SPAWNFLAGS
 "VEHICLE_PERMANENT_GUN" turret always active
 "VEHICLE_TANK" steers by driving its sides differently
 "PHYS_TEMPLATE" doesn't start, but stays hidden as a template for func_vehicle_spawner to make copies of
+"VEHICLE_SEAT_PLAYER" puts the first player in it as soon as it's ready, waiting for one to join if there's nobody yet
 */
 void() func_vehicle =
 {
@@ -1669,6 +1711,7 @@ float SPAWNER_REPLACE = 1;
 float SPAWNER_START_SPAWNED = 2;
 float SPAWNER_NO_ROOF = 4;
 float SPAWNER_PERMANENT_GUN = 8;
+float SPAWNER_SEAT_ACTIVATOR = 16;
 
 void() Vehicle_SpawnerUse =
 {
@@ -1716,9 +1759,11 @@ void() Vehicle_SpawnerUse =
 	car.owner = self;
 	car.targetname = self.vehicle_targetname;
 	self.enemy = car;
+	if (self.spawnflags & SPAWNER_SEAT_ACTIVATOR)
+		Car_SeatWhenReady(car, activator);
 };
 
-/*QUAKED func_vehicle_spawner (1 0 0) (-8 -8 -8) (8 8 8) SPAWNER_REPLACE SPAWNER_START_SPAWNED SPAWNER_NO_ROOF SPAWNER_PERMANENT_GUN
+/*QUAKED func_vehicle_spawner (1 0 0) (-8 -8 -8) (8 8 8) SPAWNER_REPLACE SPAWNER_START_SPAWNED SPAWNER_NO_ROOF SPAWNER_PERMANENT_GUN SPAWNER_SEAT_ACTIVATOR
 Makes a copy of a func_vehicle template, or a builtin vehicle when triggered.
 
 "targetname" fire this to make a vehicle
@@ -1731,6 +1776,7 @@ SPAWNFLAGS
 "SPAWNER_REPLACE" removes the vehicle it made last time when making a new one, so only one is around at a time
 "SPAWNER_START_SPAWNED" makes a vehicle at the start of the map too
 "SPAWNER_NO_ROOF", "SPAWNER_PERMANENT_GUN" like the builtin vehicles' spawnflags, for netname vehicles
+"SPAWNER_SEAT_ACTIVATOR" puts whoever triggered it in the new vehicle, or the first player if it wasn't a player
 */
 void() func_vehicle_spawner =
 {

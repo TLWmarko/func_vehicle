@@ -78,6 +78,7 @@ float PHFLAGS_KILLME = 128;
 float PHFLAGS_STABILIZERBAR = 256;
 float PHFLAGS_VEHICLE = 512;
 float PHFLAGS_POWERED = 1024;
+float PHFLAGS_SEAT = 2048;
 
 .float force_calcdist, force_calcscale;
 
@@ -116,5 +117,6 @@ float resting_allowed;
 float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 float VEHICLE_TANK = 4;
+float VEHICLE_SEAT_PLAYER = 16;
 
 float(entity e) Phys_KillTarget;
