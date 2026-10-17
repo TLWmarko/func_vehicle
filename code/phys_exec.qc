@@ -1201,7 +1201,7 @@ void(entity obj) Phys_ObjectRemove =
 
 	if (obj.think == ThinkGenerateTetras)
 		CleanUpOuterTetrasAndSupports(obj);
-	obj.physobj_flags = 0; // so a stale reference to it isn't mistaken for a vehicle
+	obj.classname = ""; // so a stale reference to it isn't mistaken for a physics object
 
 	e = obj.physobj_particlelist;
 	while (e)
@@ -1246,13 +1246,13 @@ float(entity e) Phys_KillTarget =
 {
 	local entity obj;
 
-	if (e.classname == "physics_object")
+	if (e.classname == "physics_object" || e.classname == "physics_template")
 		obj = e;
-	else if (e.owner.classname == "physics_object")
+	else if (e.owner.classname == "physics_object" || e.owner.classname == "physics_template")
 		obj = e.owner;
 	else
 		return FALSE;
-	if (obj.physobj_flags & PHFLAGS_VEHICLE)
+	if (obj.driving)
 		Vehicle_Destroy(obj);
 	else
 		Phys_ObjectRemove(obj);

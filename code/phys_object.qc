@@ -147,7 +147,7 @@ void(entity tmpl) Phys_MakeTemplate =
 	Phys_HideTemplateParts(tmpl.physobj_hitmodel);
 	Phys_HideTemplateParts(tmpl.physobj_staticlist);
 	tmpl.solid = SOLID_NOT;
-	tmpl.physobj_flags |= PHFLAGS_TEMPLATE;
+	tmpl.classname = "physics_template";
 };
 
 void(entity from, entity to) Phys_CopyPart =
@@ -201,10 +201,9 @@ entity(entity tmpl, vector org, vector ang) Phys_SpawnFromTemplate =
 	local entity obj;
 
 	obj = spawn();
-	obj.classname = tmpl.classname;
 	obj.netname = tmpl.netname;
 	obj.spawnflags = tmpl.spawnflags - (tmpl.spawnflags & PHYS_TEMPLATE);
-	obj.physobj_flags = tmpl.physobj_flags - (tmpl.physobj_flags & PHFLAGS_TEMPLATE);
+	obj.physobj_flags = tmpl.physobj_flags;
 	obj.physobj_mass = tmpl.physobj_mass;
 	obj.lip = tmpl.lip;
 	obj.max_forward_speed = tmpl.max_forward_speed;

@@ -1687,7 +1687,7 @@ void() Vehicle_SpawnerUse =
 			dprint("\n");
 			return;
 		}
-		if (!(tmpl.physobj_flags & PHFLAGS_TEMPLATE))
+		if (tmpl.classname != "physics_template")
 		{
 			// the template sets itself up on its first frame, try again in a bit
 			self.think = Vehicle_SpawnerUse;
@@ -1696,7 +1696,7 @@ void() Vehicle_SpawnerUse =
 		}
 	}
 
-	if ((self.spawnflags & SPAWNER_REPLACE) && self.enemy != world && self.enemy.owner == self)
+	if ((self.spawnflags & SPAWNER_REPLACE) && self.enemy != world && self.enemy.owner == self && self.enemy.classname == "physics_object")
 		Phys_KillTarget(self.enemy);
 	self.enemy = world;
 
