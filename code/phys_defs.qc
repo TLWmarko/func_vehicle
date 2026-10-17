@@ -118,5 +118,6 @@ float VEHICLE_NO_ROOF = 1;
 float VEHICLE_PERMANENT_GUN = 2;
 float VEHICLE_TANK = 4;
 float VEHICLE_SEAT_PLAYER = 16;
+float DRIVER_TOUCH_TRIGGERS = 32;
 
 float(entity e) Phys_KillTarget;

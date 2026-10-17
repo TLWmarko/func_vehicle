@@ -1117,8 +1117,19 @@ void BrakingAndAccelerating(entity car){
 	}
 }
 
+float() Car_DriverPreThink =
+{
+	if (!self.driving)
+		return FALSE;
+	if (self.driving.spawnflags & DRIVER_TOUCH_TRIGGERS)
+		self.solid = SOLID_TRIGGER;
+	return TRUE;
+};
+
 void TryUpdateVehicle(){
 	entity car = self.driving;
+	if (car)
+		self.solid = SOLID_NOT;
 	// multiplayer compatible camera state check
 	if (!camera_generation)
 		camera_generation = time + random() + 1;
@@ -1332,7 +1343,7 @@ void() StartFuncVehicle =
 }
 
 // keeping the titular name for the memes, but this is a point entity
-/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN VEHICLE_TANK PHYS_TEMPLATE VEHICLE_SEAT_PLAYER
+/*QUAKED func_vehicle (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN VEHICLE_TANK PHYS_TEMPLATE VEHICLE_SEAT_PLAYER DRIVER_TOUCH_TRIGGERS
 This is the entity which brings all the disjointed particles, statics and hitmodels together for a fully simulated vehicle.
 When building a vehicle out of brushes, it is recommended to build vehicles facing north or south (angle 90 or 270) so their wheels spin smoothly, see func_vehicle_wheel.
 
@@ -1351,6 +1362,7 @@ SPAWNFLAGS
 "VEHICLE_TANK" steers by driving its sides differently
 "PHYS_TEMPLATE" doesn't start, but stays hidden as a template for func_vehicle_spawner to make copies of
 "VEHICLE_SEAT_PLAYER" puts the first player in it as soon as it's ready, waiting for one to join if there's nobody yet
+"DRIVER_TOUCH_TRIGGERS" its driver sets off triggers, opens doors and picks up items like a player on foot
 */
 void() func_vehicle =
 {
@@ -1656,18 +1668,31 @@ entity(string name, vector org, vector ang, float flags) Vehicle_SpawnBuiltin =
 	return car;
 };
 
+/*QUAKED func_vehicle_builtins (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN x x VEHICLE_SEAT_PLAYER DRIVER_TOUCH_TRIGGERS
+Built-in vehicle selected by netname.
+
+"netname" the builtin vehicle to make: hotrod or apc
+
+SPAWNFLAGS
+"VEHICLE_NO_ROOF" convertible style
+"VEHICLE_PERMANENT_GUN" turret always active
+"VEHICLE_SEAT_PLAYER" puts the first player in it as soon as it's ready, waiting for one to join if there's nobody yet
+"DRIVER_TOUCH_TRIGGERS" its driver sets off triggers, opens doors and picks up items like a player on foot
+*/
 void() func_vehicle_builtins =
 {
 	Vehicle_PrecacheBuiltin(self.netname);
 	Vehicle_SpawnBuiltin(self.netname, self.origin, self.angles, self.spawnflags);
 };
 
-/*QUAKED vehicle_hotrod (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN
+/*QUAKED vehicle_hotrod (1 0 0) (-8 -8 -8) (8 8 8) VEHICLE_NO_ROOF VEHICLE_PERMANENT_GUN x x VEHICLE_SEAT_PLAYER DRIVER_TOUCH_TRIGGERS
 The built-in Mad Max styled hotrod. 
 
 SPAWNFLAGS
 "VEHICLE_NO_ROOF" convertible style
 "VEHICLE_PERMANENT_GUN" turret always active
+"VEHICLE_SEAT_PLAYER" puts the first player in it as soon as it's ready, waiting for one to join if there's nobody yet
+"DRIVER_TOUCH_TRIGGERS" its driver sets off triggers, opens doors and picks up items like a player on foot
 */
 void() vehicle_hotrod =
 {
@@ -1712,6 +1737,7 @@ float SPAWNER_START_SPAWNED = 2;
 float SPAWNER_NO_ROOF = 4;
 float SPAWNER_PERMANENT_GUN = 8;
 float SPAWNER_SEAT_ACTIVATOR = 16;
+float SPAWNER_TOUCH_TRIGGERS = 32;
 
 void() Vehicle_SpawnerUse =
 {
@@ -1759,11 +1785,13 @@ void() Vehicle_SpawnerUse =
 	car.owner = self;
 	car.targetname = self.vehicle_targetname;
 	self.enemy = car;
+	if (self.spawnflags & SPAWNER_TOUCH_TRIGGERS)
+		car.spawnflags |= DRIVER_TOUCH_TRIGGERS;
 	if (self.spawnflags & SPAWNER_SEAT_ACTIVATOR)
 		Car_SeatWhenReady(car, activator);
 };
 
-/*QUAKED func_vehicle_spawner (1 0 0) (-8 -8 -8) (8 8 8) SPAWNER_REPLACE SPAWNER_START_SPAWNED SPAWNER_NO_ROOF SPAWNER_PERMANENT_GUN SPAWNER_SEAT_ACTIVATOR
+/*QUAKED func_vehicle_spawner (1 0 0) (-8 -8 -8) (8 8 8) SPAWNER_REPLACE SPAWNER_START_SPAWNED SPAWNER_NO_ROOF SPAWNER_PERMANENT_GUN SPAWNER_SEAT_ACTIVATOR SPAWNER_TOUCH_TRIGGERS
 Makes a copy of a func_vehicle template, or a builtin vehicle when triggered.
 
 "targetname" fire this to make a vehicle
@@ -1777,6 +1805,7 @@ SPAWNFLAGS
 "SPAWNER_START_SPAWNED" makes a vehicle at the start of the map too
 "SPAWNER_NO_ROOF", "SPAWNER_PERMANENT_GUN" like the builtin vehicles' spawnflags, for netname vehicles
 "SPAWNER_SEAT_ACTIVATOR" puts whoever triggered it in the new vehicle, or the first player if it wasn't a player
+"SPAWNER_TOUCH_TRIGGERS" gives the vehicles it makes the DRIVER_TOUCH_TRIGGERS spawnflag
 */
 void() func_vehicle_spawner =
 {
